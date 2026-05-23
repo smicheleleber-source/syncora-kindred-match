@@ -151,10 +151,6 @@ function CasesPanel() {
                 <dt className="font-medium text-foreground">Date</dt>
                 <dd>{c.next_date}</dd>
               </div>
-              <div>
-                <dt className="font-medium text-foreground">Hourly rate</dt>
-                <dd>${c.hourly_rate.toLocaleString()}/hr</dd>
-              </div>
             </dl>
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
               <button
