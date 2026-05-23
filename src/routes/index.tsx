@@ -930,10 +930,10 @@ type ServiceTile = {
 };
 
 const SERVICE_TILES: ServiceTile[] = [
-  { name: "Syncora Legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
-  { name: "Syncora Health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
-  { name: "Syncora Home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
-  { name: "Syncora Finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
+  { name: "Syncora Legal", slug: "legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
+  { name: "Syncora Health", slug: "health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
+  { name: "Syncora Home", slug: "home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
+  { name: "Syncora Finance", slug: "finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
 ];
 
 const VALUE_PROPS = [
