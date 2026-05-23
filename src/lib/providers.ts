@@ -333,6 +333,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 2000,
     budget_max: 9000,
     bio: "Full-service family law with rapid intake for urgent matters.",
+    pro_bono: true,
+    hourly_rate: 275,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "4",
