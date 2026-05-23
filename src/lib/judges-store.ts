@@ -163,6 +163,19 @@ export function addJudge(j: Omit<Judge, "id">) {
   persist();
 }
 
+export function updateJudge(id: string, patch: Partial<Judge>) {
+  state = {
+    ...state,
+    judges: state.judges.map((j) => (j.id === id ? { ...j, ...patch } : j)),
+  };
+  persist();
+}
+
+export function removeJudge(id: string) {
+  state = { ...state, judges: state.judges.filter((j) => j.id !== id) };
+  persist();
+}
+
 export function addComplaint(
   c: Omit<Complaint, "id" | "filedISO" | "lastUpdateISO" | "status"> & {
     status?: ComplaintStatus;
