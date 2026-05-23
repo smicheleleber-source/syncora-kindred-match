@@ -39,13 +39,21 @@ function Index() {
   const [category, setCategory] = useState<string>("");
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<Urgency>("medium");
-  const [complexity, setComplexity] = useState<Complexity>("moderate");
   const [location, setLocation] = useState("Austin, TX");
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(5000);
   const [submitted, setSubmitted] = useState<MatchInput | null>(null);
   const providerDirectory = useProviders();
   const reviews = useReviews();
+
+  // Complexity is derived from the number of specialties required, not chosen
+  // by the client. More specialties → narrower expertise → more complex matter.
+  const complexity: Complexity =
+    specialties.length >= 3
+      ? "complex"
+      : specialties.length >= 1
+        ? "moderate"
+        : "simple";
 
   const matches = useMemo(
     () => (submitted ? matchProviders(submitted, providerDirectory) : []),
@@ -346,16 +354,20 @@ function Index() {
               />
             </Field>
 
-            <Field label="Complexity">
-              <SegGroup
-                value={complexity}
-                onChange={(v) => setComplexity(v as Complexity)}
-                options={[
-                  { value: "simple", label: "Simple" },
-                  { value: "moderate", label: "Moderate" },
-                  { value: "complex", label: "Complex" },
-                ]}
-              />
+            <Field label="Complexity (auto)">
+              <div className="flex items-center justify-between rounded-md border border-input bg-muted/40 px-3 py-2 text-sm">
+                <span className="font-medium capitalize text-foreground">
+                  {complexity}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Derived from {specialties.length} specialt
+                  {specialties.length === 1 ? "y" : "ies"} selected
+                </span>
+              </div>
+              <p className="mt-1.5 text-xs text-muted-foreground">
+                Complexity reflects how specialized the matter is, not a client
+                judgement. Pick more specialties below to raise it.
+              </p>
             </Field>
 
             <Field label="Budget — minimum (USD)">
