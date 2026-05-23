@@ -228,8 +228,13 @@ export function alignmentForClient(
   judge: Judge,
   client: { practiceArea?: string; expectedResolutionISO?: string },
 ): { level: AlignmentLevel; reason: string } {
+  // Prefer validated practice areas when available; fall back to claimed
+  const effectiveAreas =
+    judge.validated_practice_areas && judge.validated_practice_areas.length > 0
+      ? judge.validated_practice_areas
+      : judge.practiceAreas;
   const areaMatch =
-    client.practiceArea && judge.practiceAreas.includes(client.practiceArea);
+    client.practiceArea && effectiveAreas.includes(client.practiceArea);
   const d = daysUntil(judge.nextEvent?.dateISO);
   const r = daysUntil(client.expectedResolutionISO);
 
