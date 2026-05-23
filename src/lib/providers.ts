@@ -477,6 +477,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 1000,
     budget_max: 10000,
     bio: "Visas, green cards, naturalization, and removal defense.",
+    pro_bono: true,
+    hourly_rate: 295,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "15",
