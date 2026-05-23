@@ -123,6 +123,12 @@ function JoinPage() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseBoard, setLicenseBoard] = useState("");
   const [bio, setBio] = useState("");
+  const [proBono, setProBono] = useState(false);
+  const [hourlyRate, setHourlyRate] = useState<number | undefined>(undefined);
+  const [firmSize, setFirmSize] = useState<FirmSize | undefined>(undefined);
+  const [genderComp, setGenderComp] = useState<GenderComposition | undefined>(
+    undefined,
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
 
