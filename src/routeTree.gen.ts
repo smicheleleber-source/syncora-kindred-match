@@ -30,6 +30,8 @@ import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
+import { Route as EmployeeTasksRouteImport } from './routes/employee.tasks'
+import { Route as EmployeeDashboardRouteImport } from './routes/employee.dashboard'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminJudgesRouteImport } from './routes/admin.judges'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
@@ -139,6 +141,16 @@ const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
   path: '/playbooks/litigation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeTasksRoute = EmployeeTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => EmployeeRoute,
+} as any)
+const EmployeeDashboardRoute = EmployeeDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => EmployeeRoute,
+} as any)
 const AdminProvidersRoute = AdminProvidersRouteImport.update({
   id: '/admin/providers',
   path: '/admin/providers',
@@ -166,7 +178,7 @@ export interface FileRoutesByFullPath {
   '/connections': typeof ConnectionsRoute
   '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
-  '/employee': typeof EmployeeRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
@@ -176,6 +188,8 @@ export interface FileRoutesByFullPath {
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -192,7 +206,7 @@ export interface FileRoutesByTo {
   '/connections': typeof ConnectionsRoute
   '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
-  '/employee': typeof EmployeeRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
@@ -202,6 +216,8 @@ export interface FileRoutesByTo {
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -219,7 +235,7 @@ export interface FileRoutesById {
   '/connections': typeof ConnectionsRoute
   '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
-  '/employee': typeof EmployeeRoute
+  '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
@@ -229,6 +245,8 @@ export interface FileRoutesById {
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
+  '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -257,6 +275,8 @@ export interface FileRouteTypes {
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
+    | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -283,6 +303,8 @@ export interface FileRouteTypes {
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
+    | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -309,6 +331,8 @@ export interface FileRouteTypes {
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
+    | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -326,7 +350,7 @@ export interface RootRouteChildren {
   ConnectionsRoute: typeof ConnectionsRoute
   CourtDocsRoute: typeof CourtDocsRoute
   DonateRoute: typeof DonateRoute
-  EmployeeRoute: typeof EmployeeRoute
+  EmployeeRoute: typeof EmployeeRouteWithChildren
   FeedbackRoute: typeof FeedbackRoute
   JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
@@ -491,6 +515,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaybooksLitigationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employee/tasks': {
+      id: '/employee/tasks'
+      path: '/tasks'
+      fullPath: '/employee/tasks'
+      preLoaderRoute: typeof EmployeeTasksRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
+    '/employee/dashboard': {
+      id: '/employee/dashboard'
+      path: '/dashboard'
+      fullPath: '/employee/dashboard'
+      preLoaderRoute: typeof EmployeeDashboardRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
     '/admin/providers': {
       id: '/admin/providers'
       path: '/admin/providers'
@@ -515,6 +553,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EmployeeRouteChildren {
+  EmployeeDashboardRoute: typeof EmployeeDashboardRoute
+  EmployeeTasksRoute: typeof EmployeeTasksRoute
+}
+
+const EmployeeRouteChildren: EmployeeRouteChildren = {
+  EmployeeDashboardRoute: EmployeeDashboardRoute,
+  EmployeeTasksRoute: EmployeeTasksRoute,
+}
+
+const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
+  EmployeeRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdvertiseRoute: AdvertiseRoute,
@@ -526,7 +578,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConnectionsRoute: ConnectionsRoute,
   CourtDocsRoute: CourtDocsRoute,
   DonateRoute: DonateRoute,
-  EmployeeRoute: EmployeeRoute,
+  EmployeeRoute: EmployeeRouteWithChildren,
   FeedbackRoute: FeedbackRoute,
   JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
