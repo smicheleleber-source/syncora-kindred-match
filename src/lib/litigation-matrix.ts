@@ -392,6 +392,111 @@ export function toggleElementDoc(claimId: string, elementId: string, docId: stri
   emit();
 }
 
+export function toggleElementCitation(claimId: string, elementId: string, citationId: string) {
+  state = {
+    ...state,
+    claims: state.claims.map((c) =>
+      c.id !== claimId
+        ? c
+        : {
+            ...c,
+            elements: c.elements.map((e) => {
+              if (e.id !== elementId) return e;
+              const current = e.citation_ids ?? [];
+              const has = current.includes(citationId);
+              return {
+                ...e,
+                citation_ids: has
+                  ? current.filter((d) => d !== citationId)
+                  : [...current, citationId],
+              };
+            }),
+          },
+    ),
+  };
+  emit();
+}
+
+export function toggleDocumentCitation(docId: string, citationId: string) {
+  state = {
+    ...state,
+    documents: state.documents.map((d) => {
+      if (d.id !== docId) return d;
+      const current = d.citation_ids ?? [];
+      const has = current.includes(citationId);
+      return {
+        ...d,
+        citation_ids: has
+          ? current.filter((id) => id !== citationId)
+          : [...current, citationId],
+      };
+    }),
+  };
+  emit();
+}
+
+export function addCitation(c: Omit<CaseLawCitation, "id" | "created_at">): CaseLawCitation {
+  const created: CaseLawCitation = { ...c, id: uid("cite"), created_at: Date.now() };
+  state = { ...state, citations: [...(state.citations ?? []), created] };
+  emit();
+  return created;
+}
+
+export function removeCitation(citationId: string) {
+  state = {
+    ...state,
+    citations: (state.citations ?? []).filter((c) => c.id !== citationId),
+    documents: state.documents.map((d) => ({
+      ...d,
+      citation_ids: (d.citation_ids ?? []).filter((id) => id !== citationId),
+    })),
+    claims: state.claims.map((c) => ({
+      ...c,
+      elements: c.elements.map((e) => ({
+        ...e,
+        citation_ids: (e.citation_ids ?? []).filter((id) => id !== citationId),
+      })),
+    })),
+  };
+  emit();
+}
+
+export function buildClaimDraft(
+  m: LitigationMatrix,
+  claim: MatrixClaim,
+): string {
+  const docMap = new Map(m.documents.map((d) => [d.id, d]));
+  const citeMap = new Map((m.citations ?? []).map((c) => [c.id, c]));
+  const lines: string[] = [];
+  lines.push(`${claim.name.toUpperCase()}`);
+  lines.push(`Cause of action: ${claim.cause_of_action}`);
+  lines.push(`Party: ${claim.party}`);
+  lines.push("");
+  lines.push(`In re ${m.case_name}${m.case_number ? `, No. ${m.case_number}` : ""}${m.forum ? ` (${m.forum})` : ""}`);
+  lines.push("");
+  claim.elements.forEach((el, i) => {
+    lines.push(`${i + 1}. ${el.text} [${el.burden} · ${PROOF_STRENGTH_LABEL[el.strength]}]`);
+    if (el.evidence_notes) lines.push(`   Evidence: ${el.evidence_notes}`);
+    const docs = (el.document_ids ?? [])
+      .map((id) => docMap.get(id))
+      .filter(Boolean) as CourtDocument[];
+    if (docs.length) {
+      lines.push(`   Record: ${docs.map((d) => `${d.cite} (${d.title})`).join("; ")}`);
+    }
+    const cites = (el.citation_ids ?? [])
+      .map((id) => citeMap.get(id))
+      .filter(Boolean) as CaseLawCitation[];
+    if (cites.length) {
+      lines.push(`   Authority:`);
+      for (const c of cites) {
+        lines.push(`     • ${formatCitation(c)} — ${c.holding}`);
+      }
+    }
+    lines.push("");
+  });
+  return lines.join("\n");
+}
+
 export function addDocument(doc: Omit<CourtDocument, "id" | "created_at">) {
   state = {
     ...state,
