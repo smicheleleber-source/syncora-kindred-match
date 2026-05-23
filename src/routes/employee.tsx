@@ -40,6 +40,68 @@ const SEED_MATCHES: Record<string, number[]> = {
   "Other":               [2,  3,  3,  4,  5,  5,  6,  7,  8,  9, 10, 11],
 };
 
+// ---- Litigation duration sample dataset ----
+// Avg duration (months) from filing to resolution, by case type.
+// `clientInvolved` flags matters where a Syncora-matched client is a party.
+type LitigationRow = {
+  id: string;
+  caption: string;
+  type: string;
+  classAction: boolean;
+  filed: string; // ISO
+  resolved: string | null; // ISO or null if active
+  status:
+    | "filing"
+    | "discovery"
+    | "motions"
+    | "trial"
+    | "settlement"
+    | "appeal"
+    | "closed";
+  clientInvolved: boolean;
+  clientRole?: "plaintiff" | "class_member" | "defendant" | "intervenor";
+};
+
+const LITIGATION: LitigationRow[] = [
+  { id: "l1", caption: "In re Northstar Pharma Recall", type: "Pharmacy malpractice", classAction: true,  filed: "2022-04-11", resolved: "2024-09-30", status: "closed",      clientInvolved: true,  clientRole: "class_member" },
+  { id: "l2", caption: "Doe v. Mercy Hospital",          type: "Medical malpractice",  classAction: false, filed: "2023-01-22", resolved: null,         status: "discovery",  clientInvolved: true,  clientRole: "plaintiff" },
+  { id: "l3", caption: "Patel v. Apex Trucking",         type: "Personal injury",      classAction: false, filed: "2024-06-05", resolved: "2025-08-14", status: "settlement", clientInvolved: true,  clientRole: "plaintiff" },
+  { id: "l4", caption: "In re Vertex Data Breach",       type: "Consumer / privacy",   classAction: true,  filed: "2023-09-18", resolved: null,         status: "motions",    clientInvolved: true,  clientRole: "class_member" },
+  { id: "l5", caption: "Estate of Reyes",                type: "Estate planning",      classAction: false, filed: "2024-02-09", resolved: "2024-12-20", status: "closed",      clientInvolved: false },
+  { id: "l6", caption: "Carter v. Summit Builders",      type: "Construction defect",  classAction: false, filed: "2022-11-30", resolved: null,         status: "trial",      clientInvolved: false },
+  { id: "l7", caption: "In re Helios Auto Airbag",       type: "Product liability",    classAction: true,  filed: "2021-07-14", resolved: "2025-03-02", status: "closed",      clientInvolved: true,  clientRole: "class_member" },
+  { id: "l8", caption: "Nguyen v. Cascade Bank",         type: "Consumer finance",     classAction: false, filed: "2025-01-08", resolved: null,         status: "filing",     clientInvolved: true,  clientRole: "plaintiff" },
+  { id: "l9", caption: "In re Greenfield Wage & Hour",   type: "Employment law",       classAction: true,  filed: "2023-05-21", resolved: null,         status: "discovery",  clientInvolved: false },
+  { id: "l10", caption: "Brooks v. State (custody)",     type: "Family law",           classAction: false, filed: "2024-10-02", resolved: "2025-06-11", status: "closed",      clientInvolved: true,  clientRole: "plaintiff" },
+  { id: "l11", caption: "In re Atlas Opioid MDL",        type: "Medical malpractice",  classAction: true,  filed: "2020-03-16", resolved: null,         status: "appeal",     clientInvolved: true,  clientRole: "class_member" },
+  { id: "l12", caption: "Singh v. Lakeside Dental",      type: "Dental malpractice",   classAction: false, filed: "2024-04-19", resolved: null,         status: "motions",    clientInvolved: true,  clientRole: "plaintiff" },
+];
+
+function monthsBetween(a: string, b: string | Date): number {
+  const start = new Date(a).getTime();
+  const end = (b instanceof Date ? b : new Date(b)).getTime();
+  return Math.max(0, (end - start) / (1000 * 60 * 60 * 24 * 30.4375));
+}
+
+const STATUS_LABEL: Record<LitigationRow["status"], string> = {
+  filing: "Filing",
+  discovery: "Discovery",
+  motions: "Motions",
+  trial: "Trial",
+  settlement: "Settlement",
+  appeal: "Appeal",
+  closed: "Closed",
+};
+const STATUS_TONE: Record<LitigationRow["status"], string> = {
+  filing: "bg-muted text-foreground",
+  discovery: "bg-primary/15 text-primary",
+  motions: "bg-accent/20 text-foreground",
+  trial: "bg-orange-500/20 text-orange-700 dark:text-orange-300",
+  settlement: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-300",
+  appeal: "bg-purple-500/20 text-purple-700 dark:text-purple-300",
+  closed: "bg-foreground/10 text-muted-foreground",
+};
+
 function bucketFor(category: string): string {
   const c = category.toLowerCase();
   if (c.includes("family")) return "Family law";
