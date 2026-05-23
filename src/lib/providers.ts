@@ -273,6 +273,39 @@ export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
   "clergy malpractice": [
     "clergy abuse", "institutional cover-up", "breach of confidence",
   ],
+  "guardian ad litem": [
+    "child custody", "abuse & neglect", "termination of parental rights",
+    "incapacitated adult", "elder GAL", "probate GAL", "special needs",
+  ],
+  "mediator": [
+    "divorce", "custody", "civil dispute", "workplace", "community",
+    "commercial / contract", "elder / family caregiving", "online mediation",
+  ],
+  "arbitrator": [
+    "commercial", "construction", "employment", "consumer",
+    "labor / union", "international",
+  ],
+  "parenting coordinator": [
+    "high-conflict custody", "co-parenting plans", "decision-making disputes",
+    "reunification", "blended family",
+  ],
+  "counselor / therapist": [
+    "individual therapy", "couples / marriage", "family", "trauma / PTSD",
+    "child & adolescent", "domestic violence survivor", "substance use",
+    "grief", "court-ordered evaluation",
+  ],
+  "social worker": [
+    "LCSW clinical", "child welfare", "elder welfare", "case management",
+    "school social work", "medical social work", "forensic social work",
+  ],
+  "court-appointed evaluator": [
+    "custody evaluation", "psychological evaluation", "competency",
+    "risk assessment", "reunification assessment",
+  ],
+  "victim advocate": [
+    "domestic violence", "sexual assault", "child abuse",
+    "elder abuse", "court accompaniment", "protective order assistance",
+  ],
   "mutual aid network": [
     "food distribution", "rent relief", "medical bill help",
     "childcare support", "disaster response",
