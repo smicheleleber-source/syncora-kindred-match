@@ -202,7 +202,17 @@ function MetaInput({
   );
 }
 
-function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] }) {
+function ClaimCard({
+  claim,
+  docs,
+  citations,
+  onBuildDraft,
+}: {
+  claim: MatrixClaim;
+  docs: CourtDocument[];
+  citations: CaseLawCitation[];
+  onBuildDraft: () => void;
+}) {
   const readiness = claimReadiness(claim);
   return (
     <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
@@ -218,6 +228,13 @@ function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] 
             <div className="text-xs text-muted-foreground">{readiness.label}</div>
             <div className="text-lg font-semibold text-foreground">{readiness.pct}%</div>
           </div>
+          <button
+            type="button"
+            onClick={onBuildDraft}
+            className="rounded-full border border-primary/40 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+          >
+            Build draft
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -243,16 +260,23 @@ function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] 
               <th className="py-2 pr-3 font-semibold">Strength</th>
               <th className="py-2 pr-3 font-semibold">Evidence notes</th>
               <th className="py-2 pr-3 font-semibold">Documents</th>
+              <th className="py-2 pr-3 font-semibold">Case law</th>
               <th className="py-2 font-semibold" />
             </tr>
           </thead>
           <tbody>
             {claim.elements.map((el) => (
-              <ElementRow key={el.id} claimId={claim.id} el={el} docs={docs} />
+              <ElementRow
+                key={el.id}
+                claimId={claim.id}
+                el={el}
+                docs={docs}
+                citations={citations}
+              />
             ))}
             {claim.elements.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-4 text-sm text-muted-foreground">
+                <td colSpan={7} className="py-4 text-sm text-muted-foreground">
                   No elements yet — add the first one below.
                 </td>
               </tr>
