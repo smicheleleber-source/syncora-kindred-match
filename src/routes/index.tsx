@@ -525,24 +525,23 @@ function Index() {
 
                     <p className="mt-3 text-sm text-foreground/80">{m.provider.bio}</p>
 
-                    <div className="mt-5 space-y-2">
-                      {m.breakdown.map((b) => (
-                        <div key={b.label} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-medium text-foreground">{b.label}</span>
-                            <span className="tabular-nums text-muted-foreground">
-                              {b.points}/{b.max}
-                            </span>
-                          </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                            <div
-                              className="h-full bg-accent"
-                              style={{ width: `${(b.points / b.max) * 100}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">{b.note}</p>
-                        </div>
-                      ))}
+                    <CategoryMatchPanel
+                      breakdown={m.breakdown}
+                      requestedCategory={submitted?.category ?? ""}
+                      providerCategory={m.provider.category}
+                      requestedSpecialties={submitted?.specialties ?? []}
+                      providerSpecialties={m.provider.specialties}
+                    />
+
+                    <div className="mt-4 space-y-2">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Other scoring factors
+                      </div>
+                      {m.breakdown
+                        .filter((b) => b.label !== "Category" && b.label !== "Specialty")
+                        .map((b) => (
+                          <BreakdownBar key={b.label} {...b} />
+                        ))}
                     </div>
 
                     <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
@@ -591,6 +590,187 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="mb-1.5 block text-sm font-medium text-foreground">{label}</span>
       {children}
     </label>
+  );
+}
+
+function ratioTone(points: number, max: number): { bar: string; chip: string; label: string } {
+  const ratio = max > 0 ? points / max : 0;
+  if (ratio >= 0.85)
+    return {
+      bar: "bg-accent",
+      chip: "bg-accent/15 text-accent-foreground ring-1 ring-accent/40",
+      label: "Strong",
+    };
+  if (ratio >= 0.5)
+    return {
+      bar: "bg-primary",
+      chip: "bg-primary/10 text-primary ring-1 ring-primary/30",
+      label: "Partial",
+    };
+  if (ratio > 0)
+    return {
+      bar: "bg-muted-foreground/60",
+      chip: "bg-muted text-muted-foreground ring-1 ring-border",
+      label: "Weak",
+    };
+  return {
+    bar: "bg-destructive/50",
+    chip: "bg-destructive/10 text-destructive ring-1 ring-destructive/30",
+    label: "No match",
+  };
+}
+
+function BreakdownBar({
+  label,
+  points,
+  max,
+  note,
+}: {
+  label: string;
+  points: number;
+  max: number;
+  note: string;
+}) {
+  const tone = ratioTone(points, max);
+  const pct = max > 0 ? Math.round((points / max) * 100) : 0;
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-medium text-foreground">{label}</span>
+        <span className="tabular-nums text-muted-foreground">
+          {points}/{max} · {pct}%
+        </span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+        <div className={"h-full " + tone.bar} style={{ width: `${pct}%` }} />
+      </div>
+      <p className="text-xs text-muted-foreground">{note}</p>
+    </div>
+  );
+}
+
+function CategoryMatchPanel({
+  breakdown,
+  requestedCategory,
+  providerCategory,
+  requestedSpecialties,
+  providerSpecialties,
+}: {
+  breakdown: { label: string; points: number; max: number; note: string }[];
+  requestedCategory: string;
+  providerCategory: string;
+  requestedSpecialties: string[];
+  providerSpecialties: string[];
+}) {
+  const cat = breakdown.find((b) => b.label === "Category");
+  const spec = breakdown.find((b) => b.label === "Specialty");
+  if (!cat || !spec) return null;
+  const subtotal = cat.points + spec.points;
+  const subtotalMax = cat.max + spec.max;
+  const subtotalPct = Math.round((subtotal / subtotalMax) * 100);
+  const tone = ratioTone(subtotal, subtotalMax);
+  const categoryHit =
+    requestedCategory.toLowerCase() === providerCategory.toLowerCase();
+  const matchedSpecs = requestedSpecialties.filter((s) =>
+    providerSpecialties.map((p) => p.toLowerCase()).includes(s.toLowerCase()),
+  );
+  const missedSpecs = requestedSpecialties.filter(
+    (s) => !providerSpecialties.map((p) => p.toLowerCase()).includes(s.toLowerCase()),
+  );
+  return (
+    <div className="mt-5 rounded-xl border border-border bg-gradient-to-br from-primary/5 via-card to-accent/5 p-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Practice category match
+          </div>
+          <div className="mt-0.5 text-sm text-foreground">
+            You asked for{" "}
+            <span className="font-semibold capitalize">{requestedCategory || "—"}</span>
+            {" · "}
+            They practice{" "}
+            <span className="font-semibold capitalize">{providerCategory}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className={"rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider " + tone.chip}>
+            {tone.label}
+          </span>
+          <span className="tabular-nums text-sm font-semibold text-foreground">
+            {subtotal}/{subtotalMax}
+            <span className="ml-1 text-xs text-muted-foreground">({subtotalPct}%)</span>
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-lg border border-border/60 bg-background/60 p-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground">
+              {categoryHit ? "✓ Category" : "✗ Category"}
+            </span>
+            <span className="tabular-nums text-muted-foreground">
+              {cat.points}/{cat.max}
+            </span>
+          </div>
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+            <div
+              className={"h-full " + ratioTone(cat.points, cat.max).bar}
+              style={{ width: `${(cat.points / cat.max) * 100}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-muted-foreground">{cat.note}</p>
+        </div>
+        <div className="rounded-lg border border-border/60 bg-background/60 p-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground">
+              Specialty overlap
+            </span>
+            <span className="tabular-nums text-muted-foreground">
+              {spec.points}/{spec.max}
+            </span>
+          </div>
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+            <div
+              className={"h-full " + ratioTone(spec.points, spec.max).bar}
+              style={{ width: `${(spec.points / spec.max) * 100}%` }}
+            />
+          </div>
+          {requestedSpecialties.length === 0 ? (
+            <p className="mt-1.5 text-xs text-muted-foreground">{spec.note}</p>
+          ) : (
+            <div className="mt-1.5 space-y-1 text-xs">
+              {matchedSpecs.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="text-muted-foreground">Matched:</span>
+                  {matchedSpecs.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] font-medium text-accent-foreground ring-1 ring-accent/40"
+                    >
+                      ✓ {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+              {missedSpecs.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="text-muted-foreground">Missing:</span>
+                  {missedSpecs.map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground ring-1 ring-border"
+                    >
+                      ✗ {s}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
