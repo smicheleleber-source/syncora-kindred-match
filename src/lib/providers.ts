@@ -852,14 +852,11 @@ function computeUrgencyBoost(
   if (need <= 1) {
     return { pts: 0, note: "Low urgency — no speed boost applied" };
   }
-  const delta = have - need; // -2..+2
-  // High urgency (need=3): high avail +10, medium +0 (already at par), low -0
-  // Medium urgency (need=2): high avail +6, medium +3, low +0
-  const table: Record<number, Record<number, number>> = {
-    3: { 2: 10, 1: 4, 0: 0, [-1]: 0, [-2]: 0 },
-    2: { 2: 6, 1: 6, 0: 3, [-1]: 0, [-2]: 0 },
-  };
-  const pts = table[need]?.[delta] ?? 0;
+  // High urgency: high avail +10, medium +4, low +0
+  // Medium urgency: high avail +6, medium +3, low +0
+  let pts = 0;
+  if (need === 3) pts = have === 3 ? 10 : have === 2 ? 4 : 0;
+  else if (need === 2) pts = have === 3 ? 6 : have === 2 ? 3 : 0;
   if (pts === 0) {
     return {
       pts: 0,
