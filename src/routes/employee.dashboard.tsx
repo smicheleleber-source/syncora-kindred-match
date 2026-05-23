@@ -4,6 +4,7 @@ import { useProviders } from "@/lib/provider-store";
 import { useConnections } from "@/lib/connections";
 import { RequireAuth } from "@/components/RequireAuth";
 import { useAuth } from "@/lib/auth";
+import { PortalShell } from "./employee";
 
 export const Route = createFileRoute("/employee/dashboard")({
   head: () => ({
@@ -18,8 +19,9 @@ export const Route = createFileRoute("/employee/dashboard")({
   }),
   component: () => (
     <RequireAuth roles={["admin", "approver", "preparer", "auditor", "viewer"]}>
-      <SoxBanner />
-      <EmployeeDashboard />
+      <PortalShell>
+        <EmployeeDashboard />
+      </PortalShell>
     </RequireAuth>
   ),
 });
