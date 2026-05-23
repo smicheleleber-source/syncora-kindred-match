@@ -176,6 +176,12 @@ function Index() {
             >
               Legislative monitor →
             </Link>
+            <Link
+              to="/calendar"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Availability calendar →
+            </Link>
           </div>
         </div>
       </header>
