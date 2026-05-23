@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import {
   CATEGORIES,
   matchProviders,
+  SPECIALTIES_BY_CATEGORY,
   type Complexity,
   type MatchInput,
   type Urgency,
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [category, setCategory] = useState<string>("family law");
+  const [specialties, setSpecialties] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<Urgency>("medium");
   const [complexity, setComplexity] = useState<Complexity>("moderate");
   const [location, setLocation] = useState("Austin, TX");
@@ -40,6 +42,7 @@ function Index() {
     e.preventDefault();
     setSubmitted({
       category,
+      specialties,
       urgency,
       complexity,
       location,
@@ -49,6 +52,14 @@ function Index() {
     setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
+  }
+
+  const specialtyOptions = SPECIALTIES_BY_CATEGORY[category] ?? [];
+
+  function toggleSpecialty(s: string) {
+    setSpecialties((prev) =>
+      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s],
+    );
   }
 
   return (
@@ -83,7 +94,10 @@ function Index() {
             <Field label="Legal category">
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => {
+                  setCategory(e.target.value);
+                  setSpecialties([]);
+                }}
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring appearance-none"
               >
                 {CATEGORIES.map((c) => (
@@ -151,6 +165,39 @@ function Index() {
             </Field>
           </div>
 
+          {specialtyOptions.length > 0 && (
+            <div className="mt-6">
+              <div className="mb-1.5 flex items-baseline justify-between">
+                <span className="text-sm font-medium text-foreground">
+                  Specialties (optional)
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Tap any that apply — e.g. custody, military, DUI
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {specialtyOptions.map((s) => {
+                  const active = specialties.includes(s);
+                  return (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => toggleSpecialty(s)}
+                      className={
+                        "rounded-full border px-3 py-1 text-xs font-medium transition " +
+                        (active
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input bg-background text-muted-foreground hover:border-primary/40 hover:text-foreground")
+                      }
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <button
             type="submit"
             className="mt-8 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
@@ -188,6 +235,26 @@ function Index() {
                           {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
                           {m.provider.budget_max.toLocaleString()}
                         </p>
+                        {m.provider.specialties.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {m.provider.specialties.map((s) => {
+                              const matched = submitted?.specialties.includes(s);
+                              return (
+                                <span
+                                  key={s}
+                                  className={
+                                    "rounded-full px-2 py-0.5 text-[10px] font-medium " +
+                                    (matched
+                                      ? "bg-accent/20 text-accent-foreground ring-1 ring-accent/40"
+                                      : "bg-muted text-muted-foreground")
+                                  }
+                                >
+                                  {s}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-baseline gap-1 rounded-full bg-primary/10 px-3 py-1.5">
                         <span className="text-2xl font-semibold tabular-nums text-primary">
