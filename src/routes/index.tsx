@@ -121,6 +121,12 @@ function Index() {
               ♥ Donate to alliances
             </Link>
             <Link
+              to="/cases"
+              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
+            >
+              Review & fund cases →
+            </Link>
+            <Link
               to="/connections"
               className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
             >
