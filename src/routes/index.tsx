@@ -17,6 +17,7 @@ import { useProviders } from "@/lib/provider-store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
 import { summarizeProvider, useReviews } from "@/lib/reviews-store";
+import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight } from "lucide-react";
 
 type Matter = {
   id: string;
@@ -140,142 +141,7 @@ function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border/60 bg-gradient-to-br from-primary/5 via-background to-accent/10">
-        <div className="mx-auto max-w-5xl px-6 py-12">
-          <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
-            <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-            Syncora Connect
-          </div>
-          <div className="mt-3">
-            <Link
-              to="/portals"
-              className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10"
-            >
-              Are you a client, professional, agency, advertiser, or employee? → Choose your portal
-            </Link>
-          </div>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Find the right professional in minutes.
-          </h1>
-          <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
-            Start with the reason you're here, narrow to a practice area, then tell us
-            about your case. We'll score every provider and surface your top three matches.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2 text-sm">
-            <span className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground">
-              Find a provider
-            </span>
-            <Link
-              to="/providers/join"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              List your practice →
-            </Link>
-            <Link
-              to="/professionals"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              For professionals →
-            </Link>
-            <Link
-              to="/donate"
-              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
-            >
-              ♥ Donate to alliances
-            </Link>
-            <Link
-              to="/cases"
-              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
-            >
-              Review & fund cases →
-            </Link>
-            <Link
-              to="/court-docs"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Court docs & risk →
-            </Link>
-            <Link
-              to="/reviews"
-              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
-            >
-              ★ Client reviews →
-            </Link>
-            <Link
-              to="/connections"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              My connections →
-            </Link>
-            <Link
-              to="/playbooks/litigation"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Litigation playbook →
-            </Link>
-            <Link
-              to="/playbooks/matrix"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Litigation matrix →
-            </Link>
-            <Link
-              to="/collab"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Doc collaboration →
-            </Link>
-            <Link
-              to="/advertise"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Advertise →
-            </Link>
-            <Link
-              to="/legislative"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Legislative monitor →
-            </Link>
-            <Link
-              to="/calendar"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Availability calendar →
-            </Link>
-            <Link
-              to="/judges"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Judges & complaints →
-            </Link>
-            <Link
-              to="/admin/providers"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Admin · Providers →
-            </Link>
-            <Link
-              to="/solicitor"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Solicitor workspace →
-            </Link>
-            <Link
-              to="/feedback"
-              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
-            >
-              Feedback & roadmap →
-            </Link>
-            <Link
-              to="/employee"
-              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
-            >
-              Employee dashboard →
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SyncoraHero />
 
       <main className="mx-auto max-w-5xl px-6 py-12">
         {matters.length > 0 && (
