@@ -4,11 +4,9 @@ import {
   addCase,
   addDoc,
   addTime,
-  generateInvoiceFromUnbilled,
   removeCase,
   removeDoc,
   removeTime,
-  setInvoiceStatus,
   updateCase,
   useSolicitor,
   type SolicitorCase,
@@ -23,20 +21,20 @@ export const Route = createFileRoute("/solicitor")({
       {
         name: "description",
         content:
-          "A workspace for solicitors: case management, time & billing, document collaboration, and practice analytics.",
+          "A workspace for government solicitors (Solicitor General, City/State/County Solicitor): matter management, time logs for public reporting, document collaboration, and caseload analytics. Solicitors are public legal officers — no client billing or fee collection.",
       },
       { property: "og:title", content: "Solicitor Workspace — Syncora Connect" },
       {
         property: "og:description",
         content:
-          "Manage cases, log billable time, share documents, and review practice analytics in one place.",
+          "Manage government matters, log time for public reporting, share filings, and review caseload analytics. Built for public-sector solicitors, not private fee-for-service practice.",
       },
     ],
   }),
   component: SolicitorPage,
 });
 
-type Tab = "cases" | "billing" | "docs" | "analytics";
+type Tab = "cases" | "time" | "docs" | "analytics";
 
 const STATUSES: SolicitorCaseStatus[] = ["intake", "active", "in_court", "settled", "closed"];
 
@@ -55,11 +53,16 @@ function SolicitorPage() {
             Solicitor workspace
           </h1>
           <p className="mt-3 max-w-3xl text-base text-muted-foreground">
-            Manage cases that come through Syncora matches: track court dates, log billable
-            time, share documents with clients and co-counsel, and review your practice analytics.
+            For government solicitors — Solicitor General, City, County, and State Solicitors — who
+            represent a public entity in court. Track matters, log time for public reporting, share
+            filings with co-counsel and agency partners, and review caseload analytics.
+          </p>
+          <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
+            Solicitors are public legal officers. This workspace does <strong>not</strong> bill clients,
+            issue invoices, or collect money — use the private-practice workspace for fee-based work.
           </p>
           <nav className="mt-6 inline-flex rounded-full border border-border bg-background p-1">
-            {(["cases", "billing", "docs", "analytics"] as Tab[]).map((t) => (
+            {(["cases", "time", "docs", "analytics"] as Tab[]).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -71,7 +74,7 @@ function SolicitorPage() {
                     : "text-muted-foreground hover:text-foreground")
                 }
               >
-                {t === "docs" ? "Documents" : t === "billing" ? "Time & billing" : t}
+                {t === "docs" ? "Filings" : t === "time" ? "Time log" : t === "cases" ? "Matters" : t}
               </button>
             ))}
           </nav>
@@ -79,7 +82,7 @@ function SolicitorPage() {
       </header>
       <main className="mx-auto max-w-6xl px-6 py-10">
         {tab === "cases" && <CasesPanel />}
-        {tab === "billing" && <BillingPanel />}
+        {tab === "time" && <TimeLogPanel />}
         {tab === "docs" && <DocsPanel />}
         {tab === "analytics" && <AnalyticsPanel />}
       </main>
@@ -148,10 +151,6 @@ function CasesPanel() {
                 <dt className="font-medium text-foreground">Date</dt>
                 <dd>{c.next_date}</dd>
               </div>
-              <div>
-                <dt className="font-medium text-foreground">Hourly rate</dt>
-                <dd>${c.hourly_rate.toLocaleString()}/hr</dd>
-              </div>
             </dl>
             <div className="mt-4 flex flex-wrap gap-2 text-xs">
               <button
@@ -196,7 +195,6 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
   const [status, setStatus] = useState<SolicitorCaseStatus>(initial?.status ?? "intake");
   const [nextEvent, setNextEvent] = useState(initial?.next_event ?? "Initial consultation");
   const [nextDate, setNextDate] = useState(initial?.next_date ?? new Date().toISOString().slice(0, 10));
-  const [rate, setRate] = useState(initial?.hourly_rate ?? 300);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -208,7 +206,7 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
       status,
       next_event: nextEvent,
       next_date: nextDate,
-      hourly_rate: rate,
+      hourly_rate: 0,
     };
     if (initial) updateCase(initial.id, payload);
     else addCase(payload);
@@ -220,7 +218,7 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
       onSubmit={submit}
       className="mt-4 grid gap-3 rounded-xl border border-border bg-background p-4 md:grid-cols-2"
     >
-      <Field label="Client">
+      <Field label="Party / agency">
         <input value={client} onChange={(e) => setClient(e.target.value)} className="input" />
       </Field>
       <Field label="Category">
@@ -241,9 +239,6 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
             <option key={s} value={s}>{s.replace("_", " ")}</option>
           ))}
         </select>
-      </Field>
-      <Field label="Hourly rate (USD)">
-        <input type="number" min={0} value={rate} onChange={(e) => setRate(Number(e.target.value) || 0)} className="input" />
       </Field>
       <div className="md:col-span-2 flex gap-2">
         <button type="submit" className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground">
@@ -267,38 +262,38 @@ function Field({ label, children, wide }: { label: string; children: React.React
   );
 }
 
-function BillingPanel() {
-  const { cases, time, invoices } = useSolicitor();
+function TimeLogPanel() {
+  const { cases, time } = useSolicitor();
   const [caseId, setCaseId] = useState(cases[0]?.id ?? "");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [hours, setHours] = useState(1);
   const [desc, setDesc] = useState("");
 
-  const unbilledByCase = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const t of time) if (!t.billed) map.set(t.case_id, (map.get(t.case_id) ?? 0) + t.hours);
-    return map;
-  }, [time]);
-
   function logTime(e: React.FormEvent) {
     e.preventDefault();
     if (!caseId || !desc.trim() || hours <= 0) return;
-    addTime({ case_id: caseId, date, hours, description: desc.trim(), billed: false });
+    addTime({ case_id: caseId, date, hours, description: desc.trim(), billed: true });
     setDesc("");
     setHours(1);
   }
 
-  const totalOutstanding = invoices
-    .filter((i) => i.status !== "paid")
-    .reduce((s, i) => s + i.amount, 0);
+  const hoursByCase = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const t of time) map.set(t.case_id, (map.get(t.case_id) ?? 0) + t.hours);
+    return map;
+  }, [time]);
 
   return (
     <section className="space-y-8">
       <div className="grid gap-3 md:grid-cols-3">
-        <Stat label="Unbilled hours" value={time.filter((t) => !t.billed).reduce((s, t) => s + t.hours, 0).toFixed(2)} />
-        <Stat label="Outstanding" value={`$${totalOutstanding.toLocaleString()}`} />
-        <Stat label="Invoices" value={invoices.length.toString()} />
+        <Stat label="Hours this period" value={time.reduce((s, t) => s + t.hours, 0).toFixed(2)} />
+        <Stat label="Matters logged" value={hoursByCase.size.toString()} />
+        <Stat label="Entries" value={time.length.toString()} />
       </div>
+      <p className="text-xs text-muted-foreground">
+        Time is logged for public-reporting and caseload-management purposes — solicitors do not bill
+        parties or collect fees.
+      </p>
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-card-foreground">Log time</h2>
@@ -329,9 +324,6 @@ function BillingPanel() {
                 <span className="w-32 truncate text-foreground">{c?.client_name ?? "—"}</span>
                 <span className="flex-1 text-muted-foreground">{t.description}</span>
                 <span className="w-16 text-right">{t.hours.toFixed(2)}h</span>
-                <span className={"w-16 text-right text-xs " + (t.billed ? "text-muted-foreground" : "text-primary")}>
-                  {t.billed ? "billed" : "unbilled"}
-                </span>
                 <button type="button" onClick={() => removeTime(t.id)} className="text-xs text-destructive hover:underline">
                   delete
                 </button>
@@ -340,56 +332,6 @@ function BillingPanel() {
           })}
           {time.length === 0 && <li className="p-4 text-sm text-muted-foreground">No entries yet.</li>}
         </ul>
-      </div>
-
-      <div>
-        <h2 className="mb-3 text-base font-semibold text-foreground">Invoices</h2>
-        <div className="space-y-3">
-          {cases.map((c) => {
-            const pending = unbilledByCase.get(c.id) ?? 0;
-            if (pending <= 0) return null;
-            return (
-              <div key={c.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-sm">
-                <span className="flex-1">
-                  <span className="font-medium text-card-foreground">{c.client_name}</span>{" "}
-                  <span className="text-muted-foreground">
-                    — {pending.toFixed(2)}h × ${c.hourly_rate} = ${(pending * c.hourly_rate).toLocaleString()}
-                  </span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => generateInvoiceFromUnbilled(c.id)}
-                  className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground"
-                >
-                  Generate invoice
-                </button>
-              </div>
-            );
-          })}
-          <ul className="divide-y divide-border rounded-xl border border-border bg-card">
-            {invoices.slice().reverse().map((i) => {
-              const c = cases.find((x) => x.id === i.case_id);
-              return (
-                <li key={i.id} className="flex items-center gap-3 p-3 text-sm">
-                  <span className="w-24 font-mono text-xs text-muted-foreground">{i.number}</span>
-                  <span className="w-40 truncate">{c?.client_name ?? "—"}</span>
-                  <span className="flex-1 text-muted-foreground">{new Date(i.issued_at).toLocaleDateString()}</span>
-                  <span className="w-24 text-right font-medium">${i.amount.toLocaleString()}</span>
-                  <select
-                    value={i.status}
-                    onChange={(e) => setInvoiceStatus(i.id, e.target.value as typeof i.status)}
-                    className="rounded-full border border-border bg-background px-2 py-0.5 text-xs"
-                  >
-                    <option value="draft">draft</option>
-                    <option value="sent">sent</option>
-                    <option value="paid">paid</option>
-                  </select>
-                </li>
-              );
-            })}
-            {invoices.length === 0 && <li className="p-4 text-sm text-muted-foreground">No invoices yet.</li>}
-          </ul>
-        </div>
       </div>
     </section>
   );
@@ -494,7 +436,7 @@ function DocsPanel() {
 }
 
 function AnalyticsPanel() {
-  const { cases, time, invoices } = useSolicitor();
+  const { cases, time } = useSolicitor();
 
   const byStatus = useMemo(() => {
     const map = new Map<SolicitorCaseStatus, number>();
@@ -503,10 +445,8 @@ function AnalyticsPanel() {
   }, [cases]);
 
   const totalHours = time.reduce((s, t) => s + t.hours, 0);
-  const billedHours = time.filter((t) => t.billed).reduce((s, t) => s + t.hours, 0);
-  const revenue = invoices.filter((i) => i.status === "paid").reduce((s, i) => s + i.amount, 0);
-  const pipeline = invoices.filter((i) => i.status !== "paid").reduce((s, i) => s + i.amount, 0);
-  const avgRate = cases.length ? Math.round(cases.reduce((s, c) => s + c.hourly_rate, 0) / cases.length) : 0;
+  const inCourt = cases.filter((c) => c.status === "in_court").length;
+  const closed = cases.filter((c) => c.status === "closed").length;
 
   const upcoming = cases
     .slice()
@@ -518,8 +458,8 @@ function AnalyticsPanel() {
       <div className="grid gap-3 md:grid-cols-4">
         <Stat label="Open matters" value={cases.filter((c) => c.status !== "closed").length.toString()} />
         <Stat label="Total hours" value={totalHours.toFixed(1)} />
-        <Stat label="Revenue (paid)" value={`$${revenue.toLocaleString()}`} />
-        <Stat label="Pipeline" value={`$${pipeline.toLocaleString()}`} />
+        <Stat label="In court" value={inCourt.toString()} />
+        <Stat label="Closed" value={closed.toString()} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -543,12 +483,12 @@ function AnalyticsPanel() {
             })}
           </ul>
           <div className="mt-4 text-xs text-muted-foreground">
-            Realization: {totalHours > 0 ? Math.round((billedHours / totalHours) * 100) : 0}% · Avg rate ${avgRate}/hr
+            Public office caseload — no billing, no revenue tracked.
           </div>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
-          <h3 className="text-sm font-semibold text-card-foreground">Upcoming court & client events</h3>
+          <h3 className="text-sm font-semibold text-card-foreground">Upcoming court & agency events</h3>
           <ul className="mt-3 space-y-2 text-sm">
             {upcoming.map((c) => (
               <li key={c.id} className="flex items-center gap-2">
