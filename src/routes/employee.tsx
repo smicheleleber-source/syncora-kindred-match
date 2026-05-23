@@ -446,3 +446,171 @@ function StackedBarChart({
     </div>
   );
 }
+
+function LitigationDurationSection() {
+  const now = new Date();
+  const rows = LITIGATION.map((r) => ({
+    ...r,
+    durationMonths: monthsBetween(r.filed, r.resolved ?? now),
+    active: r.resolved === null,
+  }));
+
+  const active = rows.filter((r) => r.active);
+  const closed = rows.filter((r) => !r.active);
+  const classRows = rows.filter((r) => r.classAction);
+  const clientRows = rows.filter((r) => r.clientInvolved);
+
+  const avg = (arr: typeof rows) =>
+    arr.length ? arr.reduce((s, r) => s + r.durationMonths, 0) / arr.length : 0;
+
+  const avgAll = avg(rows);
+  const avgClosed = avg(closed);
+  const avgActive = avg(active);
+  const avgClass = avg(classRows);
+  const avgNonClass = avg(rows.filter((r) => !r.classAction));
+
+  // Duration distribution buckets (months)
+  const buckets = [
+    { label: "0–6 mo", min: 0, max: 6 },
+    { label: "6–12 mo", min: 6, max: 12 },
+    { label: "1–2 yr", min: 12, max: 24 },
+    { label: "2–4 yr", min: 24, max: 48 },
+    { label: "4 yr+", min: 48, max: Infinity },
+  ];
+  const dist = buckets.map((b) => ({
+    ...b,
+    count: rows.filter((r) => r.durationMonths >= b.min && r.durationMonths < b.max).length,
+  }));
+  const distMax = Math.max(...dist.map((d) => d.count), 1);
+
+  // Sort: client-involved first, then longest duration
+  const sorted = [...rows].sort((a, b) => {
+    if (a.clientInvolved !== b.clientInvolved) return a.clientInvolved ? -1 : 1;
+    return b.durationMonths - a.durationMonths;
+  });
+
+  return (
+    <section className="rounded-2xl border border-border bg-card p-6">
+      <div className="mb-6 flex items-baseline justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Litigation duration metrics</h2>
+          <p className="text-sm text-muted-foreground">
+            Time from filing to resolution, including class actions, with status flags for matters
+            where a Syncora-matched client is a party.
+          </p>
+        </div>
+        <span className="rounded-full border border-border px-3 py-1 text-xs uppercase tracking-wide text-muted-foreground">
+          {rows.length} matters tracked
+        </span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+        <Kpi label="Avg duration (all)" value={`${avgAll.toFixed(1)} mo`} sub={`${rows.length} matters`} />
+        <Kpi label="Avg closed" value={`${avgClosed.toFixed(1)} mo`} sub={`${closed.length} resolved`} />
+        <Kpi label="Avg active (open)" value={`${avgActive.toFixed(1)} mo`} sub={`${active.length} in progress`} />
+        <Kpi label="Avg class action" value={`${avgClass.toFixed(1)} mo`} sub={`${classRows.length} class suits`} />
+        <Kpi label="Avg individual" value={`${avgNonClass.toFixed(1)} mo`} sub="Non-class matters" />
+      </div>
+
+      {/* Duration distribution */}
+      <div className="mt-6">
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Duration distribution
+        </h3>
+        <div className="space-y-2">
+          {dist.map((d) => (
+            <div key={d.label}>
+              <div className="mb-1 flex justify-between text-sm">
+                <span>{d.label}</span>
+                <span className="tabular-nums text-muted-foreground">{d.count}</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted">
+                <div
+                  className="h-full rounded-full bg-primary"
+                  style={{ width: `${(d.count / distMax) * 100}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Matter table */}
+      <div className="mt-6">
+        <div className="mb-3 flex items-baseline justify-between">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Matter detail
+          </h3>
+          <span className="text-xs text-muted-foreground">
+            {clientRows.length} involve a Syncora client
+          </span>
+        </div>
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="w-full min-w-[760px] text-sm">
+            <thead className="bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2 text-left">Matter</th>
+                <th className="px-3 py-2 text-left">Type</th>
+                <th className="px-3 py-2 text-left">Form</th>
+                <th className="px-3 py-2 text-left">Status</th>
+                <th className="px-3 py-2 text-right">Duration</th>
+                <th className="px-3 py-2 text-left">Client</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {sorted.map((r) => (
+                <tr key={r.id} className={r.clientInvolved ? "bg-primary/5" : undefined}>
+                  <td className="px-3 py-2">
+                    <div className="font-medium">{r.caption}</div>
+                    <div className="text-xs text-muted-foreground">
+                      Filed {new Date(r.filed).toLocaleDateString()}
+                      {r.resolved && ` · Resolved ${new Date(r.resolved).toLocaleDateString()}`}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2">{r.type}</td>
+                  <td className="px-3 py-2">
+                    {r.classAction ? (
+                      <span className="rounded-full bg-accent/20 px-2 py-0.5 text-xs font-medium">
+                        Class action
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Individual</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_TONE[r.status]}`}
+                    >
+                      {STATUS_LABEL[r.status]}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums">
+                    {r.durationMonths.toFixed(1)} mo
+                    {r.active && (
+                      <span className="ml-1 text-xs text-muted-foreground">(ongoing)</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {r.clientInvolved ? (
+                      <div>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+                          Involved
+                        </span>
+                        <div className="mt-0.5 text-xs capitalize text-muted-foreground">
+                          {r.clientRole?.replace("_", " ")}
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
