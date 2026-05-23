@@ -11,6 +11,8 @@ import {
   type MatchInput,
   type Urgency,
 } from "@/lib/providers";
+import { useProviders } from "@/lib/provider-store";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,10 +39,11 @@ function Index() {
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(5000);
   const [submitted, setSubmitted] = useState<MatchInput | null>(null);
+  const providerDirectory = useProviders();
 
   const matches = useMemo(
-    () => (submitted ? matchProviders(submitted) : []),
-    [submitted],
+    () => (submitted ? matchProviders(submitted, providerDirectory) : []),
+    [submitted, providerDirectory],
   );
 
   function onSubmit(e: React.FormEvent) {
@@ -97,6 +100,17 @@ function Index() {
             Start with the reason you're here, narrow to a practice area, then tell us
             about your case. We'll score every provider and surface your top three matches.
           </p>
+          <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            <span className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground">
+              Find a provider
+            </span>
+            <Link
+              to="/providers/join"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              List your practice →
+            </Link>
+          </div>
         </div>
       </header>
 
