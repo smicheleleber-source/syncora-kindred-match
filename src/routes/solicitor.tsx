@@ -195,7 +195,6 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
   const [status, setStatus] = useState<SolicitorCaseStatus>(initial?.status ?? "intake");
   const [nextEvent, setNextEvent] = useState(initial?.next_event ?? "Initial consultation");
   const [nextDate, setNextDate] = useState(initial?.next_date ?? new Date().toISOString().slice(0, 10));
-  const [rate, setRate] = useState(initial?.hourly_rate ?? 300);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -207,7 +206,7 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
       status,
       next_event: nextEvent,
       next_date: nextDate,
-      hourly_rate: rate,
+      hourly_rate: 0,
     };
     if (initial) updateCase(initial.id, payload);
     else addCase(payload);
@@ -219,7 +218,7 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
       onSubmit={submit}
       className="mt-4 grid gap-3 rounded-xl border border-border bg-background p-4 md:grid-cols-2"
     >
-      <Field label="Client">
+      <Field label="Party / agency">
         <input value={client} onChange={(e) => setClient(e.target.value)} className="input" />
       </Field>
       <Field label="Category">
@@ -240,9 +239,6 @@ function CaseForm({ initial, onDone }: { initial?: SolicitorCase; onDone: () => 
             <option key={s} value={s}>{s.replace("_", " ")}</option>
           ))}
         </select>
-      </Field>
-      <Field label="Hourly rate (USD)">
-        <input type="number" min={0} value={rate} onChange={(e) => setRate(Number(e.target.value) || 0)} className="input" />
       </Field>
       <div className="md:col-span-2 flex gap-2">
         <button type="submit" className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground">
