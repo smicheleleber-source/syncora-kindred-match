@@ -838,6 +838,37 @@ export interface ScoredProvider {
 
 const urgencyRank: Record<Urgency, number> = { high: 3, medium: 2, low: 1 };
 
+/**
+ * Extra credit (0–10) for matching urgency with faster-than-needed availability.
+ * High urgency rewards high-availability providers strongly; low urgency
+ * doesn't need a speed boost.
+ */
+function computeUrgencyBoost(
+  inputUrgency: Urgency,
+  provAvail: Urgency,
+): { pts: number; note: string } {
+  const need = urgencyRank[inputUrgency];
+  const have = urgencyRank[provAvail];
+  if (need <= 1) {
+    return { pts: 0, note: "Low urgency — no speed boost applied" };
+  }
+  // High urgency: high avail +10, medium +4, low +0
+  // Medium urgency: high avail +6, medium +3, low +0
+  let pts = 0;
+  if (need === 3) pts = have === 3 ? 10 : have === 2 ? 4 : 0;
+  else if (need === 2) pts = have === 3 ? 6 : have === 2 ? 3 : 0;
+  if (pts === 0) {
+    return {
+      pts: 0,
+      note: `Their ${provAvail} availability doesn't accelerate a ${inputUrgency}-urgency matter`,
+    };
+  }
+  return {
+    pts,
+    note: `Faster than required (${provAvail} availability for ${inputUrgency} urgency)`,
+  };
+}
+
 function normalizeLoc(s: string) {
   return s.toLowerCase().trim();
 }
@@ -937,6 +968,17 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
         availDelta >= 0
           ? `Available for ${input.urgency} urgency (their slot: ${provider.availability})`
           : `Limited availability for ${input.urgency} urgency (their slot: ${provider.availability})`,
+    });
+
+    // Urgency boost: when the client is in a hurry, reward providers whose
+    // own availability is faster than the bare minimum. No boost (and no
+    // penalty) when urgency is low — speed isn't needed.
+    const urgencyBoost = computeUrgencyBoost(input.urgency, provider.availability);
+    breakdown.push({
+      label: "Urgency boost",
+      points: urgencyBoost.pts,
+      max: 10,
+      note: urgencyBoost.note,
     });
 
     const loc = locationScore(input.location, provider.location);
