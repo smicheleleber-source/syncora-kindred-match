@@ -10,6 +10,7 @@ import {
   type Urgency,
 } from "@/lib/providers";
 import { addProvider } from "@/lib/provider-store";
+import { useLibrary } from "@/lib/connections";
 
 export const Route = createFileRoute("/providers/join")({
   head: () => ({
@@ -88,6 +89,7 @@ type FormErrors = Partial<Record<string, string>>;
 
 function JoinPage() {
   const navigate = useNavigate();
+  const library = useLibrary();
   const [domain, setDomain] = useState<Domain>("Legal");
   const [category, setCategory] = useState<string>(
     CATEGORIES_BY_DOMAIN.Legal[0],
@@ -459,6 +461,27 @@ function JoinPage() {
               {bio.length}/600 characters
             </p>
           </Section>
+
+          {library.length > 0 && (
+            <Section title="Parameters other suppliers and clients commonly track">
+              <p className="mb-3 text-xs text-muted-foreground">
+                These came from past engagements (AI-normalized). You'll add the
+                values per-client once you connect.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {library.slice(0, 12).map((p) => (
+                  <span
+                    key={p.key}
+                    title={p.example ? `e.g. ${p.example}` : undefined}
+                    className="rounded-full border border-border bg-background px-3 py-1 text-xs text-foreground"
+                  >
+                    {p.label}{" "}
+                    <span className="text-muted-foreground">×{p.uses}</span>
+                  </span>
+                ))}
+              </div>
+            </Section>
+          )}
 
           <button
             type="submit"
