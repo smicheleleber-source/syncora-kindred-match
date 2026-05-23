@@ -413,6 +413,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 5000,
     budget_max: 25000,
     bio: "Former prosecutors defending DUIs, felonies, and federal charges.",
+    pro_bono: false,
+    hourly_rate: 650,
+    firm_size: "large",
+    gender_composition: "predominantly_male",
   },
   {
     id: "10",
