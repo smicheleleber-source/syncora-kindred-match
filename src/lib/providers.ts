@@ -14,6 +14,11 @@ export interface Provider {
   name: string;
   category: string;
   specialties: string[];
+  // Subset of `specialties` that the system has independently validated
+  // (e.g. license check, sample-work review, peer attestation). Anything in
+  // `specialties` but NOT in `validated_specialties` is treated as
+  // self-reported experience that still needs validation.
+  validated_specialties?: string[];
   complexity_supported: Complexity[];
   availability: Urgency; // soonest urgency they can handle
   location: string;
