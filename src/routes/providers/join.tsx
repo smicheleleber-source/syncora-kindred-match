@@ -192,6 +192,8 @@ function JoinPage() {
       name: v.name,
       category: v.category,
       specialties: v.specialties,
+      // All self-reported on signup — must be validated later by the system.
+      validated_specialties: [],
       complexity_supported: v.complexity_supported,
       availability: v.availability,
       location: v.location,
