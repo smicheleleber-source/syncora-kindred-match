@@ -58,8 +58,9 @@ function SolicitorPage() {
             filings with co-counsel and agency partners, and review caseload analytics.
           </p>
           <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
-            Solicitors are public legal officers. This workspace does <strong>not</strong> bill clients,
-            issue invoices, or collect money — use the private-practice workspace for fee-based work.
+            Solicitors are public legal officers — no client billing or fee-for-service invoicing.
+            Statutory <strong>motion fees</strong> and filing fees accepted at the counter are
+            receipted here for the public record.
           </p>
           <nav className="mt-6 inline-flex rounded-full border border-border bg-background p-1">
             {(["cases", "time", "docs", "analytics"] as Tab[]).map((t) => (
@@ -291,9 +292,11 @@ function TimeLogPanel() {
         <Stat label="Entries" value={time.length.toString()} />
       </div>
       <p className="text-xs text-muted-foreground">
-        Time is logged for public-reporting and caseload-management purposes — solicitors do not bill
-        parties or collect fees.
+        Time is logged for public-reporting and caseload-management purposes. Solicitors do not bill
+        parties for legal work, but may accept statutory motion and filing fees — record those as
+        receipts below.
       </p>
+      <MotionFeeReceipts />
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-card-foreground">Log time</h2>
@@ -342,6 +345,80 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div className="rounded-2xl border border-border bg-card p-4">
       <div className="text-xs uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="mt-1 text-2xl font-semibold text-card-foreground">{value}</div>
+    </div>
+  );
+}
+
+const FEE_KEY = "syncora.solicitor.motion_fees.v1";
+type MotionFee = { id: string; date: string; payer: string; motion_type: string; amount: number; receipt: string };
+function loadFees(): MotionFee[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(FEE_KEY) ?? "[]") as MotionFee[]; } catch { return []; }
+}
+function saveFees(f: MotionFee[]) { try { localStorage.setItem(FEE_KEY, JSON.stringify(f)); } catch { /* ignore */ } }
+
+function MotionFeeReceipts() {
+  const [fees, setFees] = useState<MotionFee[]>(() => loadFees());
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [payer, setPayer] = useState("");
+  const [motionType, setMotionType] = useState("Motion to file");
+  const [amount, setAmount] = useState(0);
+
+  function add(e: React.FormEvent) {
+    e.preventDefault();
+    if (!payer.trim() || amount <= 0) return;
+    const next: MotionFee = {
+      id: Math.random().toString(36).slice(2, 10),
+      date,
+      payer: payer.trim(),
+      motion_type: motionType.trim() || "Motion",
+      amount,
+      receipt: `RCT-${1000 + fees.length + 1}`,
+    };
+    const updated = [...fees, next];
+    setFees(updated);
+    saveFees(updated);
+    setPayer("");
+    setAmount(0);
+  }
+
+  function remove(id: string) {
+    const updated = fees.filter((f) => f.id !== id);
+    setFees(updated);
+    saveFees(updated);
+  }
+
+  const total = fees.reduce((s, f) => s + f.amount, 0);
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold text-card-foreground">Motion & filing fee receipts</h2>
+        <span className="text-xs text-muted-foreground">Total on record: ${total.toLocaleString()}</span>
+      </div>
+      <form onSubmit={add} className="mt-3 grid gap-3 md:grid-cols-5">
+        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="input" />
+        <input value={payer} onChange={(e) => setPayer(e.target.value)} placeholder="Payer (party / firm)" className="input md:col-span-2" />
+        <input value={motionType} onChange={(e) => setMotionType(e.target.value)} placeholder="Motion / filing type" className="input" />
+        <input type="number" min={0} step="0.01" value={amount} onChange={(e) => setAmount(Number(e.target.value) || 0)} placeholder="Amount (USD)" className="input" />
+        <button type="submit" className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground md:col-span-5">
+          Record receipt
+        </button>
+      </form>
+      <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
+        {fees.slice().reverse().map((f) => (
+          <li key={f.id} className="flex items-center gap-3 p-3 text-sm">
+            <span className="w-24 font-mono text-xs text-muted-foreground">{f.receipt}</span>
+            <span className="w-24 text-xs text-muted-foreground">{f.date}</span>
+            <span className="w-40 truncate text-foreground">{f.payer}</span>
+            <span className="flex-1 text-muted-foreground">{f.motion_type}</span>
+            <span className="w-24 text-right font-medium">${f.amount.toLocaleString()}</span>
+            <button type="button" onClick={() => remove(f.id)} className="text-xs text-destructive hover:underline">delete</button>
+          </li>
+        ))}
+        {fees.length === 0 && <li className="p-4 text-sm text-muted-foreground">No motion fees recorded yet.</li>}
+      </ul>
+      <style>{`.input{border:1px solid hsl(var(--border));background:hsl(var(--background));border-radius:6px;padding:6px 10px;font-size:14px}`}</style>
     </div>
   );
 }
