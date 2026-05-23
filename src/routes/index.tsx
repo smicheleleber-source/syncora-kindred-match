@@ -436,3 +436,65 @@ function SegGroup({
     </div>
   );
 }
+
+function Stepper({
+  step,
+  domain,
+  category,
+  onJump,
+}: {
+  step: 1 | 2 | 3;
+  domain: Domain | null;
+  category: string;
+  onJump: (s: 1 | 2 | 3) => void;
+}) {
+  const items: { n: 1 | 2 | 3; label: string; value: string }[] = [
+    { n: 1, label: "Reason", value: domain ?? "Choose" },
+    { n: 2, label: "Subcategory", value: category || "—" },
+    { n: 3, label: "Case details", value: step === 3 ? "In progress" : "—" },
+  ];
+  return (
+    <ol className="flex flex-wrap items-center gap-2 text-xs">
+      {items.map((it, i) => {
+        const active = step === it.n;
+        const done = step > it.n;
+        const clickable = done || active;
+        return (
+          <li key={it.n} className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={!clickable}
+              onClick={() => clickable && onJump(it.n)}
+              className={
+                "flex items-center gap-2 rounded-full border px-3 py-1.5 transition " +
+                (active
+                  ? "border-primary bg-primary/10 text-primary"
+                  : done
+                    ? "border-border bg-background text-foreground hover:border-primary/40"
+                    : "border-border bg-background text-muted-foreground")
+              }
+            >
+              <span
+                className={
+                  "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold " +
+                  (active || done
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground")
+                }
+              >
+                {it.n}
+              </span>
+              <span className="font-medium">{it.label}</span>
+              <span className="hidden capitalize text-muted-foreground sm:inline">
+                · {it.value}
+              </span>
+            </button>
+            {i < items.length - 1 && (
+              <span className="text-muted-foreground/50">→</span>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
