@@ -234,12 +234,18 @@ function JoinPage() {
             Tell us what you do, when you're available, and your credentials.
             Verified listings rank higher and get surfaced to matched clients.
           </p>
-          <div className="mt-5">
+          <div className="mt-5 flex flex-wrap gap-2">
             <Link
               to="/"
               className="text-sm font-medium text-muted-foreground hover:text-foreground"
             >
               ← Back to client matching
+            </Link>
+            <Link
+              to="/professionals"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              For professionals →
             </Link>
           </div>
         </div>

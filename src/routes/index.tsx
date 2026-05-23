@@ -117,6 +117,12 @@ function Index() {
               List your practice →
             </Link>
             <Link
+              to="/professionals"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              For professionals →
+            </Link>
+            <Link
               to="/donate"
               className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
             >

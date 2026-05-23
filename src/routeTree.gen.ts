@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as ProfessionalsRouteImport } from './routes/professionals'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CasesRouteImport } from './routes/cases'
@@ -21,6 +22,11 @@ import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.liti
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfessionalsRoute = ProfessionalsRouteImport.update({
+  id: '/professionals',
+  path: '/professionals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonateRoute = DonateRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   CasesRoute: typeof CasesRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
+  ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/reviews'
       fullPath: '/reviews'
       preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/professionals': {
+      id: '/professionals'
+      path: '/professionals'
+      fullPath: '/professionals'
+      preLoaderRoute: typeof ProfessionalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donate': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   CasesRoute: CasesRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
+  ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
@@ -208,13 +229,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
