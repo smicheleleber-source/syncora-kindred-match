@@ -42,7 +42,8 @@ function Index() {
   const [location, setLocation] = useState("Austin, TX");
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(5000);
-  const [submitted, setSubmitted] = useState<MatchInput | null>(null);
+  const [matters, setMatters] = useState<Matter[]>([]);
+  const [activeMatterId, setActiveMatterId] = useState<string | null>(null);
   const providerDirectory = useProviders();
   const reviews = useReviews();
 
@@ -55,6 +56,11 @@ function Index() {
         ? "moderate"
         : "simple";
 
+  const activeMatter = useMemo(
+    () => matters.find((m) => m.id === activeMatterId) ?? null,
+    [matters, activeMatterId],
+  );
+  const submitted = activeMatter?.input ?? null;
   const matches = useMemo(
     () => (submitted ? matchProviders(submitted, providerDirectory) : []),
     [submitted, providerDirectory],
@@ -71,7 +77,14 @@ function Index() {
       budget_min: budgetMin,
       budget_max: budgetMax,
     };
-    setSubmitted(input);
+    const matter: Matter = {
+      id: crypto.randomUUID(),
+      domain: domain ?? "Legal",
+      input,
+      created_at: Date.now(),
+    };
+    setMatters((prev) => [...prev, matter]);
+    setActiveMatterId(matter.id);
     try {
       localStorage.setItem("syncora.lastMatchInput.v1", JSON.stringify(input));
     } catch {
@@ -80,6 +93,21 @@ function Index() {
     setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
+  }
+
+  function startAnotherMatter() {
+    setDomain(null);
+    setCategory("");
+    setSpecialties([]);
+    setStep(1);
+    setTimeout(() => {
+      document.getElementById("intake")?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  }
+
+  function removeMatter(id: string) {
+    setMatters((prev) => prev.filter((m) => m.id !== id));
+    if (activeMatterId === id) setActiveMatterId(null);
   }
 
   const specialtyOptions = SPECIALTIES_BY_CATEGORY[category] ?? [];
