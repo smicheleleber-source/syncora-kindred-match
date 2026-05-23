@@ -436,7 +436,7 @@ function DocsPanel() {
 }
 
 function AnalyticsPanel() {
-  const { cases, time, invoices } = useSolicitor();
+  const { cases, time } = useSolicitor();
 
   const byStatus = useMemo(() => {
     const map = new Map<SolicitorCaseStatus, number>();
@@ -445,10 +445,8 @@ function AnalyticsPanel() {
   }, [cases]);
 
   const totalHours = time.reduce((s, t) => s + t.hours, 0);
-  const billedHours = time.filter((t) => t.billed).reduce((s, t) => s + t.hours, 0);
-  const revenue = invoices.filter((i) => i.status === "paid").reduce((s, i) => s + i.amount, 0);
-  const pipeline = invoices.filter((i) => i.status !== "paid").reduce((s, i) => s + i.amount, 0);
-  const avgRate = cases.length ? Math.round(cases.reduce((s, c) => s + c.hourly_rate, 0) / cases.length) : 0;
+  const inCourt = cases.filter((c) => c.status === "in_court").length;
+  const closed = cases.filter((c) => c.status === "closed").length;
 
   const upcoming = cases
     .slice()
@@ -460,8 +458,8 @@ function AnalyticsPanel() {
       <div className="grid gap-3 md:grid-cols-4">
         <Stat label="Open matters" value={cases.filter((c) => c.status !== "closed").length.toString()} />
         <Stat label="Total hours" value={totalHours.toFixed(1)} />
-        <Stat label="Revenue (paid)" value={`$${revenue.toLocaleString()}`} />
-        <Stat label="Pipeline" value={`$${pipeline.toLocaleString()}`} />
+        <Stat label="In court" value={inCourt.toString()} />
+        <Stat label="Closed" value={closed.toString()} />
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -485,12 +483,12 @@ function AnalyticsPanel() {
             })}
           </ul>
           <div className="mt-4 text-xs text-muted-foreground">
-            Realization: {totalHours > 0 ? Math.round((billedHours / totalHours) * 100) : 0}% · Avg rate ${avgRate}/hr
+            Public office caseload — no billing, no revenue tracked.
           </div>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5">
-          <h3 className="text-sm font-semibold text-card-foreground">Upcoming court & client events</h3>
+          <h3 className="text-sm font-semibold text-card-foreground">Upcoming court & agency events</h3>
           <ul className="mt-3 space-y-2 text-sm">
             {upcoming.map((c) => (
               <li key={c.id} className="flex items-center gap-2">
