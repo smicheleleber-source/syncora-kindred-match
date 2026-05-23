@@ -5,6 +5,7 @@ export interface Provider {
   id: string;
   name: string;
   category: string;
+  specialties: string[];
   complexity_supported: Complexity[];
   availability: Urgency; // soonest urgency they can handle
   location: string;
