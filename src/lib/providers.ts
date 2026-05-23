@@ -41,6 +41,107 @@ export const CATEGORIES = [
   "clergy malpractice",
 ] as const;
 
+// Specialty options shown to users after they pick a category. These define
+// finer-grained expertise (e.g. custody, military, DUI) within a practice area.
+export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
+  "family law": [
+    "custody", "divorce", "adoption", "prenuptial agreement", "alimony",
+    "child support", "domestic violence", "military family", "LGBTQ+",
+    "high-asset", "international custody", "mediation", "uncontested divorce",
+  ],
+  "criminal defense": [
+    "DUI", "drug charges", "white-collar", "federal charges", "juvenile",
+    "violent crime", "sex crime", "expungement", "appeals", "military (court-martial)",
+    "misdemeanor", "bail",
+  ],
+  "personal injury": [
+    "car accident", "motorcycle", "truck accident", "slip & fall", "dog bite",
+    "wrongful death", "product liability", "premises liability", "workplace injury",
+  ],
+  "estate planning": [
+    "wills", "trusts", "probate", "elder law", "special needs",
+    "business succession", "asset protection", "veterans benefits",
+  ],
+  "business law": [
+    "contracts", "M&A", "startup incorporation", "IP licensing",
+    "partnership disputes", "securities", "franchise", "employment contracts",
+  ],
+  "immigration law": [
+    "visas", "green cards", "naturalization", "asylum", "deportation defense",
+    "employment-based", "family-based", "DACA", "investor visas",
+  ],
+  "real estate law": [
+    "closings", "title review", "landlord-tenant", "zoning",
+    "commercial leases", "HOA disputes", "construction defects",
+  ],
+  "employment law": [
+    "wrongful termination", "discrimination", "harassment", "wage & hour",
+    "whistleblower", "non-compete", "ADA", "military (USERRA)", "severance",
+  ],
+  "tax law": [
+    "IRS audit", "tax planning", "offshore disclosure", "sales tax",
+    "estate tax", "business tax", "crypto", "tax litigation",
+  ],
+  "medical malpractice": [
+    "hospital negligence", "ER errors", "anesthesia", "oncology",
+    "cardiology", "VA / military medicine",
+  ],
+  "dental malpractice": [
+    "dental implants", "root canal", "nerve damage", "orthodontics",
+    "oral surgery", "anesthesia",
+  ],
+  "nursing malpractice": [
+    "nursing home abuse", "medication errors", "bedsores", "falls",
+    "elder neglect", "hospice",
+  ],
+  "surgical malpractice": [
+    "wrong-site surgery", "retained instruments", "anesthesia",
+    "post-op infection", "robotic surgery", "cosmetic surgery",
+  ],
+  "birth injury malpractice": [
+    "cerebral palsy", "Erb's palsy", "oxygen deprivation",
+    "C-section errors", "shoulder dystocia",
+  ],
+  "misdiagnosis malpractice": [
+    "cancer misdiagnosis", "stroke", "heart attack", "infection",
+    "pediatric", "ER triage",
+  ],
+  "pharmacy malpractice": [
+    "wrong drug", "dosing error", "drug interaction", "compounding",
+    "mail-order pharmacy",
+  ],
+  "mental health malpractice": [
+    "therapist misconduct", "suicide foreseeability", "improper commitment",
+    "breach of confidentiality", "boundary violations",
+  ],
+  "chiropractic malpractice": [
+    "cervical manipulation", "disc injury", "informed consent", "stroke",
+  ],
+  "veterinary malpractice": [
+    "surgical errors", "anesthesia", "misdiagnosis",
+    "exotic animals", "wrongful death",
+  ],
+  "legal malpractice": [
+    "missed deadlines", "conflict of interest", "settlement negligence",
+    "appeals", "fee disputes",
+  ],
+  "accounting malpractice": [
+    "audit failure", "tax prep error", "fiduciary breach",
+    "forensic", "securities filings",
+  ],
+  "engineering malpractice": [
+    "structural", "civil", "mechanical", "electrical", "geotechnical",
+    "environmental",
+  ],
+  "architectural malpractice": [
+    "design defect", "code violation", "cost overrun",
+    "construction administration", "ADA compliance",
+  ],
+  "clergy malpractice": [
+    "clergy abuse", "institutional cover-up", "breach of confidence",
+  ],
+};
+
 export const PROVIDERS: Provider[] = [
   {
     id: "1",
@@ -430,6 +531,7 @@ export const PROVIDERS: Provider[] = [
 
 export interface MatchInput {
   category: string;
+  specialties: string[];
   urgency: Urgency;
   complexity: Complexity;
   location: string;
@@ -484,11 +586,38 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
     const breakdown: ScoredProvider["breakdown"] = [];
 
     const categoryMatch = provider.category.toLowerCase() === input.category.toLowerCase();
+    const categoryPts = categoryMatch ? 20 : 0;
+
+    // Specialty subscore (max 10) rolls into the documented 30-pt category weight.
+    const userSpecs = input.specialties.map((s) => s.toLowerCase());
+    const provSpecs = provider.specialties.map((s) => s.toLowerCase());
+    const overlap = userSpecs.filter((s) => provSpecs.includes(s));
+    let specialtyPts = 0;
+    let specialtyNote = "";
+    if (!categoryMatch) {
+      specialtyPts = 0;
+      specialtyNote = "Different category — specialties not credited";
+    } else if (userSpecs.length === 0) {
+      specialtyPts = 10;
+      specialtyNote = `Covers ${provider.specialties.slice(0, 3).join(", ")}${provider.specialties.length > 3 ? ", …" : ""}`;
+    } else {
+      specialtyPts = Math.round((overlap.length / userSpecs.length) * 10);
+      specialtyNote = overlap.length
+        ? `Matches your specialties: ${overlap.join(", ")}`
+        : `No overlap with your specialties (offers ${provider.specialties.slice(0, 3).join(", ")})`;
+    }
+
     breakdown.push({
       label: "Category",
-      points: categoryMatch ? 30 : 0,
-      max: 30,
+      points: categoryPts,
+      max: 20,
       note: categoryMatch ? `Practices ${provider.category}` : `Different category (${provider.category})`,
+    });
+    breakdown.push({
+      label: "Specialty",
+      points: specialtyPts,
+      max: 10,
+      note: specialtyNote,
     });
 
     const complexityFit = provider.complexity_supported.includes(input.complexity);
