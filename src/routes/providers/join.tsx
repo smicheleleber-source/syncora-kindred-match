@@ -87,6 +87,9 @@ const supplierSchema = z.object({
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
+}).refine((v) => v.hourly_rate == null || v.hourly_rate >= 0, {
+  message: "Hourly rate cannot be negative",
+  path: ["hourly_rate"],
 });
 
 type FormErrors = Partial<Record<string, string>>;
