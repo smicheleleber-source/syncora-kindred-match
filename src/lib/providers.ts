@@ -20,6 +20,10 @@ export interface Provider {
   next_available?: string; // ISO date string of soonest open slot
   weekly_capacity?: number; // new matters they can take per week
   contact_email?: string;
+  // Alliances may accept donations from community members.
+  accepts_donations?: boolean;
+  donation_url?: string;
+  mission?: string;
 }
 
 export const CATEGORIES = [
