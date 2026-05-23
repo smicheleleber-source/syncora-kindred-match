@@ -270,6 +270,97 @@ function Index() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-12">
+        {matters.length > 0 && (
+          <section className="mb-6 rounded-2xl border border-border bg-card p-5 shadow-sm md:p-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <div>
+                <h2 className="text-base font-semibold text-card-foreground">
+                  Your legal needs ({matters.length})
+                </h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  You can stack multiple matters — Family law, trust, employment,
+                  immigration, etc. Tap one to see its matches.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={startAnotherMatter}
+                className="rounded-full border border-primary/40 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+              >
+                + Add another need
+              </button>
+            </div>
+            <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+              {matters.map((m) => {
+                const active = m.id === activeMatterId;
+                return (
+                  <li key={m.id}>
+                    <div
+                      className={
+                        "flex items-start justify-between gap-3 rounded-xl border p-3 transition " +
+                        (active
+                          ? "border-primary bg-primary/5"
+                          : "border-border bg-background hover:border-primary/40")
+                      }
+                    >
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveMatterId(m.id);
+                          setTimeout(() => {
+                            document
+                              .getElementById("results")
+                              ?.scrollIntoView({ behavior: "smooth" });
+                          }, 30);
+                        }}
+                        className="flex-1 text-left"
+                      >
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                          {m.domain}
+                        </div>
+                        <div className="mt-0.5 text-sm font-medium capitalize text-foreground">
+                          {m.input.category}
+                        </div>
+                        <div className="mt-0.5 text-xs text-muted-foreground">
+                          {m.input.location} · {m.input.urgency} urgency · $
+                          {m.input.budget_min.toLocaleString()}–$
+                          {m.input.budget_max.toLocaleString()}
+                        </div>
+                        {m.input.specialties.length > 0 && (
+                          <div className="mt-1 flex flex-wrap gap-1">
+                            {m.input.specialties.slice(0, 4).map((s) => (
+                              <span
+                                key={s}
+                                className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground"
+                              >
+                                {s}
+                              </span>
+                            ))}
+                            {m.input.specialties.length > 4 && (
+                              <span className="text-[10px] text-muted-foreground">
+                                +{m.input.specialties.length - 4}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeMatter(m.id)}
+                        title="Remove need"
+                        className="rounded-full px-2 py-0.5 text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+
+        <div id="intake" />
         <Stepper
           step={step}
           domain={domain}
