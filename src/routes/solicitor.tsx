@@ -292,9 +292,11 @@ function TimeLogPanel() {
         <Stat label="Entries" value={time.length.toString()} />
       </div>
       <p className="text-xs text-muted-foreground">
-        Time is logged for public-reporting and caseload-management purposes — solicitors do not bill
-        parties or collect fees.
+        Time is logged for public-reporting and caseload-management purposes. Solicitors do not bill
+        parties for legal work, but may accept statutory motion and filing fees — record those as
+        receipts below.
       </p>
+      <MotionFeeReceipts />
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-card-foreground">Log time</h2>
