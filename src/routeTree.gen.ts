@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
 import { Route as LegislativeRouteImport } from './routes/legislative'
+import { Route as JudgesRouteImport } from './routes/judges'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CollabRouteImport } from './routes/collab'
@@ -36,6 +37,11 @@ const ProfessionalsRoute = ProfessionalsRouteImport.update({
 const LegislativeRoute = LegislativeRouteImport.update({
   id: '/legislative',
   path: '/legislative',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JudgesRoute = JudgesRouteImport.update({
+  id: '/judges',
+  path: '/judges',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonateRoute = DonateRouteImport.update({
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
@@ -112,6 +119,7 @@ export interface FileRoutesByTo {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
@@ -145,6 +154,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/judges'
     | '/legislative'
     | '/professionals'
     | '/reviews'
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/judges'
     | '/legislative'
     | '/professionals'
     | '/reviews'
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/judges'
     | '/legislative'
     | '/professionals'
     | '/reviews'
@@ -191,6 +203,7 @@ export interface RootRouteChildren {
   CollabRoute: typeof CollabRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
+  JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
@@ -220,6 +233,13 @@ declare module '@tanstack/react-router' {
       path: '/legislative'
       fullPath: '/legislative'
       preLoaderRoute: typeof LegislativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/judges': {
+      id: '/judges'
+      path: '/judges'
+      fullPath: '/judges'
+      preLoaderRoute: typeof JudgesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donate': {
@@ -303,6 +323,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollabRoute: CollabRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
+  JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
