@@ -60,7 +60,7 @@ export interface CourtDocument {
   cite: string; // e.g. "Dkt. 42", "Ex. B", "Smith Depo 112:4-19"
   url?: string;
   notes?: string;
-  citation_ids: string[]; // case-law authority joined into this doc
+  citation_ids?: string[]; // case-law authority joined into this doc
   created_at: number;
 }
 
@@ -71,7 +71,7 @@ export interface MatrixElement {
   strength: ProofStrength;
   evidence_notes: string;
   document_ids: string[]; // refs into CourtDocument[]
-  citation_ids: string[]; // case-law authority supporting the element
+  citation_ids?: string[]; // case-law authority supporting the element
 }
 
 export interface MatrixClaim {
@@ -89,7 +89,7 @@ export interface LitigationMatrix {
   trial_date: string; // ISO date or ""
   documents: CourtDocument[];
   claims: MatrixClaim[];
-  citations: CaseLawCitation[];
+  citations?: CaseLawCitation[];
 }
 
 export interface CaseLawCitation {
