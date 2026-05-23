@@ -325,6 +325,8 @@ function EmployeeDashboard() {
             ))}
           </div>
         </section>
+
+        <LitigationDurationSection />
       </main>
     </div>
   );
