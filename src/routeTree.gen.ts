@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
+import { Route as LegislativeRouteImport } from './routes/legislative'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CollabRouteImport } from './routes/collab'
@@ -29,6 +30,11 @@ const ReviewsRoute = ReviewsRouteImport.update({
 const ProfessionalsRoute = ProfessionalsRouteImport.update({
   id: '/professionals',
   path: '/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegislativeRoute = LegislativeRouteImport.update({
+  id: '/legislative',
+  path: '/legislative',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DonateRoute = DonateRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/legislative'
     | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/legislative'
     | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/collab'
     | '/connections'
     | '/donate'
+    | '/legislative'
     | '/professionals'
     | '/reviews'
     | '/playbooks/litigation'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   CollabRoute: typeof CollabRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
+  LegislativeRoute: typeof LegislativeRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/professionals'
       fullPath: '/professionals'
       preLoaderRoute: typeof ProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legislative': {
+      id: '/legislative'
+      path: '/legislative'
+      fullPath: '/legislative'
+      preLoaderRoute: typeof LegislativeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/donate': {
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   CollabRoute: CollabRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
+  LegislativeRoute: LegislativeRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
@@ -271,3 +292,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
