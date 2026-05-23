@@ -17,6 +17,7 @@ import { Route as JudgesRouteImport } from './routes/judges'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as DonateRouteImport } from './routes/donate'
+import { Route as CourtDocsRouteImport } from './routes/court-docs'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CollabRouteImport } from './routes/collab'
 import { Route as CasesRouteImport } from './routes/cases'
@@ -68,6 +69,11 @@ const EmployeeRoute = EmployeeRouteImport.update({
 const DonateRoute = DonateRouteImport.update({
   id: '/donate',
   path: '/donate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CourtDocsRoute = CourtDocsRouteImport.update({
+  id: '/court-docs',
+  path: '/court-docs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConnectionsRoute = ConnectionsRouteImport.update({
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
+  '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRoute
   '/feedback': typeof FeedbackRoute
@@ -160,6 +167,7 @@ export interface FileRoutesByTo {
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
+  '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRoute
   '/feedback': typeof FeedbackRoute
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
+  '/court-docs': typeof CourtDocsRoute
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRoute
   '/feedback': typeof FeedbackRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/collab'
     | '/connections'
+    | '/court-docs'
     | '/donate'
     | '/employee'
     | '/feedback'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/collab'
     | '/connections'
+    | '/court-docs'
     | '/donate'
     | '/employee'
     | '/feedback'
@@ -251,6 +262,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/collab'
     | '/connections'
+    | '/court-docs'
     | '/donate'
     | '/employee'
     | '/feedback'
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   CasesRoute: typeof CasesRoute
   CollabRoute: typeof CollabRoute
   ConnectionsRoute: typeof ConnectionsRoute
+  CourtDocsRoute: typeof CourtDocsRoute
   DonateRoute: typeof DonateRoute
   EmployeeRoute: typeof EmployeeRoute
   FeedbackRoute: typeof FeedbackRoute
@@ -346,6 +359,13 @@ declare module '@tanstack/react-router' {
       path: '/donate'
       fullPath: '/donate'
       preLoaderRoute: typeof DonateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/court-docs': {
+      id: '/court-docs'
+      path: '/court-docs'
+      fullPath: '/court-docs'
+      preLoaderRoute: typeof CourtDocsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/connections': {
@@ -442,6 +462,7 @@ const rootRouteChildren: RootRouteChildren = {
   CasesRoute: CasesRoute,
   CollabRoute: CollabRoute,
   ConnectionsRoute: ConnectionsRoute,
+  CourtDocsRoute: CourtDocsRoute,
   DonateRoute: DonateRoute,
   EmployeeRoute: EmployeeRoute,
   FeedbackRoute: FeedbackRoute,
@@ -460,3 +481,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
