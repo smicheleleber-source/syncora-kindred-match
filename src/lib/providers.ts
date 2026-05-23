@@ -1,5 +1,13 @@
 export type Complexity = "simple" | "moderate" | "complex";
 export type Urgency = "high" | "medium" | "low";
+export type FirmSize = "solo" | "small" | "mid" | "large";
+export type GenderComposition =
+  | "mixed"
+  | "predominantly_male"
+  | "predominantly_female"
+  | "all_male"
+  | "all_female"
+  | "prefer_not_to_say";
 
 export interface Provider {
   id: string;
@@ -24,7 +32,28 @@ export interface Provider {
   accepts_donations?: boolean;
   donation_url?: string;
   mission?: string;
+  // Rate, firm size, pro bono, and team composition
+  pro_bono?: boolean; // offers some free / sliding-scale services
+  hourly_rate?: number; // USD / hour; 0 or omitted = flat-fee / contingency
+  firm_size?: FirmSize;
+  gender_composition?: GenderComposition;
 }
+
+export const FIRM_SIZE_LABELS: Record<FirmSize, string> = {
+  solo: "Solo practitioner",
+  small: "Small firm (2–10)",
+  mid: "Mid-size firm (11–50)",
+  large: "Large firm (50+)",
+};
+
+export const GENDER_LABELS: Record<GenderComposition, string> = {
+  mixed: "Mixed gender team",
+  predominantly_male: "Predominantly male",
+  predominantly_female: "Predominantly female",
+  all_male: "All male",
+  all_female: "All female",
+  prefer_not_to_say: "Prefer not to say",
+};
 
 export const CATEGORIES = [
   "family law",
