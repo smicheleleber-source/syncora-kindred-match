@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
@@ -41,6 +42,11 @@ import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminJudgesRouteImport } from './routes/admin.judges'
 import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SolicitorRoute = SolicitorRouteImport.update({
   id: '/solicitor',
   path: '/solicitor',
@@ -216,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
@@ -283,6 +291,7 @@ export interface FileRoutesById {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/trust'
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/trust'
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/trust'
     | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
@@ -418,6 +430,7 @@ export interface RootRouteChildren {
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
+  TrustRoute: typeof TrustRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminJudgesRoute: typeof AdminJudgesRoute
   AdminProvidersRoute: typeof AdminProvidersRoute
@@ -429,6 +442,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/solicitor': {
       id: '/solicitor'
       path: '/solicitor'
@@ -699,6 +719,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
+  TrustRoute: TrustRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
   AdminJudgesRoute: AdminJudgesRoute,
   AdminProvidersRoute: AdminProvidersRoute,
@@ -710,3 +731,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
