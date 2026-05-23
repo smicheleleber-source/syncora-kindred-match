@@ -15,7 +15,8 @@ export type Judge = {
   name: string;
   court: string; // e.g. "Travis County District Court"
   jurisdiction: string; // e.g. "TX"
-  practiceAreas: string[]; // e.g. ["family", "criminal"]
+  practiceAreas: string[]; // self-reported / claimed experience
+  validated_practice_areas?: string[]; // confirmed by Syncora system
   termEndsISO?: string; // YYYY-MM-DD
   nextEvent?: {
     type: SelectionType;
