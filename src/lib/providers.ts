@@ -301,6 +301,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 3000,
     budget_max: 12000,
     bio: "Senior litigators specializing in complex custody and high-asset divorce.",
+    pro_bono: false,
+    hourly_rate: 425,
+    firm_size: "mid",
+    gender_composition: "mixed",
   },
   {
     id: "2",
