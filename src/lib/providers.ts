@@ -397,6 +397,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 600,
     budget_max: 3500,
     bio: "Community-focused practice with sliding-scale fees.",
+    pro_bono: true,
+    hourly_rate: 150,
+    firm_size: "solo",
+    gender_composition: "predominantly_female",
   },
   {
     id: "9",
