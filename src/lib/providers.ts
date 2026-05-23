@@ -939,6 +939,17 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
           : `Limited availability for ${input.urgency} urgency (their slot: ${provider.availability})`,
     });
 
+    // Urgency boost: when the client is in a hurry, reward providers whose
+    // own availability is faster than the bare minimum. No boost (and no
+    // penalty) when urgency is low — speed isn't needed.
+    const urgencyBoost = computeUrgencyBoost(input.urgency, provider.availability);
+    breakdown.push({
+      label: "Urgency boost",
+      points: urgencyBoost.pts,
+      max: 10,
+      note: urgencyBoost.note,
+    });
+
     const loc = locationScore(input.location, provider.location);
     breakdown.push({ label: "Location", points: loc.pts, max: 15, note: loc.note });
 
