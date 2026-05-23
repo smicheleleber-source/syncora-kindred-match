@@ -339,11 +339,32 @@ function Index() {
                         </div>
                         <h3 className="mt-1 text-lg font-semibold text-card-foreground">
                           {m.provider.name}
+                          {m.provider.verified && (
+                            <span
+                              title={`Verified · ${m.provider.license_board ?? "license on file"}`}
+                              className="ml-2 inline-flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wider text-accent-foreground ring-1 ring-accent/40"
+                            >
+                              ✓ Verified
+                            </span>
+                          )}
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
                           {m.provider.budget_max.toLocaleString()}
                         </p>
+                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null) && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {m.provider.years_experience != null && (
+                              <span>{m.provider.years_experience} yrs experience</span>
+                            )}
+                            {m.provider.next_available && (
+                              <span> · Next open {m.provider.next_available}</span>
+                            )}
+                            {m.provider.weekly_capacity != null && (
+                              <span> · {m.provider.weekly_capacity}/wk capacity</span>
+                            )}
+                          </p>
+                        )}
                         {m.provider.specialties.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {m.provider.specialties.map((s) => {
