@@ -491,6 +491,65 @@ function JoinPage() {
             </p>
           </Section>
 
+          <Section title="Rate, firm size & team composition">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Hourly rate (USD)" error={errors.hourly_rate}>
+                <NumInput
+                  value={hourlyRate ?? 0}
+                  onChange={(v) => setHourlyRate(v === 0 ? undefined : v)}
+                  min={0}
+                  max={5000}
+                  step={25}
+                />
+              </Field>
+              <Field label="Firm size">
+                <select
+                  value={firmSize ?? ""}
+                  onChange={(e) =>
+                    setFirmSize((e.target.value as FirmSize) || undefined)
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— Select —</option>
+                  {Object.entries(FIRM_SIZE_LABELS).map(([k, label]) => (
+                    <option key={k} value={k}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Gender composition of professionals">
+                <select
+                  value={genderComp ?? ""}
+                  onChange={(e) =>
+                    setGenderComp(
+                      (e.target.value as GenderComposition) || undefined,
+                    )
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— Select —</option>
+                  {Object.entries(GENDER_LABELS).map(([k, label]) => (
+                    <option key={k} value={k}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <label className="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2.5">
+                <input
+                  type="checkbox"
+                  checked={proBono}
+                  onChange={(e) => setProBono(e.target.checked)}
+                  className="h-4 w-4 rounded border-input text-primary"
+                />
+                <span className="text-sm text-foreground">
+                  I offer pro bono / sliding-scale services
+                </span>
+              </label>
+            </div>
+          </Section>
+
           {library.length > 0 && (
             <Section title="Parameters other suppliers and clients commonly track">
               <p className="mb-3 text-xs text-muted-foreground">
