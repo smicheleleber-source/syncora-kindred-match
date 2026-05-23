@@ -12,7 +12,8 @@ import {
   type Urgency,
 } from "@/lib/providers";
 import { useProviders } from "@/lib/provider-store";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { addConnection } from "@/lib/connections";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const navigate = useNavigate();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [domain, setDomain] = useState<Domain | null>(null);
   const [category, setCategory] = useState<string>("");
@@ -115,6 +117,12 @@ function Index() {
               className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
             >
               ♥ Donate to alliances
+            </Link>
+            <Link
+              to="/connections"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              My connections →
             </Link>
           </div>
         </div>
@@ -420,6 +428,32 @@ function Index() {
                           <p className="text-xs text-muted-foreground">{b.note}</p>
                         </div>
                       ))}
+                    </div>
+
+                    <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!submitted) return;
+                          const c = addConnection({
+                            providerId: m.provider.id,
+                            providerName: m.provider.name,
+                            category: m.provider.category,
+                            clientNote: `Matched at ${m.score}/100 for ${submitted.category}.`,
+                            clientLocation: submitted.location,
+                            clientBudgetMin: submitted.budget_min,
+                            clientBudgetMax: submitted.budget_max,
+                          });
+                          navigate({ to: "/connections", hash: c.id });
+                        }}
+                        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+                      >
+                        Connect with {m.provider.name.split(" ")[0]}
+                      </button>
+                      <span className="text-xs text-muted-foreground">
+                        Starts an engagement where you and the provider define
+                        custom parameters together.
+                      </span>
                     </div>
                   </li>
                 ))}
