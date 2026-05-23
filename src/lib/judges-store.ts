@@ -15,7 +15,8 @@ export type Judge = {
   name: string;
   court: string; // e.g. "Travis County District Court"
   jurisdiction: string; // e.g. "TX"
-  practiceAreas: string[]; // e.g. ["family", "criminal"]
+  practiceAreas: string[]; // self-reported / claimed experience
+  validated_practice_areas?: string[]; // confirmed by Syncora system
   termEndsISO?: string; // YYYY-MM-DD
   nextEvent?: {
     type: SelectionType;
@@ -68,6 +69,7 @@ function seed(): State {
         court: "Travis County District Court, 250th",
         jurisdiction: "TX",
         practiceAreas: ["family", "civil"],
+        validated_practice_areas: ["family", "civil"],
         termEndsISO: inDays(420),
         nextEvent: {
           type: "election",
@@ -81,6 +83,8 @@ function seed(): State {
         court: "U.S. District Court, W.D. Tex.",
         jurisdiction: "Federal",
         practiceAreas: ["criminal", "ip", "civil"],
+        validated_practice_areas: ["criminal", "civil"],
+        termEndsISO: inDays(180),
         nextEvent: {
           type: "appointment",
           dateISO: inDays(180),
@@ -93,6 +97,7 @@ function seed(): State {
         court: "Probate Court No. 1",
         jurisdiction: "TX",
         practiceAreas: ["probate", "elder"],
+        validated_practice_areas: ["probate"],
         termEndsISO: inDays(60),
         nextEvent: {
           type: "retention",
@@ -158,6 +163,19 @@ export function addJudge(j: Omit<Judge, "id">) {
   persist();
 }
 
+export function updateJudge(id: string, patch: Partial<Judge>) {
+  state = {
+    ...state,
+    judges: state.judges.map((j) => (j.id === id ? { ...j, ...patch } : j)),
+  };
+  persist();
+}
+
+export function removeJudge(id: string) {
+  state = { ...state, judges: state.judges.filter((j) => j.id !== id) };
+  persist();
+}
+
 export function addComplaint(
   c: Omit<Complaint, "id" | "filedISO" | "lastUpdateISO" | "status"> & {
     status?: ComplaintStatus;
@@ -210,8 +228,13 @@ export function alignmentForClient(
   judge: Judge,
   client: { practiceArea?: string; expectedResolutionISO?: string },
 ): { level: AlignmentLevel; reason: string } {
+  // Prefer validated practice areas when available; fall back to claimed
+  const effectiveAreas =
+    judge.validated_practice_areas && judge.validated_practice_areas.length > 0
+      ? judge.validated_practice_areas
+      : judge.practiceAreas;
   const areaMatch =
-    client.practiceArea && judge.practiceAreas.includes(client.practiceArea);
+    client.practiceArea && effectiveAreas.includes(client.practiceArea);
   const d = daysUntil(judge.nextEvent?.dateISO);
   const r = daysUntil(client.expectedResolutionISO);
 

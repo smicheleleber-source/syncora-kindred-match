@@ -160,6 +160,31 @@ function JudgesPage() {
                 <div className="mt-2 text-xs italic text-muted-foreground">
                   {alignment.reason}
                 </div>
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {j.practiceAreas.map((a) => {
+                    const validated = (j.validated_practice_areas ?? []).includes(a);
+                    return (
+                      <span
+                        key={a}
+                        className="inline-flex items-center gap-1 rounded-full border border-border bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+                        title={
+                          validated
+                            ? "Validated by Syncora"
+                            : "Claimed — pending validation"
+                        }
+                      >
+                        <span
+                          className={
+                            validated ? "text-emerald-600" : "text-amber-600"
+                          }
+                        >
+                          {validated ? "✓" : "◷"}
+                        </span>
+                        {a}
+                      </span>
+                    );
+                  })}
+                </div>
               </button>
             ))}
           </div>
