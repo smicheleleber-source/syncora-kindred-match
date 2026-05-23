@@ -212,6 +212,12 @@ function Index() {
             >
               Feedback & roadmap →
             </Link>
+            <Link
+              to="/employee"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Employee dashboard →
+            </Link>
           </div>
         </div>
       </header>
