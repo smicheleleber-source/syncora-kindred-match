@@ -232,6 +232,33 @@ function seed(): LitigationMatrix {
         ],
       },
     ],
+    citations: [
+      {
+        id: uid("cite"),
+        case_name: "Hadley v. Baxendale",
+        reporter: "9 Ex. 341",
+        court: "Ct. of Exchequer",
+        year: 1854,
+        pin_cite: "at 354",
+        holding:
+          "Contract damages are limited to losses that were foreseeable at the time of contracting or arising naturally from the breach.",
+        url: "https://en.wikipedia.org/wiki/Hadley_v_Baxendale",
+        tags: ["breach", "damages", "foreseeability"],
+        created_at: Date.now() - 86400000 * 30,
+      },
+      {
+        id: uid("cite"),
+        case_name: "Eurycleia Partners, LP v. Seward & Kissel, LLP",
+        reporter: "12 N.Y.3d 553",
+        court: "N.Y. Ct. App.",
+        year: 2009,
+        pin_cite: "at 559",
+        holding:
+          "Fraud requires (1) a material misrepresentation, (2) knowledge of falsity, (3) intent to induce reliance, (4) justifiable reliance, and (5) damages.",
+        tags: ["fraud", "elements", "scienter"],
+        created_at: Date.now() - 86400000 * 20,
+      },
+    ],
   };
 }
 
