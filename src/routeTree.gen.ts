@@ -31,6 +31,7 @@ import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminJudgesRouteImport } from './routes/admin.judges'
+import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 
 const SolicitorRoute = SolicitorRouteImport.update({
   id: '/solicitor',
@@ -142,6 +143,11 @@ const AdminJudgesRoute = AdminJudgesRouteImport.update({
   path: '/admin/judges',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
+  id: '/admin/employees',
+  path: '/admin/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -259,6 +269,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -283,6 +294,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -308,6 +320,7 @@ export interface RootRouteChildren {
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
+  AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminJudgesRoute: typeof AdminJudgesRoute
   AdminProvidersRoute: typeof AdminProvidersRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
@@ -472,6 +485,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminJudgesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/employees': {
+      id: '/admin/employees'
+      path: '/admin/employees'
+      fullPath: '/admin/employees'
+      preLoaderRoute: typeof AdminEmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -492,6 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
+  AdminEmployeesRoute: AdminEmployeesRoute,
   AdminJudgesRoute: AdminJudgesRoute,
   AdminProvidersRoute: AdminProvidersRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
@@ -502,3 +523,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
