@@ -58,8 +58,9 @@ function SolicitorPage() {
             filings with co-counsel and agency partners, and review caseload analytics.
           </p>
           <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
-            Solicitors are public legal officers. This workspace does <strong>not</strong> bill clients,
-            issue invoices, or collect money — use the private-practice workspace for fee-based work.
+            Solicitors are public legal officers — no client billing or fee-for-service invoicing.
+            Statutory <strong>motion fees</strong> and filing fees accepted at the counter are
+            receipted here for the public record.
           </p>
           <nav className="mt-6 inline-flex rounded-full border border-border bg-background p-1">
             {(["cases", "time", "docs", "analytics"] as Tab[]).map((t) => (
