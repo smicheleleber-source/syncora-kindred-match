@@ -150,22 +150,41 @@ function ProviderDetail() {
 
           {provider.specialties.length > 0 && (
             <>
-              <h2 className="mt-6 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              <h2 className="mt-6 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
                 Specialties
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium normal-case tracking-normal text-muted-foreground">
+                  {(provider.validated_specialties ?? []).length}/
+                  {provider.specialties.length} validated
+                </span>
               </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Specialties are first reported by the provider as claimed
+                experience, then promoted to <strong>validated</strong> once the
+                system confirms them (license check, sample work, references).
+              </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {provider.specialties.map((s) => {
                   const matched = lastInput?.specialties.includes(s);
+                  const validated = (provider.validated_specialties ?? []).includes(s);
                   return (
                     <span
                       key={s}
                       className={
-                        "rounded-full px-2 py-0.5 text-xs " +
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs " +
                         (matched
                           ? "bg-accent/20 text-accent-foreground ring-1 ring-accent/40"
                           : "bg-muted text-muted-foreground")
                       }
                     >
+                      <span
+                        title={validated ? "Validated by Syncora" : "Claimed — pending validation"}
+                        className={
+                          "text-[10px] " +
+                          (validated ? "text-emerald-600" : "text-amber-600")
+                        }
+                      >
+                        {validated ? "✓" : "◷"}
+                      </span>
                       {s}
                     </span>
                   );
