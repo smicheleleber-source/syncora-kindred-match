@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
+  CATEGORIES,
   matchProviders,
   type Complexity,
   type MatchInput,
@@ -10,11 +11,11 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Syncora Connect — Family Law Matchmaking" },
+      { title: "Syncora Connect — Legal Matchmaking" },
       {
         name: "description",
         content:
-          "Match with the right family law provider based on urgency, complexity, location, and budget.",
+          "Match with the right legal provider based on category, urgency, complexity, location, and budget.",
       },
     ],
   }),
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [category] = useState("family law");
+  const [category, setCategory] = useState<string>("family law");
   const [urgency, setUrgency] = useState<Urgency>("medium");
   const [complexity, setComplexity] = useState<Complexity>("moderate");
   const [location, setLocation] = useState("Austin, TX");
@@ -59,7 +60,7 @@ function Index() {
             Syncora Connect
           </div>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Find the right family law team in minutes.
+            Find the right legal team in minutes.
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
             Tell us about your case. We score every provider in our network across category fit,
@@ -79,10 +80,18 @@ function Index() {
           </p>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <Field label="Category">
-              <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground">
-                Family law
-              </div>
+            <Field label="Legal category">
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring appearance-none"
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </Field>
 
             <Field label="Location (city, state)">
