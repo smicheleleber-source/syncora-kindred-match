@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
 import { Route as LegislativeRouteImport } from './routes/legislative'
@@ -26,6 +27,11 @@ import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 
+const SolicitorRoute = SolicitorRouteImport.update({
+  id: '/solicitor',
+  path: '/solicitor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
   path: '/reviews',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/solicitor': typeof SolicitorRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/solicitor': typeof SolicitorRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/solicitor': typeof SolicitorRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/solicitor'
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/solicitor'
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/solicitor'
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
@@ -231,6 +243,7 @@ export interface RootRouteChildren {
   LegislativeRoute: typeof LegislativeRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
+  SolicitorRoute: typeof SolicitorRoute
   AdminProvidersRoute: typeof AdminProvidersRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
@@ -240,6 +253,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solicitor': {
+      id: '/solicitor'
+      path: '/solicitor'
+      fullPath: '/solicitor'
+      preLoaderRoute: typeof SolicitorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reviews': {
       id: '/reviews'
       path: '/reviews'
@@ -367,6 +387,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegislativeRoute: LegislativeRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
+  SolicitorRoute: SolicitorRoute,
   AdminProvidersRoute: AdminProvidersRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
