@@ -4,6 +4,8 @@ import {
   CATEGORIES_BY_DOMAIN,
   DOMAINS,
   DOMAIN_DESCRIPTIONS,
+  FIRM_SIZE_LABELS,
+  GENDER_LABELS,
   matchProviders,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
