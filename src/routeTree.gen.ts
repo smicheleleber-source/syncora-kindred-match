@@ -21,6 +21,7 @@ import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
+import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
@@ -85,6 +86,11 @@ const ProvidersJoinRoute = ProvidersJoinRouteImport.update({
   path: '/providers/join',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProvidersIdRoute = ProvidersIdRouteImport.update({
+  id: '/providers/$id',
+  path: '/providers/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlaybooksMatrixRoute = PlaybooksMatrixRouteImport.update({
   id: '/playbooks/matrix',
   path: '/playbooks/matrix',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesByTo {
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesById {
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRouteTypes {
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/providers/$id'
     | '/providers/join'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/providers/$id'
     | '/providers/join'
   id:
     | '__root__'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/providers/$id'
     | '/providers/join'
   fileRoutesById: FileRoutesById
 }
@@ -222,6 +234,7 @@ export interface RootRouteChildren {
   AdminProvidersRoute: typeof AdminProvidersRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
+  ProvidersIdRoute: typeof ProvidersIdRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
 }
 
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProvidersJoinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/providers/$id': {
+      id: '/providers/$id'
+      path: '/providers/$id'
+      fullPath: '/providers/$id'
+      preLoaderRoute: typeof ProvidersIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/playbooks/matrix': {
       id: '/playbooks/matrix'
       path: '/playbooks/matrix'
@@ -350,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminProvidersRoute: AdminProvidersRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
+  ProvidersIdRoute: ProvidersIdRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
 }
 export const routeTree = rootRouteImport
