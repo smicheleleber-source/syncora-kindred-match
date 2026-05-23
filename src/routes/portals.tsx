@@ -118,6 +118,10 @@ function PortalsPage() {
           <Link to="/portals/client" className="text-primary hover:underline">
             Most visitors are clients — start there.
           </Link>
+          {" · "}
+          <Link to="/pricing" className="text-primary hover:underline">
+            See graduated pricing & early-adopter cohorts
+          </Link>
         </p>
       </div>
     </div>
