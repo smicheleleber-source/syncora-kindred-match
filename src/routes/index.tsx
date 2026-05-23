@@ -429,6 +429,32 @@ function Index() {
                         </div>
                       ))}
                     </div>
+
+                    <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!submitted) return;
+                          const c = addConnection({
+                            providerId: m.provider.id,
+                            providerName: m.provider.name,
+                            category: m.provider.category,
+                            clientNote: `Matched at ${m.score}/100 for ${submitted.category}.`,
+                            clientLocation: submitted.location,
+                            clientBudgetMin: submitted.budget_min,
+                            clientBudgetMax: submitted.budget_max,
+                          });
+                          navigate({ to: "/connections", hash: c.id });
+                        }}
+                        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+                      >
+                        Connect with {m.provider.name.split(" ")[0]}
+                      </button>
+                      <span className="text-xs text-muted-foreground">
+                        Starts an engagement where you and the provider define
+                        custom parameters together.
+                      </span>
+                    </div>
                   </li>
                 ))}
               </ol>
