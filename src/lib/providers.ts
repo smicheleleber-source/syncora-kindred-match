@@ -711,6 +711,10 @@ export const PROVIDERS: Provider[] = [
     bio: "Neighbor-to-neighbor support network covering groceries, rent, and emergency funds.",
     accepts_donations: true,
     mission: "Direct cash and goods to households in crisis — no application, no means test.",
+    pro_bono: true,
+    hourly_rate: 0,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "34",
