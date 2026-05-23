@@ -32,7 +32,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PortalsProfessionalRouteImport } from './routes/portals.professional'
-import { Route as PortalsClientRouteImport } from './routes/portals.client'
+import { Route as PortalsClientPortalRouteImport } from './routes/portals.client-portal'
 import { Route as PortalsAgencyRouteImport } from './routes/portals.agency'
 import { Route as PortalsAdvertiserRouteImport } from './routes/portals.advertiser'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
@@ -158,9 +158,9 @@ const PortalsProfessionalRoute = PortalsProfessionalRouteImport.update({
   path: '/professional',
   getParentRoute: () => PortalsRoute,
 } as any)
-const PortalsClientRoute = PortalsClientRouteImport.update({
-  id: '/client',
-  path: '/client',
+const PortalsClientPortalRoute = PortalsClientPortalRouteImport.update({
+  id: '/client-portal',
+  path: '/client-portal',
   getParentRoute: () => PortalsRoute,
 } as any)
 const PortalsAgencyRoute = PortalsAgencyRouteImport.update({
@@ -239,7 +239,7 @@ export interface FileRoutesByFullPath {
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
   '/portals/agency': typeof PortalsAgencyRoute
-  '/portals/client': typeof PortalsClientRoute
+  '/portals/client-portal': typeof PortalsClientPortalRoute
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -274,7 +274,7 @@ export interface FileRoutesByTo {
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
   '/portals/agency': typeof PortalsAgencyRoute
-  '/portals/client': typeof PortalsClientRoute
+  '/portals/client-portal': typeof PortalsClientPortalRoute
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -310,7 +310,7 @@ export interface FileRoutesById {
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
   '/portals/agency': typeof PortalsAgencyRoute
-  '/portals/client': typeof PortalsClientRoute
+  '/portals/client-portal': typeof PortalsClientPortalRoute
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -347,7 +347,7 @@ export interface FileRouteTypes {
     | '/playbooks/matrix'
     | '/portals/advertiser'
     | '/portals/agency'
-    | '/portals/client'
+    | '/portals/client-portal'
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
@@ -382,7 +382,7 @@ export interface FileRouteTypes {
     | '/playbooks/matrix'
     | '/portals/advertiser'
     | '/portals/agency'
-    | '/portals/client'
+    | '/portals/client-portal'
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
@@ -417,7 +417,7 @@ export interface FileRouteTypes {
     | '/playbooks/matrix'
     | '/portals/advertiser'
     | '/portals/agency'
-    | '/portals/client'
+    | '/portals/client-portal'
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
@@ -616,11 +616,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalsProfessionalRouteImport
       parentRoute: typeof PortalsRoute
     }
-    '/portals/client': {
-      id: '/portals/client'
-      path: '/client'
-      fullPath: '/portals/client'
-      preLoaderRoute: typeof PortalsClientRouteImport
+    '/portals/client-portal': {
+      id: '/portals/client-portal'
+      path: '/client-portal'
+      fullPath: '/portals/client-portal'
+      preLoaderRoute: typeof PortalsClientPortalRouteImport
       parentRoute: typeof PortalsRoute
     }
     '/portals/agency': {
@@ -706,14 +706,14 @@ const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
 interface PortalsRouteChildren {
   PortalsAdvertiserRoute: typeof PortalsAdvertiserRoute
   PortalsAgencyRoute: typeof PortalsAgencyRoute
-  PortalsClientRoute: typeof PortalsClientRoute
+  PortalsClientPortalRoute: typeof PortalsClientPortalRoute
   PortalsProfessionalRoute: typeof PortalsProfessionalRoute
 }
 
 const PortalsRouteChildren: PortalsRouteChildren = {
   PortalsAdvertiserRoute: PortalsAdvertiserRoute,
   PortalsAgencyRoute: PortalsAgencyRoute,
-  PortalsClientRoute: PortalsClientRoute,
+  PortalsClientPortalRoute: PortalsClientPortalRoute,
   PortalsProfessionalRoute: PortalsProfessionalRoute,
 }
 
@@ -752,3 +752,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
