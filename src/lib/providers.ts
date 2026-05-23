@@ -164,6 +164,10 @@ export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
     "custody", "divorce", "adoption", "prenuptial agreement", "alimony",
     "child support", "domestic violence", "military family", "LGBTQ+",
     "high-asset", "international custody", "mediation", "uncontested divorce",
+    "mental illness in family", "DSS / CPS case", "educational interference",
+    "parental alienation", "guardian ad litem disputes", "special needs child",
+    "school IEP / 504 disputes", "termination of parental rights",
+    "grandparent rights", "relocation / move-away",
   ],
   "criminal defense": [
     "DUI", "drug charges", "white-collar", "federal charges", "juvenile",
