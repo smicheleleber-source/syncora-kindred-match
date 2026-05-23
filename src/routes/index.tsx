@@ -919,3 +919,160 @@ function Stepper({
     </ol>
   );
 }
+
+// ---------- Syncora Connect hero ----------
+
+type ServiceTile = {
+  name: string;
+  desc: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tint: string;
+};
+
+const SERVICE_TILES: ServiceTile[] = [
+  { name: "Syncora Legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
+  { name: "Syncora Health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
+  { name: "Syncora Home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
+  { name: "Syncora Finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
+];
+
+const VALUE_PROPS = [
+  { icon: Lightbulb, title: "Intelligent Matching", desc: "Smartly aligns your needs with the best possible providers." },
+  { icon: Clock, title: "Timing & Fit", desc: "Simple cases matched quickly, complex cases matched carefully." },
+  { icon: ShieldCheck, title: "Confidence & Trust", desc: "Transparent, vetted connections every time." },
+];
+
+function SyncoraLogo({ className = "h-10 w-10" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 64 48" className={className} aria-hidden="true">
+      <circle cx="22" cy="24" r="16" fill="none" stroke="currentColor" strokeWidth="3" />
+      <circle cx="42" cy="24" r="16" fill="none" stroke="currentColor" strokeWidth="3" className="text-accent" />
+      <path d="M27 25l4 4 8-9" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="text-accent" />
+    </svg>
+  );
+}
+
+function SyncoraHero() {
+  return (
+    <header className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-6xl px-6 pt-12 pb-10">
+        {/* Brand */}
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center gap-3 text-primary">
+            <SyncoraLogo className="h-12 w-16" />
+            <span className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+              Syncora<span className="text-accent">Connect</span>
+            </span>
+          </div>
+          <p className="mt-3 text-base text-accent md:text-lg">
+            Intelligent Matching for the Services You Need.
+          </p>
+        </div>
+
+        {/* Hero banner */}
+        <section className="relative mt-10 overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary via-primary to-accent/80 text-primary-foreground shadow-xl">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-accent/40 blur-3xl" />
+            <div className="absolute right-0 bottom-0 h-80 w-80 rounded-full bg-chart-1/30 blur-3xl" />
+          </div>
+          <div className="relative grid gap-8 p-8 md:grid-cols-[1.1fr_1fr] md:gap-6 md:p-12">
+            <div className="flex flex-col justify-center">
+              <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
+                Find the right professional—
+                <span className="block italic font-normal opacity-90">exactly when you need them.</span>
+              </h1>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
+                Seamlessly connecting clients with the right professionals — based
+                on real-time availability, location, and expertise.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="#intake"
+                  className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-md transition hover:brightness-110"
+                >
+                  Get Matched Now <ArrowRight className="h-4 w-4" />
+                </a>
+                <Link
+                  to="/portals"
+                  className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/10 px-5 py-2.5 text-sm font-medium text-primary-foreground backdrop-blur transition hover:bg-primary-foreground/20"
+                >
+                  Choose your portal
+                </Link>
+              </div>
+            </div>
+
+            {/* Network diagram */}
+            <div className="relative hidden min-h-[260px] items-center justify-center md:flex">
+              <NetworkDiagram />
+            </div>
+          </div>
+        </section>
+
+        {/* Service tiles */}
+        <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {SERVICE_TILES.map((t) => (
+            <a
+              key={t.name}
+              href="#intake"
+              className="group rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${t.tint}`}>
+                <t.icon className="h-5 w-5" />
+              </span>
+              <div className="mt-4 text-base font-semibold text-card-foreground">{t.name}</div>
+              <p className="mt-1 text-sm text-muted-foreground">{t.desc}</p>
+            </a>
+          ))}
+        </section>
+
+        {/* Value props */}
+        <section className="mt-10 grid gap-6 border-t border-border/60 pt-8 sm:grid-cols-3">
+          {VALUE_PROPS.map((v) => (
+            <div key={v.title} className="flex flex-col items-center text-center sm:items-start sm:text-left">
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-accent/15 text-accent">
+                <v.icon className="h-5 w-5" />
+              </span>
+              <div className="mt-3 text-sm font-semibold text-foreground">{v.title}</div>
+              <p className="mt-1 text-xs text-muted-foreground">{v.desc}</p>
+            </div>
+          ))}
+        </section>
+      </div>
+    </header>
+  );
+}
+
+function NetworkDiagram() {
+  const nodes = [
+    { x: 50, y: 20, icon: Briefcase, ring: "bg-accent" },
+    { x: 15, y: 60, icon: Scale, ring: "bg-primary" },
+    { x: 50, y: 75, icon: Stethoscope, ring: "bg-accent" },
+    { x: 85, y: 60, icon: HomeIcon, ring: "bg-chart-1" },
+  ];
+  return (
+    <div className="relative h-full w-full">
+      <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full" preserveAspectRatio="none">
+        <g stroke="currentColor" strokeWidth="0.4" className="text-primary-foreground/40" fill="none">
+          <line x1="50" y1="20" x2="15" y2="60" />
+          <line x1="50" y1="20" x2="85" y2="60" />
+          <line x1="50" y1="20" x2="50" y2="75" />
+          <line x1="15" y1="60" x2="50" y2="75" />
+          <line x1="85" y1="60" x2="50" y2="75" />
+          <circle cx="50" cy="48" r="22" />
+        </g>
+      </svg>
+      {nodes.map((n, i) => (
+        <div
+          key={i}
+          className={`absolute flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full ring-4 ring-background/30 shadow-lg ${n.ring}`}
+          style={{ left: `${n.x}%`, top: `${n.y}%` }}
+        >
+          <n.icon className="h-5 w-5 text-primary-foreground" />
+        </div>
+      ))}
+      <div className="absolute left-1/2 top-[48%] flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-background text-primary shadow-md">
+        <Clock className="h-5 w-5" />
+      </div>
+    </div>
+  );
+}
