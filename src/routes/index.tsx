@@ -1,26 +1,267 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import {
+  matchProviders,
+  type Complexity,
+  type MatchInput,
+  type Urgency,
+} from "@/lib/providers";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Syncora Connect — Family Law Matchmaking" },
+      {
+        name: "description",
+        content:
+          "Match with the right family law provider based on urgency, complexity, location, and budget.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function Index() {
+  const [category] = useState("family law");
+  const [urgency, setUrgency] = useState<Urgency>("medium");
+  const [complexity, setComplexity] = useState<Complexity>("moderate");
+  const [location, setLocation] = useState("Austin, TX");
+  const [budgetMin, setBudgetMin] = useState(1000);
+  const [budgetMax, setBudgetMax] = useState(5000);
+  const [submitted, setSubmitted] = useState<MatchInput | null>(null);
+
+  const matches = useMemo(
+    () => (submitted ? matchProviders(submitted) : []),
+    [submitted],
+  );
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitted({
+      category,
+      urgency,
+      complexity,
+      location,
+      budget_min: budgetMin,
+      budget_max: budgetMax,
+    });
+    setTimeout(() => {
+      document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  }
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="min-h-screen bg-background">
+      <header className="border-b border-border/60 bg-gradient-to-br from-primary/5 via-background to-accent/10">
+        <div className="mx-auto max-w-5xl px-6 py-12">
+          <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
+            <span className="inline-block h-2 w-2 rounded-full bg-accent" />
+            Syncora Connect
+          </div>
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
+            Find the right family law team in minutes.
+          </h1>
+          <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
+            Tell us about your case. We score every provider in our network across category fit,
+            complexity, availability, location, and budget — then surface your top three matches.
+          </p>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-6 py-12">
+        <form
+          onSubmit={onSubmit}
+          className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8"
+        >
+          <h2 className="text-xl font-semibold text-card-foreground">Your case</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            All fields stay on this device until you request matches.
+          </p>
+
+          <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <Field label="Category">
+              <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-sm text-foreground">
+                Family law
+              </div>
+            </Field>
+
+            <Field label="Location (city, state)">
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="Austin, TX"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+
+            <Field label="Urgency">
+              <SegGroup
+                value={urgency}
+                onChange={(v) => setUrgency(v as Urgency)}
+                options={[
+                  { value: "high", label: "High" },
+                  { value: "medium", label: "Medium" },
+                  { value: "low", label: "Low" },
+                ]}
+              />
+            </Field>
+
+            <Field label="Complexity">
+              <SegGroup
+                value={complexity}
+                onChange={(v) => setComplexity(v as Complexity)}
+                options={[
+                  { value: "simple", label: "Simple" },
+                  { value: "moderate", label: "Moderate" },
+                  { value: "complex", label: "Complex" },
+                ]}
+              />
+            </Field>
+
+            <Field label="Budget — minimum (USD)">
+              <input
+                type="number"
+                min={0}
+                step={100}
+                value={budgetMin}
+                onChange={(e) => setBudgetMin(Number(e.target.value) || 0)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+
+            <Field label="Budget — maximum (USD)">
+              <input
+                type="number"
+                min={0}
+                step={100}
+                value={budgetMax}
+                onChange={(e) => setBudgetMax(Number(e.target.value) || 0)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+              />
+            </Field>
+          </div>
+
+          <button
+            type="submit"
+            className="mt-8 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            Find my top 3 matches
+          </button>
+        </form>
+
+        <section id="results" className="mt-12">
+          {submitted ? (
+            <>
+              <div className="flex items-baseline justify-between">
+                <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                  Your top matches
+                </h2>
+                <span className="text-xs text-muted-foreground">
+                  Scored out of 100
+                </span>
+              </div>
+              <ol className="mt-6 space-y-4">
+                {matches.map((m, i) => (
+                  <li
+                    key={m.provider.id}
+                    className="rounded-2xl border border-border bg-card p-6 shadow-sm"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div>
+                        <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                          Match #{i + 1}
+                        </div>
+                        <h3 className="mt-1 text-lg font-semibold text-card-foreground">
+                          {m.provider.name}
+                        </h3>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
+                          {m.provider.budget_max.toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="flex items-baseline gap-1 rounded-full bg-primary/10 px-3 py-1.5">
+                        <span className="text-2xl font-semibold tabular-nums text-primary">
+                          {m.score}
+                        </span>
+                        <span className="text-xs text-primary/70">/100</span>
+                      </div>
+                    </div>
+
+                    <p className="mt-3 text-sm text-foreground/80">{m.provider.bio}</p>
+
+                    <div className="mt-5 space-y-2">
+                      {m.breakdown.map((b) => (
+                        <div key={b.label} className="space-y-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-medium text-foreground">{b.label}</span>
+                            <span className="tabular-nums text-muted-foreground">
+                              {b.points}/{b.max}
+                            </span>
+                          </div>
+                          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                            <div
+                              className="h-full bg-accent"
+                              style={{ width: `${(b.points / b.max) * 100}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground">{b.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-border bg-card/40 p-10 text-center text-sm text-muted-foreground">
+              Submit your case above to see your top 3 matches with score breakdowns.
+            </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
 
-function Index() {
-  return <PlaceholderIndex />;
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium text-foreground">{label}</span>
+      {children}
+    </label>
+  );
+}
+
+function SegGroup({
+  value,
+  onChange,
+  options,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div className="inline-flex w-full rounded-md border border-input bg-background p-1">
+      {options.map((o) => {
+        const active = o.value === value;
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(o.value)}
+            className={
+              "flex-1 rounded px-3 py-1.5 text-sm font-medium transition " +
+              (active
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground")
+            }
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
