@@ -41,6 +41,56 @@ export const CATEGORIES = [
   "clergy malpractice",
 ] as const;
 
+// Top-level reason a user comes to Syncora Connect. Each domain expands into a
+// list of subcategories (categories), and each subcategory into specialties.
+export const DOMAINS = [
+  "Legal",
+  "Medical",
+  "Professional Services",
+  "Spiritual & Counseling",
+] as const;
+export type Domain = (typeof DOMAINS)[number];
+
+export const DOMAIN_DESCRIPTIONS: Record<Domain, string> = {
+  Legal: "Attorneys for civil, criminal, family, business, and immigration matters.",
+  Medical: "Malpractice and negligence claims involving healthcare providers.",
+  "Professional Services": "Negligence by accountants, engineers, and architects.",
+  "Spiritual & Counseling": "Abuse and breach-of-trust by clergy or counselors.",
+};
+
+export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
+  Legal: [
+    "family law",
+    "criminal defense",
+    "personal injury",
+    "estate planning",
+    "business law",
+    "immigration law",
+    "real estate law",
+    "employment law",
+    "tax law",
+    "legal malpractice",
+  ],
+  Medical: [
+    "medical malpractice",
+    "dental malpractice",
+    "nursing malpractice",
+    "surgical malpractice",
+    "birth injury malpractice",
+    "misdiagnosis malpractice",
+    "pharmacy malpractice",
+    "mental health malpractice",
+    "chiropractic malpractice",
+    "veterinary malpractice",
+  ],
+  "Professional Services": [
+    "accounting malpractice",
+    "engineering malpractice",
+    "architectural malpractice",
+  ],
+  "Spiritual & Counseling": ["clergy malpractice"],
+};
+
 // Specialty options shown to users after they pick a category. These define
 // finer-grained expertise (e.g. custody, military, DUI) within a practice area.
 export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
