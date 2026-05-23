@@ -294,13 +294,17 @@ function ElementRow({
   claimId,
   el,
   docs,
+  citations,
 }: {
   claimId: string;
   el: MatrixElement;
   docs: CourtDocument[];
+  citations: CaseLawCitation[];
 }) {
   const [docPickerOpen, setDocPickerOpen] = useState(false);
+  const [citePickerOpen, setCitePickerOpen] = useState(false);
   const linked = docs.filter((d) => el.document_ids.includes(d.id));
+  const linkedCites = citations.filter((c) => (el.citation_ids ?? []).includes(c.id));
   return (
     <tr className="border-b border-border align-top">
       <td className="py-3 pr-3">
@@ -390,6 +394,55 @@ function ElementRow({
                   <span>
                     <span className="font-medium text-foreground">{d.cite}</span>{" "}
                     <span className="text-muted-foreground">— {d.title}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </td>
+      <td className="py-3 pr-3">
+        <div className="flex flex-wrap gap-1">
+          {linkedCites.map((c) => (
+            <span
+              key={c.id}
+              className="rounded-full border border-border bg-background px-2 py-0.5 text-xs"
+              title={c.holding}
+            >
+              {c.case_name}
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={() => setCitePickerOpen((o) => !o)}
+            className="rounded-full border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-primary hover:text-primary"
+          >
+            + cite
+          </button>
+        </div>
+        {citePickerOpen && (
+          <div className="mt-2 max-h-44 w-72 overflow-y-auto rounded-md border border-border bg-background p-2 text-xs shadow-md">
+            {citations.length === 0 && (
+              <p className="text-muted-foreground">
+                No case law yet. Add some in the Case law panel.
+              </p>
+            )}
+            {citations.map((c) => {
+              const has = (el.citation_ids ?? []).includes(c.id);
+              return (
+                <label
+                  key={c.id}
+                  className="flex cursor-pointer items-start gap-2 rounded p-1 hover:bg-muted"
+                >
+                  <input
+                    type="checkbox"
+                    checked={has}
+                    onChange={() => toggleElementCitation(claimId, el.id, c.id)}
+                    className="mt-0.5 accent-primary"
+                  />
+                  <span>
+                    <span className="font-medium text-foreground">{c.case_name}</span>{" "}
+                    <span className="text-muted-foreground">— {c.reporter} ({c.year})</span>
                   </span>
                 </label>
               );
