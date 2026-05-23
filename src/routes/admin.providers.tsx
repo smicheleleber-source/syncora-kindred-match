@@ -114,6 +114,10 @@ function AdminProvidersPage() {
       bio: draft.bio.trim(),
       specialties: draft.specialties.map((s) => s.trim()).filter(Boolean),
     };
+  // Drop any validated entries that are no longer in specialties.
+  cleaned.validated_specialties = (draft.validated_specialties ?? []).filter((s) =>
+    cleaned.specialties.includes(s),
+  );
     if (creating) {
       addProvider({ ...cleaned, id: crypto.randomUUID() });
     } else if (editingId) {
