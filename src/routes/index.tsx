@@ -149,6 +149,12 @@ function Index() {
               Review & fund cases →
             </Link>
             <Link
+              to="/court-docs"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Court docs & risk →
+            </Link>
+            <Link
               to="/reviews"
               className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
             >
