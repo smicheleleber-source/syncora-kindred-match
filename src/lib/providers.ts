@@ -317,6 +317,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 800,
     budget_max: 4000,
     bio: "Approachable family attorneys focused on mediation and uncontested cases.",
+    pro_bono: true,
+    hourly_rate: 195,
+    firm_size: "small",
+    gender_composition: "predominantly_female",
   },
   {
     id: "3",
