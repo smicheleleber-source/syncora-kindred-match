@@ -113,8 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         action: entry.action,
         resource_type: entry.resource_type,
         resource_id: entry.resource_id ?? null,
-        before_state: (entry.before_state as object | undefined) ?? null,
-        after_state: (entry.after_state as object | undefined) ?? null,
+        before_state: (entry.before_state ?? null) as never,
+        after_state: (entry.after_state ?? null) as never,
         user_agent:
           typeof navigator !== "undefined" ? navigator.userAgent : null,
       });
