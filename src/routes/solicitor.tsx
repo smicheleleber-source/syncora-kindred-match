@@ -262,38 +262,38 @@ function Field({ label, children, wide }: { label: string; children: React.React
   );
 }
 
-function BillingPanel() {
-  const { cases, time, invoices } = useSolicitor();
+function TimeLogPanel() {
+  const { cases, time } = useSolicitor();
   const [caseId, setCaseId] = useState(cases[0]?.id ?? "");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [hours, setHours] = useState(1);
   const [desc, setDesc] = useState("");
 
-  const unbilledByCase = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const t of time) if (!t.billed) map.set(t.case_id, (map.get(t.case_id) ?? 0) + t.hours);
-    return map;
-  }, [time]);
-
   function logTime(e: React.FormEvent) {
     e.preventDefault();
     if (!caseId || !desc.trim() || hours <= 0) return;
-    addTime({ case_id: caseId, date, hours, description: desc.trim(), billed: false });
+    addTime({ case_id: caseId, date, hours, description: desc.trim(), billed: true });
     setDesc("");
     setHours(1);
   }
 
-  const totalOutstanding = invoices
-    .filter((i) => i.status !== "paid")
-    .reduce((s, i) => s + i.amount, 0);
+  const hoursByCase = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const t of time) map.set(t.case_id, (map.get(t.case_id) ?? 0) + t.hours);
+    return map;
+  }, [time]);
 
   return (
     <section className="space-y-8">
       <div className="grid gap-3 md:grid-cols-3">
-        <Stat label="Unbilled hours" value={time.filter((t) => !t.billed).reduce((s, t) => s + t.hours, 0).toFixed(2)} />
-        <Stat label="Outstanding" value={`$${totalOutstanding.toLocaleString()}`} />
-        <Stat label="Invoices" value={invoices.length.toString()} />
+        <Stat label="Hours this period" value={time.reduce((s, t) => s + t.hours, 0).toFixed(2)} />
+        <Stat label="Matters logged" value={hoursByCase.size.toString()} />
+        <Stat label="Entries" value={time.length.toString()} />
       </div>
+      <p className="text-xs text-muted-foreground">
+        Time is logged for public-reporting and caseload-management purposes — solicitors do not bill
+        parties or collect fees.
+      </p>
 
       <div className="rounded-2xl border border-border bg-card p-5">
         <h2 className="text-base font-semibold text-card-foreground">Log time</h2>
@@ -324,9 +324,6 @@ function BillingPanel() {
                 <span className="w-32 truncate text-foreground">{c?.client_name ?? "—"}</span>
                 <span className="flex-1 text-muted-foreground">{t.description}</span>
                 <span className="w-16 text-right">{t.hours.toFixed(2)}h</span>
-                <span className={"w-16 text-right text-xs " + (t.billed ? "text-muted-foreground" : "text-primary")}>
-                  {t.billed ? "billed" : "unbilled"}
-                </span>
                 <button type="button" onClick={() => removeTime(t.id)} className="text-xs text-destructive hover:underline">
                   delete
                 </button>
@@ -335,56 +332,6 @@ function BillingPanel() {
           })}
           {time.length === 0 && <li className="p-4 text-sm text-muted-foreground">No entries yet.</li>}
         </ul>
-      </div>
-
-      <div>
-        <h2 className="mb-3 text-base font-semibold text-foreground">Invoices</h2>
-        <div className="space-y-3">
-          {cases.map((c) => {
-            const pending = unbilledByCase.get(c.id) ?? 0;
-            if (pending <= 0) return null;
-            return (
-              <div key={c.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 text-sm">
-                <span className="flex-1">
-                  <span className="font-medium text-card-foreground">{c.client_name}</span>{" "}
-                  <span className="text-muted-foreground">
-                    — {pending.toFixed(2)}h × ${c.hourly_rate} = ${(pending * c.hourly_rate).toLocaleString()}
-                  </span>
-                </span>
-                <button
-                  type="button"
-                  onClick={() => generateInvoiceFromUnbilled(c.id)}
-                  className="rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground"
-                >
-                  Generate invoice
-                </button>
-              </div>
-            );
-          })}
-          <ul className="divide-y divide-border rounded-xl border border-border bg-card">
-            {invoices.slice().reverse().map((i) => {
-              const c = cases.find((x) => x.id === i.case_id);
-              return (
-                <li key={i.id} className="flex items-center gap-3 p-3 text-sm">
-                  <span className="w-24 font-mono text-xs text-muted-foreground">{i.number}</span>
-                  <span className="w-40 truncate">{c?.client_name ?? "—"}</span>
-                  <span className="flex-1 text-muted-foreground">{new Date(i.issued_at).toLocaleDateString()}</span>
-                  <span className="w-24 text-right font-medium">${i.amount.toLocaleString()}</span>
-                  <select
-                    value={i.status}
-                    onChange={(e) => setInvoiceStatus(i.id, e.target.value as typeof i.status)}
-                    className="rounded-full border border-border bg-background px-2 py-0.5 text-xs"
-                  >
-                    <option value="draft">draft</option>
-                    <option value="sent">sent</option>
-                    <option value="paid">paid</option>
-                  </select>
-                </li>
-              );
-            })}
-            {invoices.length === 0 && <li className="p-4 text-sm text-muted-foreground">No invoices yet.</li>}
-          </ul>
-        </div>
       </div>
     </section>
   );
