@@ -23,20 +23,20 @@ export const Route = createFileRoute("/solicitor")({
       {
         name: "description",
         content:
-          "A workspace for solicitors: case management, time & billing, document collaboration, and practice analytics.",
+          "A workspace for government solicitors (Solicitor General, City/State/County Solicitor): matter management, time logs for public reporting, document collaboration, and caseload analytics. Solicitors are public legal officers — no client billing or fee collection.",
       },
       { property: "og:title", content: "Solicitor Workspace — Syncora Connect" },
       {
         property: "og:description",
         content:
-          "Manage cases, log billable time, share documents, and review practice analytics in one place.",
+          "Manage government matters, log time for public reporting, share filings, and review caseload analytics. Built for public-sector solicitors, not private fee-for-service practice.",
       },
     ],
   }),
   component: SolicitorPage,
 });
 
-type Tab = "cases" | "billing" | "docs" | "analytics";
+type Tab = "cases" | "time" | "docs" | "analytics";
 
 const STATUSES: SolicitorCaseStatus[] = ["intake", "active", "in_court", "settled", "closed"];
 
@@ -55,11 +55,16 @@ function SolicitorPage() {
             Solicitor workspace
           </h1>
           <p className="mt-3 max-w-3xl text-base text-muted-foreground">
-            Manage cases that come through Syncora matches: track court dates, log billable
-            time, share documents with clients and co-counsel, and review your practice analytics.
+            For government solicitors — Solicitor General, City, County, and State Solicitors — who
+            represent a public entity in court. Track matters, log time for public reporting, share
+            filings with co-counsel and agency partners, and review caseload analytics.
+          </p>
+          <p className="mt-2 max-w-3xl text-xs text-muted-foreground">
+            Solicitors are public legal officers. This workspace does <strong>not</strong> bill clients,
+            issue invoices, or collect money — use the private-practice workspace for fee-based work.
           </p>
           <nav className="mt-6 inline-flex rounded-full border border-border bg-background p-1">
-            {(["cases", "billing", "docs", "analytics"] as Tab[]).map((t) => (
+            {(["cases", "time", "docs", "analytics"] as Tab[]).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -71,7 +76,7 @@ function SolicitorPage() {
                     : "text-muted-foreground hover:text-foreground")
                 }
               >
-                {t === "docs" ? "Documents" : t === "billing" ? "Time & billing" : t}
+                {t === "docs" ? "Filings" : t === "time" ? "Time log" : t === "cases" ? "Matters" : t}
               </button>
             ))}
           </nav>
@@ -79,7 +84,7 @@ function SolicitorPage() {
       </header>
       <main className="mx-auto max-w-6xl px-6 py-10">
         {tab === "cases" && <CasesPanel />}
-        {tab === "billing" && <BillingPanel />}
+        {tab === "time" && <TimeLogPanel />}
         {tab === "docs" && <DocsPanel />}
         {tab === "analytics" && <AnalyticsPanel />}
       </main>
