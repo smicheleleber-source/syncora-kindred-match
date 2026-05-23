@@ -161,6 +161,10 @@ function JoinPage() {
       license_number: licenseNumber,
       license_board: licenseBoard,
       bio,
+      pro_bono: proBono,
+      hourly_rate: hourlyRate,
+      firm_size: firmSize,
+      gender_composition: genderComp,
     };
     const parsed = supplierSchema.safeParse(payload);
     if (!parsed.success) {
