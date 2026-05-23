@@ -110,6 +110,12 @@ function Index() {
             >
               List your practice →
             </Link>
+            <Link
+              to="/donate"
+              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
+            >
+              ♥ Donate to alliances
+            </Link>
           </div>
         </div>
       </header>

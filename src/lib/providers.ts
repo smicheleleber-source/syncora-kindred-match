@@ -20,6 +20,10 @@ export interface Provider {
   next_available?: string; // ISO date string of soonest open slot
   weekly_capacity?: number; // new matters they can take per week
   contact_email?: string;
+  // Alliances may accept donations from community members.
+  accepts_donations?: boolean;
+  donation_url?: string;
+  mission?: string;
 }
 
 export const CATEGORIES = [
@@ -47,6 +51,16 @@ export const CATEGORIES = [
   "engineering malpractice",
   "architectural malpractice",
   "clergy malpractice",
+  "mutual aid network",
+  "worker cooperative",
+  "housing cooperative",
+  "tenant union",
+  "community land trust",
+  "restorative justice circle",
+  "community defense fund",
+  "neighborhood council",
+  "credit union / lending circle",
+  "indigenous self-governance",
 ] as const;
 
 // Top-level reason a user comes to Syncora Connect. Each domain expands into a
@@ -56,6 +70,7 @@ export const DOMAINS = [
   "Medical",
   "Professional Services",
   "Spiritual & Counseling",
+  "Self-Governance Alliances",
 ] as const;
 export type Domain = (typeof DOMAINS)[number];
 
@@ -64,6 +79,8 @@ export const DOMAIN_DESCRIPTIONS: Record<Domain, string> = {
   Medical: "Malpractice and negligence claims involving healthcare providers.",
   "Professional Services": "Negligence by accountants, engineers, and architects.",
   "Spiritual & Counseling": "Abuse and breach-of-trust by clergy or counselors.",
+  "Self-Governance Alliances":
+    "Community-led groups: mutual aid, co-ops, tenant unions, restorative circles.",
 };
 
 export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
@@ -97,6 +114,18 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "architectural malpractice",
   ],
   "Spiritual & Counseling": ["clergy malpractice"],
+  "Self-Governance Alliances": [
+    "mutual aid network",
+    "worker cooperative",
+    "housing cooperative",
+    "tenant union",
+    "community land trust",
+    "restorative justice circle",
+    "community defense fund",
+    "neighborhood council",
+    "credit union / lending circle",
+    "indigenous self-governance",
+  ],
 };
 
 // Specialty options shown to users after they pick a category. These define
@@ -197,6 +226,37 @@ export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
   ],
   "clergy malpractice": [
     "clergy abuse", "institutional cover-up", "breach of confidence",
+  ],
+  "mutual aid network": [
+    "food distribution", "rent relief", "medical bill help",
+    "childcare support", "disaster response",
+  ],
+  "worker cooperative": [
+    "tech", "trades", "agriculture", "food service", "creative services",
+  ],
+  "housing cooperative": [
+    "limited equity", "student housing", "senior housing", "affordable ownership",
+  ],
+  "tenant union": [
+    "rent strike", "eviction defense", "habitability", "rent control",
+  ],
+  "community land trust": [
+    "affordable homeownership", "commercial CLT", "agricultural CLT",
+  ],
+  "restorative justice circle": [
+    "youth diversion", "harm repair", "school-based", "reentry",
+  ],
+  "community defense fund": [
+    "bail fund", "ICE defense", "protest legal support", "police accountability",
+  ],
+  "neighborhood council": [
+    "participatory budgeting", "public safety", "land use", "civic tech",
+  ],
+  "credit union / lending circle": [
+    "tanda / cundina", "small-business loans", "emergency loans", "financial literacy",
+  ],
+  "indigenous self-governance": [
+    "tribal council", "land back", "traditional courts", "language revitalization",
   ],
 };
 
@@ -584,6 +644,118 @@ export const PROVIDERS: Provider[] = [
     budget_min: 0,
     budget_max: 60000,
     bio: "Confidential representation for clergy abuse and institutional cover-ups.",
+  },
+  {
+    id: "33",
+    name: "Eastside Mutual Aid Collective",
+    category: "mutual aid network",
+    specialties: ["food distribution", "rent relief", "medical bill help"],
+    complexity_supported: ["simple", "moderate"],
+    availability: "high",
+    location: "Detroit, MI",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Neighbor-to-neighbor support network covering groceries, rent, and emergency funds.",
+    accepts_donations: true,
+    mission: "Direct cash and goods to households in crisis — no application, no means test.",
+  },
+  {
+    id: "34",
+    name: "Cooperative Builders Guild",
+    category: "worker cooperative",
+    specialties: ["trades", "tech"],
+    complexity_supported: ["moderate", "complex"],
+    availability: "medium",
+    location: "Oakland, CA",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Worker-owned construction and software co-op reinvesting profits into member equity.",
+    accepts_donations: true,
+    mission: "Grow the worker-ownership economy through training, financing, and conversions.",
+  },
+  {
+    id: "35",
+    name: "Riverside Tenant Union",
+    category: "tenant union",
+    specialties: ["eviction defense", "habitability", "rent strike"],
+    complexity_supported: ["simple", "moderate", "complex"],
+    availability: "high",
+    location: "Brooklyn, NY",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Building-by-building organizing for renters facing displacement and disrepair.",
+    accepts_donations: true,
+    mission: "Fund tenant organizers and emergency stay-in-place grants.",
+  },
+  {
+    id: "36",
+    name: "Greenline Community Land Trust",
+    category: "community land trust",
+    specialties: ["affordable homeownership", "agricultural CLT"],
+    complexity_supported: ["complex"],
+    availability: "low",
+    location: "Atlanta, GA",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Steward land off the speculative market for permanently affordable homes and farms.",
+    accepts_donations: true,
+    mission: "Acquire and steward land for permanent community ownership.",
+  },
+  {
+    id: "37",
+    name: "Circle Up Restorative Justice",
+    category: "restorative justice circle",
+    specialties: ["youth diversion", "harm repair", "school-based"],
+    complexity_supported: ["moderate"],
+    availability: "medium",
+    location: "Minneapolis, MN",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Facilitates restorative dialogues as an alternative to court and school discipline.",
+    accepts_donations: true,
+    mission: "Train facilitators and run circles in schools, courts, and neighborhoods.",
+  },
+  {
+    id: "38",
+    name: "Liberty Bail & Defense Fund",
+    category: "community defense fund",
+    specialties: ["bail fund", "protest legal support", "ICE defense"],
+    complexity_supported: ["simple", "moderate", "complex"],
+    availability: "high",
+    location: "Houston, TX",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Rotating revolving fund posting bail and funding defense for low-income arrestees.",
+    accepts_donations: true,
+    mission: "Free people from cash-bail detention and protect protest and immigrant rights.",
+  },
+  {
+    id: "39",
+    name: "South Side Lending Circle",
+    category: "credit union / lending circle",
+    specialties: ["tanda / cundina", "small-business loans", "financial literacy"],
+    complexity_supported: ["simple", "moderate"],
+    availability: "medium",
+    location: "Chicago, IL",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Peer-funded micro-loans that build credit and capital outside extractive banking.",
+    accepts_donations: true,
+    mission: "Capitalize lending pools for unbanked entrepreneurs and families.",
+  },
+  {
+    id: "40",
+    name: "Northern Plains Tribal Self-Governance Alliance",
+    category: "indigenous self-governance",
+    specialties: ["tribal council", "land back", "language revitalization"],
+    complexity_supported: ["complex"],
+    availability: "low",
+    location: "Rapid City, SD",
+    budget_min: 0,
+    budget_max: 0,
+    bio: "Coalition supporting tribal self-determination, sovereignty, and cultural restoration.",
+    accepts_donations: true,
+    mission: "Resource sovereignty work, land-back campaigns, and language programs.",
   },
 ];
 
