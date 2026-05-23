@@ -525,24 +525,23 @@ function Index() {
 
                     <p className="mt-3 text-sm text-foreground/80">{m.provider.bio}</p>
 
-                    <div className="mt-5 space-y-2">
-                      {m.breakdown.map((b) => (
-                        <div key={b.label} className="space-y-1">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-medium text-foreground">{b.label}</span>
-                            <span className="tabular-nums text-muted-foreground">
-                              {b.points}/{b.max}
-                            </span>
-                          </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-                            <div
-                              className="h-full bg-accent"
-                              style={{ width: `${(b.points / b.max) * 100}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">{b.note}</p>
-                        </div>
-                      ))}
+                    <CategoryMatchPanel
+                      breakdown={m.breakdown}
+                      requestedCategory={submitted?.category ?? ""}
+                      providerCategory={m.provider.category}
+                      requestedSpecialties={submitted?.specialties ?? []}
+                      providerSpecialties={m.provider.specialties}
+                    />
+
+                    <div className="mt-4 space-y-2">
+                      <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Other scoring factors
+                      </div>
+                      {m.breakdown
+                        .filter((b) => b.label !== "Category" && b.label !== "Specialty")
+                        .map((b) => (
+                          <BreakdownBar key={b.label} {...b} />
+                        ))}
                     </div>
 
                     <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-border pt-4">
