@@ -14,6 +14,7 @@ import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CasesRouteImport } from './routes/cases'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
+import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 
 const DonateRoute = DonateRouteImport.update({
@@ -41,6 +42,11 @@ const ProvidersJoinRoute = ProvidersJoinRouteImport.update({
   path: '/providers/join',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaybooksMatrixRoute = PlaybooksMatrixRouteImport.update({
+  id: '/playbooks/matrix',
+  path: '/playbooks/matrix',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
   id: '/playbooks/litigation',
   path: '/playbooks/litigation',
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
+  '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
+  '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
+  '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/connections'
     | '/donate'
     | '/playbooks/litigation'
+    | '/playbooks/matrix'
     | '/providers/join'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/connections'
     | '/donate'
     | '/playbooks/litigation'
+    | '/playbooks/matrix'
     | '/providers/join'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/connections'
     | '/donate'
     | '/playbooks/litigation'
+    | '/playbooks/matrix'
     | '/providers/join'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
+  PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
 }
 
@@ -145,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProvidersJoinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playbooks/matrix': {
+      id: '/playbooks/matrix'
+      path: '/playbooks/matrix'
+      fullPath: '/playbooks/matrix'
+      preLoaderRoute: typeof PlaybooksMatrixRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/playbooks/litigation': {
       id: '/playbooks/litigation'
       path: '/playbooks/litigation'
@@ -161,8 +181,19 @@ const rootRouteChildren: RootRouteChildren = {
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
+  PlaybooksMatrixRoute: PlaybooksMatrixRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
