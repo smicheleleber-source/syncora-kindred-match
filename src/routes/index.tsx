@@ -54,7 +54,7 @@ function Index() {
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted({
+    const input: MatchInput = {
       category,
       specialties,
       urgency,
@@ -62,7 +62,13 @@ function Index() {
       location,
       budget_min: budgetMin,
       budget_max: budgetMax,
-    });
+    };
+    setSubmitted(input);
+    try {
+      localStorage.setItem("syncora.lastMatchInput.v1", JSON.stringify(input));
+    } catch {
+      /* ignore */
+    }
     setTimeout(() => {
       document.getElementById("results")?.scrollIntoView({ behavior: "smooth" });
     }, 50);
@@ -422,7 +428,13 @@ function Index() {
                           Match #{i + 1}
                         </div>
                         <h3 className="mt-1 text-lg font-semibold text-card-foreground">
-                          {m.provider.name}
+                          <Link
+                            to="/providers/$id"
+                            params={{ id: m.provider.id }}
+                            className="hover:text-primary hover:underline"
+                          >
+                            {m.provider.name}
+                          </Link>
                           {m.provider.verified && (
                             <span
                               title={`Verified · ${m.provider.license_board ?? "license on file"}`}
