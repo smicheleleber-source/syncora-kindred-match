@@ -200,6 +200,12 @@ function Index() {
             >
               Admin · Providers →
             </Link>
+            <Link
+              to="/solicitor"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Solicitor workspace →
+            </Link>
           </div>
         </div>
       </header>
