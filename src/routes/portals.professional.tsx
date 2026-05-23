@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UserPlus, Briefcase, BookOpen, Users, MessageSquare, Calendar, FileText, Layers } from "lucide-react";
+import { UserPlus, Briefcase, BookOpen, Users, MessageSquare, Calendar, FileText, Layers, Wallet } from "lucide-react";
 import { PortalHeader, ToolSection, type Tool } from "@/components/PortalCard";
 
 export const Route = createFileRoute("/portals/professional")({
@@ -20,6 +20,7 @@ const ONBOARD: Tool[] = [
 ];
 const PRACTICE: Tool[] = [
   { to: "/solicitor", label: "Practice workspace", desc: "Matter management, time tracking, filings, and analytics for your private practice.", icon: Briefcase },
+  { to: "/trust", label: "Trust & escrow banking", desc: "Hold client retainers and opposing-counsel escrow with no-overdraw ledger and draws.", icon: Wallet },
   { to: "/cases", label: "Matched matters", desc: "Clients matched to you through Syncora intake.", icon: Layers },
   { to: "/calendar", label: "Calendar", desc: "Court dates, depositions, and consultations.", icon: Calendar },
   { to: "/connections", label: "Connections", desc: "Clients and co-counsel you've engaged with.", icon: FileText },
