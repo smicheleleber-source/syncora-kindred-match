@@ -18,6 +18,13 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
 import { summarizeProvider, useReviews } from "@/lib/reviews-store";
 
+type Matter = {
+  id: string;
+  domain: Domain | "Legal";
+  input: MatchInput;
+  created_at: number;
+};
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -122,14 +129,12 @@ function Index() {
     setDomain(d);
     setCategory("");
     setSpecialties([]);
-    setSubmitted(null);
     setStep(2);
   }
 
   function pickCategory(c: string) {
     setCategory(c);
     setSpecialties([]);
-    setSubmitted(null);
     setStep(3);
   }
 
