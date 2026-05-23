@@ -4,9 +4,13 @@ import { z } from "zod";
 import {
   CATEGORIES_BY_DOMAIN,
   DOMAINS,
+  FIRM_SIZE_LABELS,
+  GENDER_LABELS,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
   type Domain,
+  type FirmSize,
+  type GenderComposition,
   type Urgency,
 } from "@/lib/providers";
 import { addProvider } from "@/lib/provider-store";
