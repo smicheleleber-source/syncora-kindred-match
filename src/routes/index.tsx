@@ -924,16 +924,17 @@ function Stepper({
 
 type ServiceTile = {
   name: string;
+  slug: "legal" | "health" | "home" | "finance";
   desc: string;
   icon: React.ComponentType<{ className?: string }>;
   tint: string;
 };
 
 const SERVICE_TILES: ServiceTile[] = [
-  { name: "Syncora Legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
-  { name: "Syncora Health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
-  { name: "Syncora Home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
-  { name: "Syncora Finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
+  { name: "Syncora Legal", slug: "legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
+  { name: "Syncora Health", slug: "health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
+  { name: "Syncora Home", slug: "home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
+  { name: "Syncora Finance", slug: "finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
 ];
 
 const VALUE_PROPS = [
@@ -1011,9 +1012,10 @@ function SyncoraHero() {
         {/* Service tiles */}
         <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {SERVICE_TILES.map((t) => (
-            <a
+            <Link
               key={t.name}
-              href="#intake"
+              to="/services/$service"
+              params={{ service: t.slug }}
               className="group rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
               <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${t.tint}`}>
@@ -1021,7 +1023,7 @@ function SyncoraHero() {
               </span>
               <div className="mt-4 text-base font-semibold text-card-foreground">{t.name}</div>
               <p className="mt-1 text-sm text-muted-foreground">{t.desc}</p>
-            </a>
+            </Link>
           ))}
         </section>
 

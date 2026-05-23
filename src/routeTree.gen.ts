@@ -29,6 +29,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuditLogRouteImport } from './routes/audit-log'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PortalsProfessionalRouteImport } from './routes/portals.professional'
@@ -143,6 +144,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesServiceRoute = ServicesServiceRouteImport.update({
+  id: '/services/$service',
+  path: '/services/$service',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProvidersJoinRoute = ProvidersJoinRouteImport.update({
   id: '/providers/join',
   path: '/providers/join',
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
+  '/services/$service': typeof ServicesServiceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -278,6 +285,7 @@ export interface FileRoutesByTo {
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
+  '/services/$service': typeof ServicesServiceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -314,6 +322,7 @@ export interface FileRoutesById {
   '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
+  '/services/$service': typeof ServicesServiceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -351,6 +360,7 @@ export interface FileRouteTypes {
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
+    | '/services/$service'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -386,6 +396,7 @@ export interface FileRouteTypes {
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
+    | '/services/$service'
   id:
     | '__root__'
     | '/'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
+    | '/services/$service'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -451,6 +463,7 @@ export interface RootRouteChildren {
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
   ProvidersIdRoute: typeof ProvidersIdRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
+  ServicesServiceRoute: typeof ServicesServiceRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -593,6 +606,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/$service': {
+      id: '/services/$service'
+      path: '/services/$service'
+      fullPath: '/services/$service'
+      preLoaderRoute: typeof ServicesServiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/providers/join': {
@@ -748,6 +768,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
   ProvidersIdRoute: ProvidersIdRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
+  ServicesServiceRoute: ServicesServiceRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
