@@ -29,6 +29,10 @@ import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
+import { Route as PortalsProfessionalRouteImport } from './routes/portals.professional'
+import { Route as PortalsClientRouteImport } from './routes/portals.client'
+import { Route as PortalsAgencyRouteImport } from './routes/portals.agency'
+import { Route as PortalsAdvertiserRouteImport } from './routes/portals.advertiser'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 import { Route as EmployeeTasksRouteImport } from './routes/employee.tasks'
@@ -137,6 +141,26 @@ const ProvidersIdRoute = ProvidersIdRouteImport.update({
   path: '/providers/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortalsProfessionalRoute = PortalsProfessionalRouteImport.update({
+  id: '/professional',
+  path: '/professional',
+  getParentRoute: () => PortalsRoute,
+} as any)
+const PortalsClientRoute = PortalsClientRouteImport.update({
+  id: '/client',
+  path: '/client',
+  getParentRoute: () => PortalsRoute,
+} as any)
+const PortalsAgencyRoute = PortalsAgencyRouteImport.update({
+  id: '/agency',
+  path: '/agency',
+  getParentRoute: () => PortalsRoute,
+} as any)
+const PortalsAdvertiserRoute = PortalsAdvertiserRouteImport.update({
+  id: '/advertiser',
+  path: '/advertiser',
+  getParentRoute: () => PortalsRoute,
+} as any)
 const PlaybooksMatrixRoute = PlaybooksMatrixRouteImport.update({
   id: '/playbooks/matrix',
   path: '/playbooks/matrix',
@@ -188,7 +212,7 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
-  '/portals': typeof PortalsRoute
+  '/portals': typeof PortalsRouteWithChildren
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -199,6 +223,10 @@ export interface FileRoutesByFullPath {
   '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/agency': typeof PortalsAgencyRoute
+  '/portals/client': typeof PortalsClientRoute
+  '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
@@ -217,7 +245,7 @@ export interface FileRoutesByTo {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
-  '/portals': typeof PortalsRoute
+  '/portals': typeof PortalsRouteWithChildren
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -228,6 +256,10 @@ export interface FileRoutesByTo {
   '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/agency': typeof PortalsAgencyRoute
+  '/portals/client': typeof PortalsClientRoute
+  '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
@@ -247,7 +279,7 @@ export interface FileRoutesById {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
-  '/portals': typeof PortalsRoute
+  '/portals': typeof PortalsRouteWithChildren
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -258,6 +290,10 @@ export interface FileRoutesById {
   '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
+  '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/agency': typeof PortalsAgencyRoute
+  '/portals/client': typeof PortalsClientRoute
+  '/portals/professional': typeof PortalsProfessionalRoute
   '/providers/$id': typeof ProvidersIdRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
@@ -289,6 +325,10 @@ export interface FileRouteTypes {
     | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/portals/advertiser'
+    | '/portals/agency'
+    | '/portals/client'
+    | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
   fileRoutesByTo: FileRoutesByTo
@@ -318,6 +358,10 @@ export interface FileRouteTypes {
     | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/portals/advertiser'
+    | '/portals/agency'
+    | '/portals/client'
+    | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
   id:
@@ -347,6 +391,10 @@ export interface FileRouteTypes {
     | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
+    | '/portals/advertiser'
+    | '/portals/agency'
+    | '/portals/client'
+    | '/portals/professional'
     | '/providers/$id'
     | '/providers/join'
   fileRoutesById: FileRoutesById
@@ -366,7 +414,7 @@ export interface RootRouteChildren {
   FeedbackRoute: typeof FeedbackRoute
   JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
-  PortalsRoute: typeof PortalsRoute
+  PortalsRoute: typeof PortalsRouteWithChildren
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
@@ -521,6 +569,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProvidersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portals/professional': {
+      id: '/portals/professional'
+      path: '/professional'
+      fullPath: '/portals/professional'
+      preLoaderRoute: typeof PortalsProfessionalRouteImport
+      parentRoute: typeof PortalsRoute
+    }
+    '/portals/client': {
+      id: '/portals/client'
+      path: '/client'
+      fullPath: '/portals/client'
+      preLoaderRoute: typeof PortalsClientRouteImport
+      parentRoute: typeof PortalsRoute
+    }
+    '/portals/agency': {
+      id: '/portals/agency'
+      path: '/agency'
+      fullPath: '/portals/agency'
+      preLoaderRoute: typeof PortalsAgencyRouteImport
+      parentRoute: typeof PortalsRoute
+    }
+    '/portals/advertiser': {
+      id: '/portals/advertiser'
+      path: '/advertiser'
+      fullPath: '/portals/advertiser'
+      preLoaderRoute: typeof PortalsAdvertiserRouteImport
+      parentRoute: typeof PortalsRoute
+    }
     '/playbooks/matrix': {
       id: '/playbooks/matrix'
       path: '/playbooks/matrix'
@@ -587,6 +663,23 @@ const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
   EmployeeRouteChildren,
 )
 
+interface PortalsRouteChildren {
+  PortalsAdvertiserRoute: typeof PortalsAdvertiserRoute
+  PortalsAgencyRoute: typeof PortalsAgencyRoute
+  PortalsClientRoute: typeof PortalsClientRoute
+  PortalsProfessionalRoute: typeof PortalsProfessionalRoute
+}
+
+const PortalsRouteChildren: PortalsRouteChildren = {
+  PortalsAdvertiserRoute: PortalsAdvertiserRoute,
+  PortalsAgencyRoute: PortalsAgencyRoute,
+  PortalsClientRoute: PortalsClientRoute,
+  PortalsProfessionalRoute: PortalsProfessionalRoute,
+}
+
+const PortalsRouteWithChildren =
+  PortalsRoute._addFileChildren(PortalsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdvertiseRoute: AdvertiseRoute,
@@ -602,7 +695,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedbackRoute: FeedbackRoute,
   JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
-  PortalsRoute: PortalsRoute,
+  PortalsRoute: PortalsRouteWithChildren,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
