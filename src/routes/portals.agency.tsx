@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Landmark, Gavel, ShieldAlert, Calendar, FileText, ScrollText, Scale } from "lucide-react";
+import { Landmark, Gavel, ShieldAlert, Calendar, FileText, ScrollText, Scale, Wallet } from "lucide-react";
 import { PortalHeader, ToolSection, type Tool } from "@/components/PortalCard";
 
 export const Route = createFileRoute("/portals/agency")({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/portals/agency")({
 
 const MATTERS: Tool[] = [
   { to: "/solicitor", label: "Solicitor workspace", desc: "Matters, time log for public reporting, filings, and motion-fee receipts.", icon: Landmark },
+  { to: "/trust", label: "Court registry & escrow", desc: "Hold disputed funds in court registry or opposing-counsel escrow with strict no-overdraw rules.", icon: Wallet },
   { to: "/court-docs", label: "Court docs & risk", desc: "Triage orders and filings; surface TROs, deadlines, and risk flags.", icon: ShieldAlert },
   { to: "/calendar", label: "Court calendar", desc: "Hearings, status conferences, and statutory deadlines.", icon: Calendar },
 ];
