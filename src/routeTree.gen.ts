@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
+import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as LegislativeRouteImport } from './routes/legislative'
 import { Route as JudgesRouteImport } from './routes/judges'
 import { Route as FeedbackRouteImport } from './routes/feedback'
@@ -49,6 +50,11 @@ const ReviewsRoute = ReviewsRouteImport.update({
 const ProfessionalsRoute = ProfessionalsRouteImport.update({
   id: '/professionals',
   path: '/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortalsRoute = PortalsRouteImport.update({
+  id: '/portals',
+  path: '/portals',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegislativeRoute = LegislativeRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
+  '/portals': typeof PortalsRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
+  '/portals': typeof PortalsRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/feedback': typeof FeedbackRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
+  '/portals': typeof PortalsRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/judges'
     | '/legislative'
+    | '/portals'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/judges'
     | '/legislative'
+    | '/portals'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/feedback'
     | '/judges'
     | '/legislative'
+    | '/portals'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   FeedbackRoute: typeof FeedbackRoute
   JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
+  PortalsRoute: typeof PortalsRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
@@ -387,6 +400,13 @@ declare module '@tanstack/react-router' {
       path: '/professionals'
       fullPath: '/professionals'
       preLoaderRoute: typeof ProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portals': {
+      id: '/portals'
+      path: '/portals'
+      fullPath: '/portals'
+      preLoaderRoute: typeof PortalsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legislative': {
@@ -582,6 +602,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedbackRoute: FeedbackRoute,
   JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
+  PortalsRoute: PortalsRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
@@ -596,3 +617,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
