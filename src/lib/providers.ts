@@ -838,6 +838,40 @@ export interface ScoredProvider {
 
 const urgencyRank: Record<Urgency, number> = { high: 3, medium: 2, low: 1 };
 
+/**
+ * Extra credit (0–10) for matching urgency with faster-than-needed availability.
+ * High urgency rewards high-availability providers strongly; low urgency
+ * doesn't need a speed boost.
+ */
+function computeUrgencyBoost(
+  inputUrgency: Urgency,
+  provAvail: Urgency,
+): { pts: number; note: string } {
+  const need = urgencyRank[inputUrgency];
+  const have = urgencyRank[provAvail];
+  if (need <= 1) {
+    return { pts: 0, note: "Low urgency — no speed boost applied" };
+  }
+  const delta = have - need; // -2..+2
+  // High urgency (need=3): high avail +10, medium +0 (already at par), low -0
+  // Medium urgency (need=2): high avail +6, medium +3, low +0
+  const table: Record<number, Record<number, number>> = {
+    3: { 2: 10, 1: 4, 0: 0, [-1]: 0, [-2]: 0 },
+    2: { 2: 6, 1: 6, 0: 3, [-1]: 0, [-2]: 0 },
+  };
+  const pts = table[need]?.[delta] ?? 0;
+  if (pts === 0) {
+    return {
+      pts: 0,
+      note: `Their ${provAvail} availability doesn't accelerate a ${inputUrgency}-urgency matter`,
+    };
+  }
+  return {
+    pts,
+    note: `Faster than required (${provAvail} availability for ${inputUrgency} urgency)`,
+  };
+}
+
 function normalizeLoc(s: string) {
   return s.toLowerCase().trim();
 }
