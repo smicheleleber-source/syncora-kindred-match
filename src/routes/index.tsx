@@ -16,6 +16,7 @@ import {
 import { useProviders } from "@/lib/provider-store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
+import { summarizeProvider, useReviews } from "@/lib/reviews-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,6 +45,7 @@ function Index() {
   const [budgetMax, setBudgetMax] = useState(5000);
   const [submitted, setSubmitted] = useState<MatchInput | null>(null);
   const providerDirectory = useProviders();
+  const reviews = useReviews();
 
   const matches = useMemo(
     () => (submitted ? matchProviders(submitted, providerDirectory) : []),
@@ -125,6 +127,12 @@ function Index() {
               className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
             >
               Review & fund cases →
+            </Link>
+            <Link
+              to="/reviews"
+              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
+            >
+              ★ Client reviews →
             </Link>
             <Link
               to="/connections"
