@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useProviders } from "@/lib/provider-store";
 import { useConnections } from "@/lib/connections";
+import { RequireAuth } from "@/components/RequireAuth";
+import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/employee")({
   head: () => ({
@@ -14,8 +16,52 @@ export const Route = createFileRoute("/employee")({
       },
     ],
   }),
-  component: EmployeeDashboard,
+  component: () => (
+    <RequireAuth roles={["admin", "approver", "preparer", "auditor", "viewer"]}>
+      <SoxBanner />
+      <EmployeeDashboard />
+    </RequireAuth>
+  ),
 });
+
+function SoxBanner() {
+  const { profile, roles, signOut } = useAuth();
+  return (
+    <div className="border-b border-amber-500/30 bg-amber-500/5 px-6 py-2 text-xs">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
+        <span className="rounded-full bg-amber-500/20 px-2 py-0.5 font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-300">
+          SoX 404
+        </span>
+        <span className="text-muted-foreground">
+          All activity is logged. Signed in as{" "}
+          <strong className="text-foreground">
+            {profile?.display_name || profile?.email}
+          </strong>{" "}
+          · roles: {roles.join(", ") || "none"}
+        </span>
+        <Link
+          to="/admin/employees"
+          className="ml-auto rounded-full border border-border bg-background px-2.5 py-0.5 text-muted-foreground hover:text-primary"
+        >
+          Admin
+        </Link>
+        <Link
+          to="/audit-log"
+          className="rounded-full border border-border bg-background px-2.5 py-0.5 text-muted-foreground hover:text-primary"
+        >
+          Audit log
+        </Link>
+        <button
+          type="button"
+          onClick={signOut}
+          className="rounded-full border border-border bg-background px-2.5 py-0.5 text-muted-foreground hover:text-destructive"
+        >
+          Sign out
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // ---- Synthetic baseline so charts render meaningfully in demo state ----
 // Real connection data from the live store is layered on top.

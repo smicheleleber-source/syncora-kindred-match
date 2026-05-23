@@ -22,6 +22,8 @@ import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CollabRouteImport } from './routes/collab'
 import { Route as CasesRouteImport } from './routes/cases'
 import { Route as CalendarRouteImport } from './routes/calendar'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuditLogRouteImport } from './routes/audit-log'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
@@ -30,6 +32,7 @@ import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminJudgesRouteImport } from './routes/admin.judges'
+import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 
 const SolicitorRoute = SolicitorRouteImport.update({
   id: '/solicitor',
@@ -96,6 +99,16 @@ const CalendarRoute = CalendarRouteImport.update({
   path: '/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditLogRoute = AuditLogRouteImport.update({
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdvertiseRoute = AdvertiseRouteImport.update({
   id: '/advertise',
   path: '/advertise',
@@ -136,10 +149,17 @@ const AdminJudgesRoute = AdminJudgesRouteImport.update({
   path: '/admin/judges',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminEmployeesRoute = AdminEmployeesRouteImport.update({
+  id: '/admin/employees',
+  path: '/admin/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/audit-log': typeof AuditLogRoute
+  '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
@@ -153,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -163,6 +184,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/audit-log': typeof AuditLogRoute
+  '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
@@ -176,6 +199,7 @@ export interface FileRoutesByTo {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -187,6 +211,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/audit-log': typeof AuditLogRoute
+  '/auth': typeof AuthRoute
   '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
@@ -200,6 +226,7 @@ export interface FileRoutesById {
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
@@ -212,6 +239,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/advertise'
+    | '/audit-log'
+    | '/auth'
     | '/calendar'
     | '/cases'
     | '/collab'
@@ -225,6 +254,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -235,6 +265,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/advertise'
+    | '/audit-log'
+    | '/auth'
     | '/calendar'
     | '/cases'
     | '/collab'
@@ -248,6 +280,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -258,6 +291,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/advertise'
+    | '/audit-log'
+    | '/auth'
     | '/calendar'
     | '/cases'
     | '/collab'
@@ -271,6 +306,7 @@ export interface FileRouteTypes {
     | '/professionals'
     | '/reviews'
     | '/solicitor'
+    | '/admin/employees'
     | '/admin/judges'
     | '/admin/providers'
     | '/playbooks/litigation'
@@ -282,6 +318,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdvertiseRoute: typeof AdvertiseRoute
+  AuditLogRoute: typeof AuditLogRoute
+  AuthRoute: typeof AuthRoute
   CalendarRoute: typeof CalendarRoute
   CasesRoute: typeof CasesRoute
   CollabRoute: typeof CollabRoute
@@ -295,6 +333,7 @@ export interface RootRouteChildren {
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
+  AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminJudgesRoute: typeof AdminJudgesRoute
   AdminProvidersRoute: typeof AdminProvidersRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
@@ -396,6 +435,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit-log': {
+      id: '/audit-log'
+      path: '/audit-log'
+      fullPath: '/audit-log'
+      preLoaderRoute: typeof AuditLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/advertise': {
       id: '/advertise'
       path: '/advertise'
@@ -452,12 +505,21 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminJudgesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/employees': {
+      id: '/admin/employees'
+      path: '/admin/employees'
+      fullPath: '/admin/employees'
+      preLoaderRoute: typeof AdminEmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdvertiseRoute: AdvertiseRoute,
+  AuditLogRoute: AuditLogRoute,
+  AuthRoute: AuthRoute,
   CalendarRoute: CalendarRoute,
   CasesRoute: CasesRoute,
   CollabRoute: CollabRoute,
@@ -471,6 +533,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
+  AdminEmployeesRoute: AdminEmployeesRoute,
   AdminJudgesRoute: AdminJudgesRoute,
   AdminProvidersRoute: AdminProvidersRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
