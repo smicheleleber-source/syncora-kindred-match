@@ -205,6 +205,10 @@ function JoinPage() {
       next_available: v.next_available || undefined,
       weekly_capacity: v.weekly_capacity,
       contact_email: v.contact_email,
+      pro_bono: v.pro_bono,
+      hourly_rate: v.hourly_rate,
+      firm_size: v.firm_size,
+      gender_composition: v.gender_composition,
     });
 
     setSuccess(
