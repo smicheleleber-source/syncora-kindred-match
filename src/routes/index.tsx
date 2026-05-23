@@ -101,7 +101,12 @@ function Index() {
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-12">
-        <Stepper step={step} domain={domain} category={category} onJump={(s) => setStep(s)} />
+        <Stepper
+          step={step}
+          domain={domain}
+          category={category}
+          onJump={(s: 1 | 2 | 3) => setStep(s)}
+        />
 
         {step === 1 && (
           <section className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
