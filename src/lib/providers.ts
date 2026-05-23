@@ -1,5 +1,13 @@
 export type Complexity = "simple" | "moderate" | "complex";
 export type Urgency = "high" | "medium" | "low";
+export type FirmSize = "solo" | "small" | "mid" | "large";
+export type GenderComposition =
+  | "mixed"
+  | "predominantly_male"
+  | "predominantly_female"
+  | "all_male"
+  | "all_female"
+  | "prefer_not_to_say";
 
 export interface Provider {
   id: string;
@@ -24,7 +32,28 @@ export interface Provider {
   accepts_donations?: boolean;
   donation_url?: string;
   mission?: string;
+  // Rate, firm size, pro bono, and team composition
+  pro_bono?: boolean; // offers some free / sliding-scale services
+  hourly_rate?: number; // USD / hour; 0 or omitted = flat-fee / contingency
+  firm_size?: FirmSize;
+  gender_composition?: GenderComposition;
 }
+
+export const FIRM_SIZE_LABELS: Record<FirmSize, string> = {
+  solo: "Solo practitioner",
+  small: "Small firm (2–10)",
+  mid: "Mid-size firm (11–50)",
+  large: "Large firm (50+)",
+};
+
+export const GENDER_LABELS: Record<GenderComposition, string> = {
+  mixed: "Mixed gender team",
+  predominantly_male: "Predominantly male",
+  predominantly_female: "Predominantly female",
+  all_male: "All male",
+  all_female: "All female",
+  prefer_not_to_say: "Prefer not to say",
+};
 
 export const CATEGORIES = [
   "family law",
@@ -272,6 +301,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 3000,
     budget_max: 12000,
     bio: "Senior litigators specializing in complex custody and high-asset divorce.",
+    pro_bono: false,
+    hourly_rate: 425,
+    firm_size: "mid",
+    gender_composition: "mixed",
   },
   {
     id: "2",
@@ -284,6 +317,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 800,
     budget_max: 4000,
     bio: "Approachable family attorneys focused on mediation and uncontested cases.",
+    pro_bono: true,
+    hourly_rate: 195,
+    firm_size: "small",
+    gender_composition: "predominantly_female",
   },
   {
     id: "3",
@@ -296,6 +333,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 2000,
     budget_max: 9000,
     bio: "Full-service family law with rapid intake for urgent matters.",
+    pro_bono: true,
+    hourly_rate: 275,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "4",
@@ -356,6 +397,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 600,
     budget_max: 3500,
     bio: "Community-focused practice with sliding-scale fees.",
+    pro_bono: true,
+    hourly_rate: 150,
+    firm_size: "solo",
+    gender_composition: "predominantly_female",
   },
   {
     id: "9",
@@ -368,6 +413,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 5000,
     budget_max: 25000,
     bio: "Former prosecutors defending DUIs, felonies, and federal charges.",
+    pro_bono: false,
+    hourly_rate: 650,
+    firm_size: "large",
+    gender_composition: "predominantly_male",
   },
   {
     id: "10",
@@ -428,6 +477,10 @@ export const PROVIDERS: Provider[] = [
     budget_min: 1000,
     budget_max: 10000,
     bio: "Visas, green cards, naturalization, and removal defense.",
+    pro_bono: true,
+    hourly_rate: 295,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "15",
@@ -658,6 +711,10 @@ export const PROVIDERS: Provider[] = [
     bio: "Neighbor-to-neighbor support network covering groceries, rent, and emergency funds.",
     accepts_donations: true,
     mission: "Direct cash and goods to households in crisis — no application, no means test.",
+    pro_bono: true,
+    hourly_rate: 0,
+    firm_size: "small",
+    gender_composition: "mixed",
   },
   {
     id: "34",

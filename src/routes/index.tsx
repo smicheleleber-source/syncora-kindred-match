@@ -4,6 +4,8 @@ import {
   CATEGORIES_BY_DOMAIN,
   DOMAINS,
   DOMAIN_DESCRIPTIONS,
+  FIRM_SIZE_LABELS,
+  GENDER_LABELS,
   matchProviders,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
@@ -366,7 +368,7 @@ function Index() {
                           {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
                           {m.provider.budget_max.toLocaleString()}
                         </p>
-                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null) && (
+                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null || m.provider.hourly_rate != null || m.provider.firm_size || m.provider.gender_composition || m.provider.pro_bono) && (
                           <p className="mt-1 text-xs text-muted-foreground">
                             {m.provider.years_experience != null && (
                               <span>{m.provider.years_experience} yrs experience</span>
@@ -376,6 +378,18 @@ function Index() {
                             )}
                             {m.provider.weekly_capacity != null && (
                               <span> · {m.provider.weekly_capacity}/wk capacity</span>
+                            )}
+                            {m.provider.hourly_rate != null && m.provider.hourly_rate > 0 && (
+                              <span> · ${m.provider.hourly_rate}/hr</span>
+                            )}
+                            {m.provider.firm_size && (
+                              <span> · {FIRM_SIZE_LABELS[m.provider.firm_size]}</span>
+                            )}
+                            {m.provider.gender_composition && (
+                              <span> · {GENDER_LABELS[m.provider.gender_composition]}</span>
+                            )}
+                            {m.provider.pro_bono && (
+                              <span className="text-accent-foreground"> · Pro bono / sliding scale</span>
                             )}
                           </p>
                         )}

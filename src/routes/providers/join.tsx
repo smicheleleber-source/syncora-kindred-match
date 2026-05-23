@@ -4,9 +4,13 @@ import { z } from "zod";
 import {
   CATEGORIES_BY_DOMAIN,
   DOMAINS,
+  FIRM_SIZE_LABELS,
+  GENDER_LABELS,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
   type Domain,
+  type FirmSize,
+  type GenderComposition,
   type Urgency,
 } from "@/lib/providers";
 import { addProvider } from "@/lib/provider-store";
@@ -80,6 +84,17 @@ const supplierSchema = z.object({
     .trim()
     .min(20, "Add at least a short description (20+ chars)")
     .max(600, "Keep your bio under 600 characters"),
+  pro_bono: z.boolean().optional(),
+  hourly_rate: z.number().int().min(0).max(5000).optional(),
+  firm_size: z.enum(["solo", "small", "mid", "large"]).optional(),
+  gender_composition: z.enum([
+    "mixed",
+    "predominantly_male",
+    "predominantly_female",
+    "all_male",
+    "all_female",
+    "prefer_not_to_say",
+  ]).optional(),
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
@@ -108,6 +123,12 @@ function JoinPage() {
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseBoard, setLicenseBoard] = useState("");
   const [bio, setBio] = useState("");
+  const [proBono, setProBono] = useState(false);
+  const [hourlyRate, setHourlyRate] = useState<number | undefined>(undefined);
+  const [firmSize, setFirmSize] = useState<FirmSize | undefined>(undefined);
+  const [genderComp, setGenderComp] = useState<GenderComposition | undefined>(
+    undefined,
+  );
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -140,6 +161,10 @@ function JoinPage() {
       license_number: licenseNumber,
       license_board: licenseBoard,
       bio,
+      pro_bono: proBono,
+      hourly_rate: hourlyRate,
+      firm_size: firmSize,
+      gender_composition: genderComp,
     };
     const parsed = supplierSchema.safeParse(payload);
     if (!parsed.success) {
@@ -180,6 +205,10 @@ function JoinPage() {
       next_available: v.next_available || undefined,
       weekly_capacity: v.weekly_capacity,
       contact_email: v.contact_email,
+      pro_bono: v.pro_bono,
+      hourly_rate: v.hourly_rate,
+      firm_size: v.firm_size,
+      gender_composition: v.gender_composition,
     });
 
     setSuccess(
@@ -460,6 +489,65 @@ function JoinPage() {
             <p className="mt-1 text-xs text-muted-foreground">
               {bio.length}/600 characters
             </p>
+          </Section>
+
+          <Section title="Rate, firm size & team composition">
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Hourly rate (USD)" error={errors.hourly_rate}>
+                <NumInput
+                  value={hourlyRate ?? 0}
+                  onChange={(v) => setHourlyRate(v === 0 ? undefined : v)}
+                  min={0}
+                  max={5000}
+                  step={25}
+                />
+              </Field>
+              <Field label="Firm size">
+                <select
+                  value={firmSize ?? ""}
+                  onChange={(e) =>
+                    setFirmSize((e.target.value as FirmSize) || undefined)
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— Select —</option>
+                  {Object.entries(FIRM_SIZE_LABELS).map(([k, label]) => (
+                    <option key={k} value={k}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Gender composition of professionals">
+                <select
+                  value={genderComp ?? ""}
+                  onChange={(e) =>
+                    setGenderComp(
+                      (e.target.value as GenderComposition) || undefined,
+                    )
+                  }
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— Select —</option>
+                  {Object.entries(GENDER_LABELS).map(([k, label]) => (
+                    <option key={k} value={k}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <label className="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2.5">
+                <input
+                  type="checkbox"
+                  checked={proBono}
+                  onChange={(e) => setProBono(e.target.checked)}
+                  className="h-4 w-4 rounded border-input text-primary"
+                />
+                <span className="text-sm text-foreground">
+                  I offer pro bono / sliding-scale services
+                </span>
+              </label>
+            </div>
           </Section>
 
           {library.length > 0 && (
