@@ -16,6 +16,7 @@ import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CollabRouteImport } from './routes/collab'
 import { Route as CasesRouteImport } from './routes/cases'
+import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AdvertiseRouteImport } from './routes/advertise'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
@@ -57,6 +58,11 @@ const CasesRoute = CasesRouteImport.update({
   path: '/cases',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CalendarRoute = CalendarRouteImport.update({
+  id: '/calendar',
+  path: '/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdvertiseRoute = AdvertiseRouteImport.update({
   id: '/advertise',
   path: '/advertise',
@@ -86,6 +92,7 @@ const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/advertise': typeof AdvertiseRoute
+  '/calendar': typeof CalendarRoute
   '/cases': typeof CasesRoute
   '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/advertise'
+    | '/calendar'
     | '/cases'
     | '/collab'
     | '/connections'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/advertise'
+    | '/calendar'
     | '/cases'
     | '/collab'
     | '/connections'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/advertise'
+    | '/calendar'
     | '/cases'
     | '/collab'
     | '/connections'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdvertiseRoute: typeof AdvertiseRoute
+  CalendarRoute: typeof CalendarRoute
   CasesRoute: typeof CasesRoute
   CollabRoute: typeof CollabRoute
   ConnectionsRoute: typeof ConnectionsRoute
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CasesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calendar': {
+      id: '/calendar'
+      path: '/calendar'
+      fullPath: '/calendar'
+      preLoaderRoute: typeof CalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/advertise': {
       id: '/advertise'
       path: '/advertise'
@@ -278,6 +298,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdvertiseRoute: AdvertiseRoute,
+  CalendarRoute: CalendarRoute,
   CasesRoute: CasesRoute,
   CollabRoute: CollabRoute,
   ConnectionsRoute: ConnectionsRoute,
