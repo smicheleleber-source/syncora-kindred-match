@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
+import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 
 const ReviewsRoute = ReviewsRouteImport.update({
   id: '/reviews',
@@ -94,6 +95,11 @@ const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
   path: '/playbooks/litigation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProvidersRoute = AdminProvidersRouteImport.update({
+  id: '/admin/providers',
+  path: '/admin/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/legislative': typeof LegislativeRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/legislative'
     | '/professionals'
     | '/reviews'
+    | '/admin/providers'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   LegislativeRoute: typeof LegislativeRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
+  AdminProvidersRoute: typeof AdminProvidersRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
@@ -312,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaybooksLitigationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/providers': {
+      id: '/admin/providers'
+      path: '/admin/providers'
+      fullPath: '/admin/providers'
+      preLoaderRoute: typeof AdminProvidersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   LegislativeRoute: LegislativeRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
+  AdminProvidersRoute: AdminProvidersRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
@@ -334,3 +355,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
