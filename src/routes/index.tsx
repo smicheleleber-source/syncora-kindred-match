@@ -170,6 +170,12 @@ function Index() {
             >
               Advertise →
             </Link>
+            <Link
+              to="/legislative"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Legislative monitor →
+            </Link>
           </div>
         </div>
       </header>
