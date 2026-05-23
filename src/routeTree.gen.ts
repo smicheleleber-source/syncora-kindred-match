@@ -30,6 +30,7 @@ import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
+import { Route as EmployeeTasksRouteImport } from './routes/employee.tasks'
 import { Route as EmployeeDashboardRouteImport } from './routes/employee.dashboard'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminJudgesRouteImport } from './routes/admin.judges'
@@ -140,6 +141,11 @@ const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
   path: '/playbooks/litigation',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmployeeTasksRoute = EmployeeTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => EmployeeRoute,
+} as any)
 const EmployeeDashboardRoute = EmployeeDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -183,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/admin/judges': typeof AdminJudgesRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/employee/dashboard': typeof EmployeeDashboardRoute
+  '/employee/tasks': typeof EmployeeTasksRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/$id': typeof ProvidersIdRoute
@@ -267,6 +276,7 @@ export interface FileRouteTypes {
     | '/admin/judges'
     | '/admin/providers'
     | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/admin/judges'
     | '/admin/providers'
     | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/admin/judges'
     | '/admin/providers'
     | '/employee/dashboard'
+    | '/employee/tasks'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/$id'
@@ -503,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlaybooksLitigationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/employee/tasks': {
+      id: '/employee/tasks'
+      path: '/tasks'
+      fullPath: '/employee/tasks'
+      preLoaderRoute: typeof EmployeeTasksRouteImport
+      parentRoute: typeof EmployeeRoute
+    }
     '/employee/dashboard': {
       id: '/employee/dashboard'
       path: '/dashboard'
@@ -536,10 +555,12 @@ declare module '@tanstack/react-router' {
 
 interface EmployeeRouteChildren {
   EmployeeDashboardRoute: typeof EmployeeDashboardRoute
+  EmployeeTasksRoute: typeof EmployeeTasksRoute
 }
 
 const EmployeeRouteChildren: EmployeeRouteChildren = {
   EmployeeDashboardRoute: EmployeeDashboardRoute,
+  EmployeeTasksRoute: EmployeeTasksRoute,
 }
 
 const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
