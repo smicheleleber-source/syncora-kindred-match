@@ -206,6 +206,12 @@ function Index() {
             >
               Solicitor workspace →
             </Link>
+            <Link
+              to="/feedback"
+              className="rounded-full border border-accent/40 bg-accent/10 px-4 py-1.5 font-medium text-foreground hover:border-accent hover:text-accent-foreground"
+            >
+              Feedback & roadmap →
+            </Link>
           </div>
         </div>
       </header>
