@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  CATEGORIES,
+  CATEGORIES_BY_DOMAIN,
+  DOMAINS,
+  DOMAIN_DESCRIPTIONS,
   matchProviders,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
+  type Domain,
   type MatchInput,
   type Urgency,
 } from "@/lib/providers";
@@ -24,7 +27,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [category, setCategory] = useState<string>("family law");
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [domain, setDomain] = useState<Domain | null>(null);
+  const [category, setCategory] = useState<string>("");
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<Urgency>("medium");
   const [complexity, setComplexity] = useState<Complexity>("moderate");
@@ -62,6 +67,21 @@ function Index() {
     );
   }
 
+  function pickDomain(d: Domain) {
+    setDomain(d);
+    setCategory("");
+    setSpecialties([]);
+    setSubmitted(null);
+    setStep(2);
+  }
+
+  function pickCategory(c: string) {
+    setCategory(c);
+    setSpecialties([]);
+    setSubmitted(null);
+    setStep(3);
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/60 bg-gradient-to-br from-primary/5 via-background to-accent/10">
@@ -71,43 +91,112 @@ function Index() {
             Syncora Connect
           </div>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Find the right legal team in minutes.
+            Find the right professional in minutes.
           </h1>
           <p className="mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
-            Tell us about your case. We score every provider in our network across category fit,
-            complexity, availability, location, and budget — then surface your top three matches.
+            Start with the reason you're here, narrow to a practice area, then tell us
+            about your case. We'll score every provider and surface your top three matches.
           </p>
         </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-6 py-12">
+        <Stepper step={step} domain={domain} category={category} onJump={(s) => setStep(s)} />
+
+        {step === 1 && (
+          <section className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+            <h2 className="text-xl font-semibold text-card-foreground">
+              What brings you to Syncora Connect?
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Pick the general reason — we'll narrow it down next.
+            </p>
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              {DOMAINS.map((d) => (
+                <button
+                  key={d}
+                  type="button"
+                  onClick={() => pickDomain(d)}
+                  className={
+                    "group rounded-xl border p-5 text-left transition " +
+                    (domain === d
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-background hover:border-primary/40 hover:bg-primary/5")
+                  }
+                >
+                  <div className="text-base font-semibold text-foreground">{d}</div>
+                  <div className="mt-1 text-sm text-muted-foreground">
+                    {DOMAIN_DESCRIPTIONS[d]}
+                  </div>
+                  <div className="mt-3 text-xs font-medium text-primary opacity-0 transition group-hover:opacity-100">
+                    Continue →
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {step === 2 && domain && (
+          <section className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold text-card-foreground">
+                  Which {domain.toLowerCase()} subcategory fits best?
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Pick the practice area closest to your situation.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              >
+                ← Back
+              </button>
+            </div>
+            <div className="mt-6 grid gap-2 md:grid-cols-2">
+              {CATEGORIES_BY_DOMAIN[domain].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => pickCategory(c)}
+                  className="rounded-lg border border-border bg-background px-4 py-3 text-left text-sm font-medium capitalize text-foreground transition hover:border-primary/40 hover:bg-primary/5"
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {step === 3 && (
         <form
           onSubmit={onSubmit}
-          className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8"
+          className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8"
         >
-          <h2 className="text-xl font-semibold text-card-foreground">Your case</h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            All fields stay on this device until you request matches.
-          </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-card-foreground">
+                Tell us about your case
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{domain}</span>
+                {" › "}
+                <span className="font-medium capitalize text-foreground">{category}</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setStep(2)}
+              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              ← Change
+            </button>
+          </div>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <Field label="Legal category">
-              <select
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setSpecialties([]);
-                }}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring appearance-none"
-              >
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-            </Field>
-
             <Field label="Location (city, state)">
               <input
                 type="text"
@@ -197,6 +286,15 @@ function Index() {
               </div>
             </div>
           )}
+
+          <button
+            type="submit"
+            className="mt-8 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            Find my top 3 matches
+          </button>
+        </form>
+        )}
 
           <button
             type="submit"
