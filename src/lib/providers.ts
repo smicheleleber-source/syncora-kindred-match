@@ -98,6 +98,7 @@ export const DOMAINS = [
   "Legal",
   "Medical",
   "Professional Services",
+  "Mediation & Neutrals",
   "Spiritual & Counseling",
   "Self-Governance Alliances",
 ] as const;
@@ -107,6 +108,8 @@ export const DOMAIN_DESCRIPTIONS: Record<Domain, string> = {
   Legal: "Attorneys for civil, criminal, family, business, and immigration matters.",
   Medical: "Malpractice and negligence claims involving healthcare providers.",
   "Professional Services": "Negligence by accountants, engineers, and architects.",
+  "Mediation & Neutrals":
+    "Fringe professionals adjacent to legal work: GALs, mediators, counselors, arbitrators, parenting coordinators, social workers.",
   "Spiritual & Counseling": "Abuse and breach-of-trust by clergy or counselors.",
   "Self-Governance Alliances":
     "Community-led groups: mutual aid, co-ops, tenant unions, restorative circles.",
@@ -141,6 +144,16 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "accounting malpractice",
     "engineering malpractice",
     "architectural malpractice",
+  ],
+  "Mediation & Neutrals": [
+    "guardian ad litem",
+    "mediator",
+    "arbitrator",
+    "parenting coordinator",
+    "counselor / therapist",
+    "social worker",
+    "court-appointed evaluator",
+    "victim advocate",
   ],
   "Spiritual & Counseling": ["clergy malpractice"],
   "Self-Governance Alliances": [
