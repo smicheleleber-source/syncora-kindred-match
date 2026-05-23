@@ -69,6 +69,7 @@ function seed(): State {
         court: "Travis County District Court, 250th",
         jurisdiction: "TX",
         practiceAreas: ["family", "civil"],
+        validated_practice_areas: ["family", "civil"],
         termEndsISO: inDays(420),
         nextEvent: {
           type: "election",
@@ -82,6 +83,8 @@ function seed(): State {
         court: "U.S. District Court, W.D. Tex.",
         jurisdiction: "Federal",
         practiceAreas: ["criminal", "ip", "civil"],
+        validated_practice_areas: ["criminal", "civil"],
+        termEndsISO: inDays(180),
         nextEvent: {
           type: "appointment",
           dateISO: inDays(180),
@@ -94,6 +97,7 @@ function seed(): State {
         court: "Probate Court No. 1",
         jurisdiction: "TX",
         practiceAreas: ["probate", "elder"],
+        validated_practice_areas: ["probate"],
         termEndsISO: inDays(60),
         nextEvent: {
           type: "retention",
