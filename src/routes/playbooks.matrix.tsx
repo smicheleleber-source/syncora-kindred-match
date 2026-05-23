@@ -1,21 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
+  addCitation,
   addClaim,
   addDocument,
   addElement,
+  buildClaimDraft,
   claimReadiness,
   DOCUMENT_KIND_LABEL,
+  formatCitation,
   PROOF_STRENGTH_LABEL,
+  removeCitation,
   removeClaim,
   removeDocument,
   removeElement,
+  toggleDocumentCitation,
+  toggleElementCitation,
   toggleElementDoc,
   updateCaseMeta,
   updateElement,
   useMatrix,
+  type CaseLawCitation,
   type CourtDocument,
   type DocumentKind,
+  type LitigationMatrix,
   type MatrixClaim,
   type MatrixElement,
   type ProofStrength,
@@ -58,6 +66,8 @@ function strengthClass(s: ProofStrength) {
 function MatrixPage() {
   const m = useMatrix();
   const [docPanelOpen, setDocPanelOpen] = useState(false);
+  const [citationsPanelOpen, setCitationsPanelOpen] = useState(false);
+  const [draftClaimId, setDraftClaimId] = useState<string | null>(null);
 
   const overallPct = useMemo(() => {
     if (m.claims.length === 0) return 0;
@@ -110,6 +120,13 @@ function MatrixPage() {
             >
               Court documents ({m.documents.length})
             </button>
+            <button
+              type="button"
+              onClick={() => setCitationsPanelOpen(true)}
+              className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Case law ({(m.citations ?? []).length})
+            </button>
             <Link
               to="/playbooks/litigation"
               className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
@@ -123,14 +140,37 @@ function MatrixPage() {
       <main className="mx-auto max-w-7xl px-6 py-10">
         <div className="space-y-6">
           {m.claims.map((claim) => (
-            <ClaimCard key={claim.id} claim={claim} docs={m.documents} />
+            <ClaimCard
+              key={claim.id}
+              claim={claim}
+              docs={m.documents}
+              citations={m.citations ?? []}
+              onBuildDraft={() => setDraftClaimId(claim.id)}
+            />
           ))}
           <AddClaimForm />
         </div>
       </main>
 
       {docPanelOpen && (
-        <DocumentPanel docs={m.documents} onClose={() => setDocPanelOpen(false)} />
+        <DocumentPanel
+          docs={m.documents}
+          citations={m.citations ?? []}
+          onClose={() => setDocPanelOpen(false)}
+        />
+      )}
+      {citationsPanelOpen && (
+        <CitationsPanel
+          citations={m.citations ?? []}
+          onClose={() => setCitationsPanelOpen(false)}
+        />
+      )}
+      {draftClaimId && (
+        <DraftModal
+          matrix={m}
+          claim={m.claims.find((c) => c.id === draftClaimId)!}
+          onClose={() => setDraftClaimId(null)}
+        />
       )}
     </div>
   );
@@ -162,7 +202,17 @@ function MetaInput({
   );
 }
 
-function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] }) {
+function ClaimCard({
+  claim,
+  docs,
+  citations,
+  onBuildDraft,
+}: {
+  claim: MatrixClaim;
+  docs: CourtDocument[];
+  citations: CaseLawCitation[];
+  onBuildDraft: () => void;
+}) {
   const readiness = claimReadiness(claim);
   return (
     <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
@@ -178,6 +228,13 @@ function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] 
             <div className="text-xs text-muted-foreground">{readiness.label}</div>
             <div className="text-lg font-semibold text-foreground">{readiness.pct}%</div>
           </div>
+          <button
+            type="button"
+            onClick={onBuildDraft}
+            className="rounded-full border border-primary/40 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+          >
+            Build draft
+          </button>
           <button
             type="button"
             onClick={() => {
@@ -203,16 +260,23 @@ function ClaimCard({ claim, docs }: { claim: MatrixClaim; docs: CourtDocument[] 
               <th className="py-2 pr-3 font-semibold">Strength</th>
               <th className="py-2 pr-3 font-semibold">Evidence notes</th>
               <th className="py-2 pr-3 font-semibold">Documents</th>
+              <th className="py-2 pr-3 font-semibold">Case law</th>
               <th className="py-2 font-semibold" />
             </tr>
           </thead>
           <tbody>
             {claim.elements.map((el) => (
-              <ElementRow key={el.id} claimId={claim.id} el={el} docs={docs} />
+              <ElementRow
+                key={el.id}
+                claimId={claim.id}
+                el={el}
+                docs={docs}
+                citations={citations}
+              />
             ))}
             {claim.elements.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-4 text-sm text-muted-foreground">
+                <td colSpan={7} className="py-4 text-sm text-muted-foreground">
                   No elements yet — add the first one below.
                 </td>
               </tr>
@@ -230,13 +294,17 @@ function ElementRow({
   claimId,
   el,
   docs,
+  citations,
 }: {
   claimId: string;
   el: MatrixElement;
   docs: CourtDocument[];
+  citations: CaseLawCitation[];
 }) {
   const [docPickerOpen, setDocPickerOpen] = useState(false);
+  const [citePickerOpen, setCitePickerOpen] = useState(false);
   const linked = docs.filter((d) => el.document_ids.includes(d.id));
+  const linkedCites = citations.filter((c) => (el.citation_ids ?? []).includes(c.id));
   return (
     <tr className="border-b border-border align-top">
       <td className="py-3 pr-3">
@@ -326,6 +394,55 @@ function ElementRow({
                   <span>
                     <span className="font-medium text-foreground">{d.cite}</span>{" "}
                     <span className="text-muted-foreground">— {d.title}</span>
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        )}
+      </td>
+      <td className="py-3 pr-3">
+        <div className="flex flex-wrap gap-1">
+          {linkedCites.map((c) => (
+            <span
+              key={c.id}
+              className="rounded-full border border-border bg-background px-2 py-0.5 text-xs"
+              title={c.holding}
+            >
+              {c.case_name}
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={() => setCitePickerOpen((o) => !o)}
+            className="rounded-full border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-primary hover:text-primary"
+          >
+            + cite
+          </button>
+        </div>
+        {citePickerOpen && (
+          <div className="mt-2 max-h-44 w-72 overflow-y-auto rounded-md border border-border bg-background p-2 text-xs shadow-md">
+            {citations.length === 0 && (
+              <p className="text-muted-foreground">
+                No case law yet. Add some in the Case law panel.
+              </p>
+            )}
+            {citations.map((c) => {
+              const has = (el.citation_ids ?? []).includes(c.id);
+              return (
+                <label
+                  key={c.id}
+                  className="flex cursor-pointer items-start gap-2 rounded p-1 hover:bg-muted"
+                >
+                  <input
+                    type="checkbox"
+                    checked={has}
+                    onChange={() => toggleElementCitation(claimId, el.id, c.id)}
+                    className="mt-0.5 accent-primary"
+                  />
+                  <span>
+                    <span className="font-medium text-foreground">{c.case_name}</span>{" "}
+                    <span className="text-muted-foreground">— {c.reporter} ({c.year})</span>
                   </span>
                 </label>
               );
@@ -436,12 +553,21 @@ function AddClaimForm() {
 
 const DOC_KINDS = Object.keys(DOCUMENT_KIND_LABEL) as DocumentKind[];
 
-function DocumentPanel({ docs, onClose }: { docs: CourtDocument[]; onClose: () => void }) {
+function DocumentPanel({
+  docs,
+  citations,
+  onClose,
+}: {
+  docs: CourtDocument[];
+  citations: CaseLawCitation[];
+  onClose: () => void;
+}) {
   const [kind, setKind] = useState<DocumentKind>("exhibit");
   const [title, setTitle] = useState("");
   const [cite, setCite] = useState("");
   const [url, setUrl] = useState("");
   const [notes, setNotes] = useState("");
+  const [expandedDoc, setExpandedDoc] = useState<string | null>(null);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -452,6 +578,7 @@ function DocumentPanel({ docs, onClose }: { docs: CourtDocument[]; onClose: () =
       cite: cite.trim(),
       url: url.trim() || undefined,
       notes: notes.trim() || undefined,
+      citation_ids: [],
     });
     setTitle("");
     setCite("");
@@ -576,6 +703,64 @@ function DocumentPanel({ docs, onClose }: { docs: CourtDocument[]; onClose: () =
                   Open ↗
                 </a>
               )}
+              <div className="mt-2 border-t border-border pt-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-medium text-muted-foreground">
+                    Case law joined ({(d.citation_ids ?? []).length})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedDoc((id) => (id === d.id ? null : d.id))
+                    }
+                    className="text-primary hover:underline"
+                  >
+                    {expandedDoc === d.id ? "Hide" : "Link case law"}
+                  </button>
+                </div>
+                {(d.citation_ids ?? []).length > 0 && (
+                  <ul className="mt-1 space-y-0.5 text-xs text-foreground">
+                    {(d.citation_ids ?? []).map((cid) => {
+                      const c = citations.find((x) => x.id === cid);
+                      if (!c) return null;
+                      return <li key={cid}>• {formatCitation(c)}</li>;
+                    })}
+                  </ul>
+                )}
+                {expandedDoc === d.id && (
+                  <div className="mt-2 max-h-40 overflow-y-auto rounded border border-border bg-background p-2 text-xs">
+                    {citations.length === 0 && (
+                      <p className="text-muted-foreground">
+                        No citations yet — add them in the Case law panel.
+                      </p>
+                    )}
+                    {citations.map((c) => {
+                      const has = (d.citation_ids ?? []).includes(c.id);
+                      return (
+                        <label
+                          key={c.id}
+                          className="flex cursor-pointer items-start gap-2 rounded p-1 hover:bg-muted"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={has}
+                            onChange={() => toggleDocumentCitation(d.id, c.id)}
+                            className="mt-0.5 accent-primary"
+                          />
+                          <span>
+                            <span className="font-medium text-foreground">
+                              {c.case_name}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              — {c.reporter} ({c.year})
+                            </span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </li>
           ))}
           {docs.length === 0 && (
@@ -583,6 +768,266 @@ function DocumentPanel({ docs, onClose }: { docs: CourtDocument[]; onClose: () =
           )}
         </ul>
       </aside>
+    </div>
+  );
+}
+
+function CitationsPanel({
+  citations,
+  onClose,
+}: {
+  citations: CaseLawCitation[];
+  onClose: () => void;
+}) {
+  const [caseName, setCaseName] = useState("");
+  const [reporter, setReporter] = useState("");
+  const [court, setCourt] = useState("");
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [pin, setPin] = useState("");
+  const [holding, setHolding] = useState("");
+  const [url, setUrl] = useState("");
+  const [tags, setTags] = useState("");
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!caseName.trim() || !reporter.trim() || !holding.trim()) return;
+    addCitation({
+      case_name: caseName.trim(),
+      reporter: reporter.trim(),
+      court: court.trim(),
+      year,
+      pin_cite: pin.trim() || undefined,
+      holding: holding.trim(),
+      url: url.trim() || undefined,
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+    });
+    setCaseName("");
+    setReporter("");
+    setCourt("");
+    setPin("");
+    setHolding("");
+    setUrl("");
+    setTags("");
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex justify-end bg-foreground/40 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <aside
+        className="h-full w-full max-w-xl overflow-y-auto bg-background p-6 shadow-2xl md:p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-foreground">Case law library</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-border bg-background px-3 py-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            Close
+          </button>
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Build a citation library once, then join authorities into elements and
+          documents wherever they support the argument.
+        </p>
+
+        <form
+          onSubmit={submit}
+          className="mt-5 space-y-3 rounded-xl border border-border bg-card p-4"
+        >
+          <h3 className="text-sm font-semibold text-card-foreground">Add a citation</h3>
+          <input
+            value={caseName}
+            onChange={(e) => setCaseName(e.target.value)}
+            placeholder="Case name (e.g. Hadley v. Baxendale)"
+            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+          />
+          <div className="grid gap-2 md:grid-cols-3">
+            <input
+              value={reporter}
+              onChange={(e) => setReporter(e.target.value)}
+              placeholder="Reporter (e.g. 517 U.S. 559)"
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm md:col-span-2"
+            />
+            <input
+              type="number"
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value) || 0)}
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+            />
+          </div>
+          <div className="grid gap-2 md:grid-cols-2">
+            <input
+              value={court}
+              onChange={(e) => setCourt(e.target.value)}
+              placeholder="Court (e.g. U.S. Supreme Court)"
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+            />
+            <input
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              placeholder="Pin cite (e.g. at 564)"
+              className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+            />
+          </div>
+          <textarea
+            value={holding}
+            onChange={(e) => setHolding(e.target.value)}
+            rows={2}
+            placeholder="Holding / proposition the case stands for"
+            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+          />
+          <input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="Permalink (CourtListener, Google Scholar, Westlaw)"
+            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+          />
+          <input
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Tags, comma-separated (e.g. breach, damages)"
+            className="w-full rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+          />
+          <button
+            type="submit"
+            className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            Add citation
+          </button>
+        </form>
+
+        <ul className="mt-6 space-y-3">
+          {citations.map((c) => (
+            <li key={c.id} className="rounded-lg border border-border bg-card p-3 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <div className="font-medium text-card-foreground">{formatCitation(c)}</div>
+                  <p className="mt-1 text-muted-foreground">{c.holding}</p>
+                  {c.tags.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {c.tags.map((t) => (
+                        <span
+                          key={t}
+                          className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {c.url && (
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-1 inline-block text-xs text-primary hover:underline"
+                    >
+                      Open ↗
+                    </a>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`Remove "${c.case_name}"?`)) removeCitation(c.id);
+                  }}
+                  className="text-xs text-muted-foreground hover:text-destructive"
+                >
+                  Remove
+                </button>
+              </div>
+            </li>
+          ))}
+          {citations.length === 0 && (
+            <li className="text-sm text-muted-foreground">No citations yet.</li>
+          )}
+        </ul>
+      </aside>
+    </div>
+  );
+}
+
+function DraftModal({
+  matrix,
+  claim,
+  onClose,
+}: {
+  matrix: LitigationMatrix;
+  claim: MatrixClaim;
+  onClose: () => void;
+}) {
+  const text = useMemo(() => buildClaimDraft(matrix, claim), [matrix, claim]);
+  const [copied, setCopied] = useState(false);
+
+  function copy() {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
+
+  function download() {
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${claim.name.replace(/[^a-z0-9]+/gi, "_")}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-6 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-full w-full max-w-3xl flex-col rounded-2xl bg-background p-6 shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Draft — {claim.name}</h2>
+            <p className="text-sm text-muted-foreground">
+              Elements, record cites, and case-law authority joined into a single section
+              you can paste into a brief or motion.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-border bg-background px-3 py-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            Close
+          </button>
+        </div>
+        <pre className="mt-4 flex-1 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-card p-4 text-xs leading-relaxed text-card-foreground">
+          {text}
+        </pre>
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={copy}
+            className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
+            {copied ? "Copied ✓" : "Copy draft"}
+          </button>
+          <button
+            type="button"
+            onClick={download}
+            className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
+          >
+            Download .txt
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

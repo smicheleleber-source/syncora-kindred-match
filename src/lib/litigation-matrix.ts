@@ -60,6 +60,7 @@ export interface CourtDocument {
   cite: string; // e.g. "Dkt. 42", "Ex. B", "Smith Depo 112:4-19"
   url?: string;
   notes?: string;
+  citation_ids?: string[]; // case-law authority joined into this doc
   created_at: number;
 }
 
@@ -70,6 +71,7 @@ export interface MatrixElement {
   strength: ProofStrength;
   evidence_notes: string;
   document_ids: string[]; // refs into CourtDocument[]
+  citation_ids?: string[]; // case-law authority supporting the element
 }
 
 export interface MatrixClaim {
@@ -87,9 +89,28 @@ export interface LitigationMatrix {
   trial_date: string; // ISO date or ""
   documents: CourtDocument[];
   claims: MatrixClaim[];
+  citations?: CaseLawCitation[];
 }
 
-const STORAGE_KEY = "syncora.litigation-matrix.v1";
+export interface CaseLawCitation {
+  id: string;
+  case_name: string; // e.g. "Hadley v. Baxendale"
+  reporter: string; // e.g. "9 Ex. 341" or "517 U.S. 559"
+  court: string; // e.g. "U.S. Supreme Court", "S.D.N.Y."
+  year: number;
+  pin_cite?: string; // e.g. "at 564"
+  holding: string; // 1–3 sentence summary
+  url?: string; // CourtListener / Google Scholar / Westlaw permalink
+  tags: string[]; // e.g. ["breach", "damages", "foreseeability"]
+  created_at: number;
+}
+
+export function formatCitation(c: CaseLawCitation): string {
+  const pin = c.pin_cite ? `, ${c.pin_cite}` : "";
+  return `${c.case_name}, ${c.reporter}${pin} (${c.court} ${c.year})`;
+}
+
+const STORAGE_KEY = "syncora.litigation-matrix.v2";
 
 function uid(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
@@ -209,6 +230,33 @@ function seed(): LitigationMatrix {
             document_ids: [],
           },
         ],
+      },
+    ],
+    citations: [
+      {
+        id: uid("cite"),
+        case_name: "Hadley v. Baxendale",
+        reporter: "9 Ex. 341",
+        court: "Ct. of Exchequer",
+        year: 1854,
+        pin_cite: "at 354",
+        holding:
+          "Contract damages are limited to losses that were foreseeable at the time of contracting or arising naturally from the breach.",
+        url: "https://en.wikipedia.org/wiki/Hadley_v_Baxendale",
+        tags: ["breach", "damages", "foreseeability"],
+        created_at: Date.now() - 86400000 * 30,
+      },
+      {
+        id: uid("cite"),
+        case_name: "Eurycleia Partners, LP v. Seward & Kissel, LLP",
+        reporter: "12 N.Y.3d 553",
+        court: "N.Y. Ct. App.",
+        year: 2009,
+        pin_cite: "at 559",
+        holding:
+          "Fraud requires (1) a material misrepresentation, (2) knowledge of falsity, (3) intent to induce reliance, (4) justifiable reliance, and (5) damages.",
+        tags: ["fraud", "elements", "scienter"],
+        created_at: Date.now() - 86400000 * 20,
       },
     ],
   };
@@ -342,6 +390,111 @@ export function toggleElementDoc(claimId: string, elementId: string, docId: stri
     ),
   };
   emit();
+}
+
+export function toggleElementCitation(claimId: string, elementId: string, citationId: string) {
+  state = {
+    ...state,
+    claims: state.claims.map((c) =>
+      c.id !== claimId
+        ? c
+        : {
+            ...c,
+            elements: c.elements.map((e) => {
+              if (e.id !== elementId) return e;
+              const current = e.citation_ids ?? [];
+              const has = current.includes(citationId);
+              return {
+                ...e,
+                citation_ids: has
+                  ? current.filter((d) => d !== citationId)
+                  : [...current, citationId],
+              };
+            }),
+          },
+    ),
+  };
+  emit();
+}
+
+export function toggleDocumentCitation(docId: string, citationId: string) {
+  state = {
+    ...state,
+    documents: state.documents.map((d) => {
+      if (d.id !== docId) return d;
+      const current = d.citation_ids ?? [];
+      const has = current.includes(citationId);
+      return {
+        ...d,
+        citation_ids: has
+          ? current.filter((id) => id !== citationId)
+          : [...current, citationId],
+      };
+    }),
+  };
+  emit();
+}
+
+export function addCitation(c: Omit<CaseLawCitation, "id" | "created_at">): CaseLawCitation {
+  const created: CaseLawCitation = { ...c, id: uid("cite"), created_at: Date.now() };
+  state = { ...state, citations: [...(state.citations ?? []), created] };
+  emit();
+  return created;
+}
+
+export function removeCitation(citationId: string) {
+  state = {
+    ...state,
+    citations: (state.citations ?? []).filter((c) => c.id !== citationId),
+    documents: state.documents.map((d) => ({
+      ...d,
+      citation_ids: (d.citation_ids ?? []).filter((id) => id !== citationId),
+    })),
+    claims: state.claims.map((c) => ({
+      ...c,
+      elements: c.elements.map((e) => ({
+        ...e,
+        citation_ids: (e.citation_ids ?? []).filter((id) => id !== citationId),
+      })),
+    })),
+  };
+  emit();
+}
+
+export function buildClaimDraft(
+  m: LitigationMatrix,
+  claim: MatrixClaim,
+): string {
+  const docMap = new Map(m.documents.map((d) => [d.id, d]));
+  const citeMap = new Map((m.citations ?? []).map((c) => [c.id, c]));
+  const lines: string[] = [];
+  lines.push(`${claim.name.toUpperCase()}`);
+  lines.push(`Cause of action: ${claim.cause_of_action}`);
+  lines.push(`Party: ${claim.party}`);
+  lines.push("");
+  lines.push(`In re ${m.case_name}${m.case_number ? `, No. ${m.case_number}` : ""}${m.forum ? ` (${m.forum})` : ""}`);
+  lines.push("");
+  claim.elements.forEach((el, i) => {
+    lines.push(`${i + 1}. ${el.text} [${el.burden} · ${PROOF_STRENGTH_LABEL[el.strength]}]`);
+    if (el.evidence_notes) lines.push(`   Evidence: ${el.evidence_notes}`);
+    const docs = (el.document_ids ?? [])
+      .map((id) => docMap.get(id))
+      .filter(Boolean) as CourtDocument[];
+    if (docs.length) {
+      lines.push(`   Record: ${docs.map((d) => `${d.cite} (${d.title})`).join("; ")}`);
+    }
+    const cites = (el.citation_ids ?? [])
+      .map((id) => citeMap.get(id))
+      .filter(Boolean) as CaseLawCitation[];
+    if (cites.length) {
+      lines.push(`   Authority:`);
+      for (const c of cites) {
+        lines.push(`     • ${formatCitation(c)} — ${c.holding}`);
+      }
+    }
+    lines.push("");
+  });
+  return lines.join("\n");
 }
 
 export function addDocument(doc: Omit<CourtDocument, "id" | "created_at">) {
