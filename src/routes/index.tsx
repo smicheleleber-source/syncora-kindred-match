@@ -394,6 +394,27 @@ function Index() {
                           {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
                           {m.provider.budget_max.toLocaleString()}
                         </p>
+                        {(() => {
+                          const s = summarizeProvider(m.provider.id, reviews);
+                          if (s.count === 0) return null;
+                          return (
+                            <p className="mt-1 text-xs">
+                              <Link
+                                to="/reviews"
+                                className="text-accent-foreground hover:underline"
+                              >
+                                ★ {s.average.toFixed(1)} · {s.count} review
+                                {s.count === 1 ? "" : "s"}
+                              </Link>
+                              {s.barComplaints > 0 && (
+                                <span className="ml-2 rounded-full bg-destructive/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-destructive ring-1 ring-destructive/30">
+                                  {s.barComplaints} bar complaint
+                                  {s.barComplaints === 1 ? "" : "s"}
+                                </span>
+                              )}
+                            </p>
+                          );
+                        })()}
                         {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null || m.provider.hourly_rate != null || m.provider.firm_size || m.provider.gender_composition || m.provider.pro_bono) && (
                           <p className="mt-1 text-xs text-muted-foreground">
                             {m.provider.years_experience != null && (
