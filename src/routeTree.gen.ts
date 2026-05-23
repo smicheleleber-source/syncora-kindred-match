@@ -13,6 +13,7 @@ import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
+import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 
 const DonateRoute = DonateRouteImport.update({
   id: '/donate',
@@ -34,17 +35,24 @@ const ProvidersJoinRoute = ProvidersJoinRouteImport.update({
   path: '/providers/join',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
+  id: '/playbooks/litigation',
+  path: '/playbooks/litigation',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRoutesById {
@@ -52,20 +60,38 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/providers/join': typeof ProvidersJoinRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/connections' | '/donate' | '/providers/join'
+  fullPaths:
+    | '/'
+    | '/connections'
+    | '/donate'
+    | '/playbooks/litigation'
+    | '/providers/join'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/connections' | '/donate' | '/providers/join'
-  id: '__root__' | '/' | '/connections' | '/donate' | '/providers/join'
+  to:
+    | '/'
+    | '/connections'
+    | '/donate'
+    | '/playbooks/litigation'
+    | '/providers/join'
+  id:
+    | '__root__'
+    | '/'
+    | '/connections'
+    | '/donate'
+    | '/playbooks/litigation'
+    | '/providers/join'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
+  PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
 }
 
@@ -99,6 +125,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProvidersJoinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/playbooks/litigation': {
+      id: '/playbooks/litigation'
+      path: '/playbooks/litigation'
+      fullPath: '/playbooks/litigation'
+      preLoaderRoute: typeof PlaybooksLitigationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +139,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
+  PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
 }
 export const routeTree = rootRouteImport
