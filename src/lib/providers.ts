@@ -5,6 +5,7 @@ export interface Provider {
   id: string;
   name: string;
   category: string;
+  specialties: string[];
   complexity_supported: Complexity[];
   availability: Urgency; // soonest urgency they can handle
   location: string;
@@ -40,11 +41,113 @@ export const CATEGORIES = [
   "clergy malpractice",
 ] as const;
 
+// Specialty options shown to users after they pick a category. These define
+// finer-grained expertise (e.g. custody, military, DUI) within a practice area.
+export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
+  "family law": [
+    "custody", "divorce", "adoption", "prenuptial agreement", "alimony",
+    "child support", "domestic violence", "military family", "LGBTQ+",
+    "high-asset", "international custody", "mediation", "uncontested divorce",
+  ],
+  "criminal defense": [
+    "DUI", "drug charges", "white-collar", "federal charges", "juvenile",
+    "violent crime", "sex crime", "expungement", "appeals", "military (court-martial)",
+    "misdemeanor", "bail",
+  ],
+  "personal injury": [
+    "car accident", "motorcycle", "truck accident", "slip & fall", "dog bite",
+    "wrongful death", "product liability", "premises liability", "workplace injury",
+  ],
+  "estate planning": [
+    "wills", "trusts", "probate", "elder law", "special needs",
+    "business succession", "asset protection", "veterans benefits",
+  ],
+  "business law": [
+    "contracts", "M&A", "startup incorporation", "IP licensing",
+    "partnership disputes", "securities", "franchise", "employment contracts",
+  ],
+  "immigration law": [
+    "visas", "green cards", "naturalization", "asylum", "deportation defense",
+    "employment-based", "family-based", "DACA", "investor visas",
+  ],
+  "real estate law": [
+    "closings", "title review", "landlord-tenant", "zoning",
+    "commercial leases", "HOA disputes", "construction defects",
+  ],
+  "employment law": [
+    "wrongful termination", "discrimination", "harassment", "wage & hour",
+    "whistleblower", "non-compete", "ADA", "military (USERRA)", "severance",
+  ],
+  "tax law": [
+    "IRS audit", "tax planning", "offshore disclosure", "sales tax",
+    "estate tax", "business tax", "crypto", "tax litigation",
+  ],
+  "medical malpractice": [
+    "hospital negligence", "ER errors", "anesthesia", "oncology",
+    "cardiology", "VA / military medicine",
+  ],
+  "dental malpractice": [
+    "dental implants", "root canal", "nerve damage", "orthodontics",
+    "oral surgery", "anesthesia",
+  ],
+  "nursing malpractice": [
+    "nursing home abuse", "medication errors", "bedsores", "falls",
+    "elder neglect", "hospice",
+  ],
+  "surgical malpractice": [
+    "wrong-site surgery", "retained instruments", "anesthesia",
+    "post-op infection", "robotic surgery", "cosmetic surgery",
+  ],
+  "birth injury malpractice": [
+    "cerebral palsy", "Erb's palsy", "oxygen deprivation",
+    "C-section errors", "shoulder dystocia",
+  ],
+  "misdiagnosis malpractice": [
+    "cancer misdiagnosis", "stroke", "heart attack", "infection",
+    "pediatric", "ER triage",
+  ],
+  "pharmacy malpractice": [
+    "wrong drug", "dosing error", "drug interaction", "compounding",
+    "mail-order pharmacy",
+  ],
+  "mental health malpractice": [
+    "therapist misconduct", "suicide foreseeability", "improper commitment",
+    "breach of confidentiality", "boundary violations",
+  ],
+  "chiropractic malpractice": [
+    "cervical manipulation", "disc injury", "informed consent", "stroke",
+  ],
+  "veterinary malpractice": [
+    "surgical errors", "anesthesia", "misdiagnosis",
+    "exotic animals", "wrongful death",
+  ],
+  "legal malpractice": [
+    "missed deadlines", "conflict of interest", "settlement negligence",
+    "appeals", "fee disputes",
+  ],
+  "accounting malpractice": [
+    "audit failure", "tax prep error", "fiduciary breach",
+    "forensic", "securities filings",
+  ],
+  "engineering malpractice": [
+    "structural", "civil", "mechanical", "electrical", "geotechnical",
+    "environmental",
+  ],
+  "architectural malpractice": [
+    "design defect", "code violation", "cost overrun",
+    "construction administration", "ADA compliance",
+  ],
+  "clergy malpractice": [
+    "clergy abuse", "institutional cover-up", "breach of confidence",
+  ],
+};
+
 export const PROVIDERS: Provider[] = [
   {
     id: "1",
     name: "Hartley & Vance Family Law",
     category: "family law",
+    specialties: ["custody", "divorce", "high-asset", "prenuptial agreement"],
     complexity_supported: ["moderate", "complex"],
     availability: "high",
     location: "Austin, TX",
@@ -56,6 +159,7 @@ export const PROVIDERS: Provider[] = [
     id: "2",
     name: "Marlowe Legal Collective",
     category: "family law",
+    specialties: ["divorce", "mediation", "uncontested divorce", "alimony"],
     complexity_supported: ["simple", "moderate"],
     availability: "medium",
     location: "Austin, TX",
@@ -67,6 +171,7 @@ export const PROVIDERS: Provider[] = [
     id: "3",
     name: "Okafor Family Advocates",
     category: "family law",
+    specialties: ["custody", "divorce", "domestic violence", "child support"],
     complexity_supported: ["simple", "moderate", "complex"],
     availability: "high",
     location: "Dallas, TX",
@@ -78,6 +183,7 @@ export const PROVIDERS: Provider[] = [
     id: "4",
     name: "Bayside Family Law Group",
     category: "family law",
+    specialties: ["uncontested divorce", "document prep"],
     complexity_supported: ["simple"],
     availability: "low",
     location: "San Diego, CA",
@@ -89,6 +195,7 @@ export const PROVIDERS: Provider[] = [
     id: "5",
     name: "Lindgren & Park LLP",
     category: "family law",
+    specialties: ["custody", "divorce", "asset division", "alimony"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "Seattle, WA",
@@ -100,6 +207,7 @@ export const PROVIDERS: Provider[] = [
     id: "6",
     name: "Rivera Mediation Studio",
     category: "family law",
+    specialties: ["mediation", "collaborative divorce", "co-parenting"],
     complexity_supported: ["simple", "moderate"],
     availability: "high",
     location: "Brooklyn, NY",
@@ -111,6 +219,7 @@ export const PROVIDERS: Provider[] = [
     id: "7",
     name: "Holloway Family Counsel",
     category: "family law",
+    specialties: ["international custody", "high-asset", "prenuptial agreement"],
     complexity_supported: ["complex"],
     availability: "low",
     location: "Chicago, IL",
@@ -122,6 +231,7 @@ export const PROVIDERS: Provider[] = [
     id: "8",
     name: "Greenfield Family Law Clinic",
     category: "family law",
+    specialties: ["divorce", "custody", "adoption", "domestic violence"],
     complexity_supported: ["simple", "moderate"],
     availability: "medium",
     location: "Denver, CO",
@@ -133,6 +243,7 @@ export const PROVIDERS: Provider[] = [
     id: "9",
     name: "Cross & Brennan Criminal Defense",
     category: "criminal defense",
+    specialties: ["DUI", "federal charges", "violent crime", "white-collar"],
     complexity_supported: ["moderate", "complex"],
     availability: "high",
     location: "Los Angeles, CA",
@@ -144,6 +255,7 @@ export const PROVIDERS: Provider[] = [
     id: "10",
     name: "Reyes Criminal Law Firm",
     category: "criminal defense",
+    specialties: ["DUI", "misdemeanor", "drug charges", "bail"],
     complexity_supported: ["simple", "moderate"],
     availability: "high",
     location: "Houston, TX",
@@ -155,6 +267,7 @@ export const PROVIDERS: Provider[] = [
     id: "11",
     name: "Summit Personal Injury Partners",
     category: "personal injury",
+    specialties: ["car accident", "slip & fall", "wrongful death", "motorcycle"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "Denver, CO",
@@ -166,6 +279,7 @@ export const PROVIDERS: Provider[] = [
     id: "12",
     name: "Berkshire Estate Planning Group",
     category: "estate planning",
+    specialties: ["wills", "trusts", "probate", "elder law"],
     complexity_supported: ["simple", "moderate"],
     availability: "low",
     location: "Boston, MA",
@@ -177,6 +291,7 @@ export const PROVIDERS: Provider[] = [
     id: "13",
     name: "Meridian Business Counsel",
     category: "business law",
+    specialties: ["contracts", "M&A", "startup incorporation", "partnership disputes"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "New York, NY",
@@ -188,6 +303,7 @@ export const PROVIDERS: Provider[] = [
     id: "14",
     name: "Pinnacle Immigration Services",
     category: "immigration law",
+    specialties: ["visas", "green cards", "naturalization", "deportation defense", "asylum"],
     complexity_supported: ["simple", "moderate", "complex"],
     availability: "high",
     location: "Miami, FL",
@@ -199,6 +315,7 @@ export const PROVIDERS: Provider[] = [
     id: "15",
     name: "Westgate Real Estate Law",
     category: "real estate law",
+    specialties: ["closings", "title review", "landlord-tenant", "zoning"],
     complexity_supported: ["simple", "moderate"],
     availability: "low",
     location: "Phoenix, AZ",
@@ -210,6 +327,7 @@ export const PROVIDERS: Provider[] = [
     id: "16",
     name: "Fairwork Employment Attorneys",
     category: "employment law",
+    specialties: ["wrongful termination", "discrimination", "wage & hour", "harassment"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "San Francisco, CA",
@@ -221,6 +339,7 @@ export const PROVIDERS: Provider[] = [
     id: "17",
     name: "Ledger Tax & Legal",
     category: "tax law",
+    specialties: ["IRS audit", "tax planning", "business tax", "offshore disclosure"],
     complexity_supported: ["moderate", "complex"],
     availability: "low",
     location: "Chicago, IL",
@@ -232,6 +351,7 @@ export const PROVIDERS: Provider[] = [
     id: "18",
     name: "Caldwell Medical Malpractice Group",
     category: "medical malpractice",
+    specialties: ["hospital negligence", "ER errors", "anesthesia", "oncology"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "Philadelphia, PA",
@@ -243,6 +363,7 @@ export const PROVIDERS: Provider[] = [
     id: "19",
     name: "Whitestone Dental Malpractice Attorneys",
     category: "dental malpractice",
+    specialties: ["dental implants", "root canal", "nerve damage", "orthodontics"],
     complexity_supported: ["simple", "moderate"],
     availability: "medium",
     location: "Atlanta, GA",
@@ -254,6 +375,7 @@ export const PROVIDERS: Provider[] = [
     id: "20",
     name: "Patrone Nursing Negligence Law",
     category: "nursing malpractice",
+    specialties: ["nursing home abuse", "medication errors", "bedsores", "elder neglect"],
     complexity_supported: ["moderate", "complex"],
     availability: "high",
     location: "Columbus, OH",
@@ -265,6 +387,7 @@ export const PROVIDERS: Provider[] = [
     id: "21",
     name: "Sterling Surgical Error Advocates",
     category: "surgical malpractice",
+    specialties: ["wrong-site surgery", "retained instruments", "anesthesia", "post-op infection"],
     complexity_supported: ["complex"],
     availability: "low",
     location: "Houston, TX",
@@ -276,6 +399,7 @@ export const PROVIDERS: Provider[] = [
     id: "22",
     name: "Cradle & Care Birth Injury Firm",
     category: "birth injury malpractice",
+    specialties: ["cerebral palsy", "Erb's palsy", "oxygen deprivation", "C-section errors"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "Charlotte, NC",
@@ -287,6 +411,7 @@ export const PROVIDERS: Provider[] = [
     id: "23",
     name: "Cardinal Misdiagnosis Law Partners",
     category: "misdiagnosis malpractice",
+    specialties: ["cancer misdiagnosis", "stroke", "heart attack", "ER triage"],
     complexity_supported: ["moderate", "complex"],
     availability: "high",
     location: "Minneapolis, MN",
@@ -298,6 +423,7 @@ export const PROVIDERS: Provider[] = [
     id: "24",
     name: "Apothecary Liability Counsel",
     category: "pharmacy malpractice",
+    specialties: ["wrong drug", "dosing error", "drug interaction", "compounding"],
     complexity_supported: ["simple", "moderate", "complex"],
     availability: "medium",
     location: "Orlando, FL",
@@ -309,6 +435,7 @@ export const PROVIDERS: Provider[] = [
     id: "25",
     name: "Beacon Mental Health Malpractice",
     category: "mental health malpractice",
+    specialties: ["therapist misconduct", "suicide foreseeability", "improper commitment", "breach of confidentiality"],
     complexity_supported: ["moderate", "complex"],
     availability: "low",
     location: "Portland, OR",
@@ -320,6 +447,7 @@ export const PROVIDERS: Provider[] = [
     id: "26",
     name: "Aligned Spine Chiropractic Claims",
     category: "chiropractic malpractice",
+    specialties: ["cervical manipulation", "disc injury", "informed consent"],
     complexity_supported: ["simple", "moderate"],
     availability: "medium",
     location: "Las Vegas, NV",
@@ -331,6 +459,7 @@ export const PROVIDERS: Provider[] = [
     id: "27",
     name: "Pawline Veterinary Malpractice",
     category: "veterinary malpractice",
+    specialties: ["surgical errors", "anesthesia", "misdiagnosis", "exotic animals"],
     complexity_supported: ["simple", "moderate"],
     availability: "high",
     location: "Nashville, TN",
@@ -342,6 +471,7 @@ export const PROVIDERS: Provider[] = [
     id: "28",
     name: "Hartwell Legal Malpractice Group",
     category: "legal malpractice",
+    specialties: ["missed deadlines", "conflict of interest", "settlement negligence", "appeals"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "Washington, DC",
@@ -353,6 +483,7 @@ export const PROVIDERS: Provider[] = [
     id: "29",
     name: "Ballard Accounting Malpractice Counsel",
     category: "accounting malpractice",
+    specialties: ["audit failure", "tax prep error", "fiduciary breach", "forensic"],
     complexity_supported: ["moderate", "complex"],
     availability: "low",
     location: "Charlotte, NC",
@@ -364,6 +495,7 @@ export const PROVIDERS: Provider[] = [
     id: "30",
     name: "Truss & Beam Engineering Liability",
     category: "engineering malpractice",
+    specialties: ["structural", "civil", "mechanical", "geotechnical"],
     complexity_supported: ["complex"],
     availability: "low",
     location: "Pittsburgh, PA",
@@ -375,6 +507,7 @@ export const PROVIDERS: Provider[] = [
     id: "31",
     name: "Drafted Architectural Malpractice Firm",
     category: "architectural malpractice",
+    specialties: ["design defect", "code violation", "cost overrun", "construction administration"],
     complexity_supported: ["moderate", "complex"],
     availability: "medium",
     location: "San Francisco, CA",
@@ -386,6 +519,7 @@ export const PROVIDERS: Provider[] = [
     id: "32",
     name: "Sanctuary Clergy Abuse Advocates",
     category: "clergy malpractice",
+    specialties: ["clergy abuse", "institutional cover-up", "breach of confidence"],
     complexity_supported: ["complex"],
     availability: "medium",
     location: "Boston, MA",
@@ -397,6 +531,7 @@ export const PROVIDERS: Provider[] = [
 
 export interface MatchInput {
   category: string;
+  specialties: string[];
   urgency: Urgency;
   complexity: Complexity;
   location: string;
@@ -451,11 +586,38 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
     const breakdown: ScoredProvider["breakdown"] = [];
 
     const categoryMatch = provider.category.toLowerCase() === input.category.toLowerCase();
+    const categoryPts = categoryMatch ? 20 : 0;
+
+    // Specialty subscore (max 10) rolls into the documented 30-pt category weight.
+    const userSpecs = input.specialties.map((s) => s.toLowerCase());
+    const provSpecs = provider.specialties.map((s) => s.toLowerCase());
+    const overlap = userSpecs.filter((s) => provSpecs.includes(s));
+    let specialtyPts = 0;
+    let specialtyNote = "";
+    if (!categoryMatch) {
+      specialtyPts = 0;
+      specialtyNote = "Different category — specialties not credited";
+    } else if (userSpecs.length === 0) {
+      specialtyPts = 10;
+      specialtyNote = `Covers ${provider.specialties.slice(0, 3).join(", ")}${provider.specialties.length > 3 ? ", …" : ""}`;
+    } else {
+      specialtyPts = Math.round((overlap.length / userSpecs.length) * 10);
+      specialtyNote = overlap.length
+        ? `Matches your specialties: ${overlap.join(", ")}`
+        : `No overlap with your specialties (offers ${provider.specialties.slice(0, 3).join(", ")})`;
+    }
+
     breakdown.push({
       label: "Category",
-      points: categoryMatch ? 30 : 0,
-      max: 30,
+      points: categoryPts,
+      max: 20,
       note: categoryMatch ? `Practices ${provider.category}` : `Different category (${provider.category})`,
+    });
+    breakdown.push({
+      label: "Specialty",
+      points: specialtyPts,
+      max: 10,
+      note: specialtyNote,
     });
 
     const complexityFit = provider.complexity_supported.includes(input.complexity);
