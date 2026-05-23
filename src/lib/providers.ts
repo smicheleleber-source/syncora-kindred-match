@@ -56,6 +56,7 @@ export const DOMAINS = [
   "Medical",
   "Professional Services",
   "Spiritual & Counseling",
+  "Self-Governance Alliances",
 ] as const;
 export type Domain = (typeof DOMAINS)[number];
 
@@ -64,6 +65,8 @@ export const DOMAIN_DESCRIPTIONS: Record<Domain, string> = {
   Medical: "Malpractice and negligence claims involving healthcare providers.",
   "Professional Services": "Negligence by accountants, engineers, and architects.",
   "Spiritual & Counseling": "Abuse and breach-of-trust by clergy or counselors.",
+  "Self-Governance Alliances":
+    "Community-led groups: mutual aid, co-ops, tenant unions, restorative circles.",
 };
 
 export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
@@ -97,6 +100,18 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "architectural malpractice",
   ],
   "Spiritual & Counseling": ["clergy malpractice"],
+  "Self-Governance Alliances": [
+    "mutual aid network",
+    "worker cooperative",
+    "housing cooperative",
+    "tenant union",
+    "community land trust",
+    "restorative justice circle",
+    "community defense fund",
+    "neighborhood council",
+    "credit union / lending circle",
+    "indigenous self-governance",
+  ],
 };
 
 // Specialty options shown to users after they pick a category. These define
