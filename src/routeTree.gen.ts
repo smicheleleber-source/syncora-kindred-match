@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
 import { Route as CasesRouteImport } from './routes/cases'
@@ -17,6 +18,11 @@ import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
 
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DonateRoute = DonateRouteImport.update({
   id: '/donate',
   path: '/donate',
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/cases': typeof CasesRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
+  '/reviews': typeof ReviewsRoute
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/providers/join': typeof ProvidersJoinRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/cases'
     | '/connections'
     | '/donate'
+    | '/reviews'
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/providers/join'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   CasesRoute: typeof CasesRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
+  ReviewsRoute: typeof ReviewsRoute
   PlaybooksLitigationRoute: typeof PlaybooksLitigationRoute
   PlaybooksMatrixRoute: typeof PlaybooksMatrixRoute
   ProvidersJoinRoute: typeof ProvidersJoinRoute
@@ -123,6 +136,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/donate': {
       id: '/donate'
       path: '/donate'
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   CasesRoute: CasesRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
+  ReviewsRoute: ReviewsRoute,
   PlaybooksLitigationRoute: PlaybooksLitigationRoute,
   PlaybooksMatrixRoute: PlaybooksMatrixRoute,
   ProvidersJoinRoute: ProvidersJoinRoute,
@@ -187,3 +208,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
