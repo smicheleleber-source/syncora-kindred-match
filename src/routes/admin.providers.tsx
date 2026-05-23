@@ -38,6 +38,7 @@ function emptyDraft(): Provider {
     name: "",
     category: CATEGORIES[0],
     specialties: [],
+    validated_specialties: [],
     complexity_supported: ["moderate"],
     availability: "medium",
     location: "",
