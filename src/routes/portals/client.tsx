@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Search, FolderOpen, FileText, Star, MessageSquare, ShieldAlert, Calendar, Heart } from "lucide-react";
 import { PortalHeader, ToolSection, type Tool } from "@/components/PortalCard";
 
-export const Route = createFileRoute("/portals/client-portal")({
+export const Route = createFileRoute("/portals/client")({
   head: () => ({
     meta: [
       { title: "Client Portal — Syncora Connect" },
