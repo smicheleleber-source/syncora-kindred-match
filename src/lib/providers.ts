@@ -47,6 +47,16 @@ export const CATEGORIES = [
   "engineering malpractice",
   "architectural malpractice",
   "clergy malpractice",
+  "mutual aid network",
+  "worker cooperative",
+  "housing cooperative",
+  "tenant union",
+  "community land trust",
+  "restorative justice circle",
+  "community defense fund",
+  "neighborhood council",
+  "credit union / lending circle",
+  "indigenous self-governance",
 ] as const;
 
 // Top-level reason a user comes to Syncora Connect. Each domain expands into a
