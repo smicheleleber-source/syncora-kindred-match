@@ -84,12 +84,20 @@ const supplierSchema = z.object({
     .trim()
     .min(20, "Add at least a short description (20+ chars)")
     .max(600, "Keep your bio under 600 characters"),
+  pro_bono: z.boolean().optional(),
+  hourly_rate: z.number().int().min(0).max(5000).optional(),
+  firm_size: z.enum(["solo", "small", "mid", "large"]).optional(),
+  gender_composition: z.enum([
+    "mixed",
+    "predominantly_male",
+    "predominantly_female",
+    "all_male",
+    "all_female",
+    "prefer_not_to_say",
+  ]).optional(),
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
-}).refine((v) => v.hourly_rate == null || v.hourly_rate >= 0, {
-  message: "Hourly rate cannot be negative",
-  path: ["hourly_rate"],
 });
 
 type FormErrors = Partial<Record<string, string>>;
