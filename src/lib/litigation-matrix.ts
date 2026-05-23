@@ -60,6 +60,7 @@ export interface CourtDocument {
   cite: string; // e.g. "Dkt. 42", "Ex. B", "Smith Depo 112:4-19"
   url?: string;
   notes?: string;
+  citation_ids: string[]; // case-law authority joined into this doc
   created_at: number;
 }
 
@@ -70,6 +71,7 @@ export interface MatrixElement {
   strength: ProofStrength;
   evidence_notes: string;
   document_ids: string[]; // refs into CourtDocument[]
+  citation_ids: string[]; // case-law authority supporting the element
 }
 
 export interface MatrixClaim {
@@ -87,9 +89,28 @@ export interface LitigationMatrix {
   trial_date: string; // ISO date or ""
   documents: CourtDocument[];
   claims: MatrixClaim[];
+  citations: CaseLawCitation[];
 }
 
-const STORAGE_KEY = "syncora.litigation-matrix.v1";
+export interface CaseLawCitation {
+  id: string;
+  case_name: string; // e.g. "Hadley v. Baxendale"
+  reporter: string; // e.g. "9 Ex. 341" or "517 U.S. 559"
+  court: string; // e.g. "U.S. Supreme Court", "S.D.N.Y."
+  year: number;
+  pin_cite?: string; // e.g. "at 564"
+  holding: string; // 1–3 sentence summary
+  url?: string; // CourtListener / Google Scholar / Westlaw permalink
+  tags: string[]; // e.g. ["breach", "damages", "foreseeability"]
+  created_at: number;
+}
+
+export function formatCitation(c: CaseLawCitation): string {
+  const pin = c.pin_cite ? `, ${c.pin_cite}` : "";
+  return `${c.case_name}, ${c.reporter}${pin} (${c.court} ${c.year})`;
+}
+
+const STORAGE_KEY = "syncora.litigation-matrix.v2";
 
 function uid(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
