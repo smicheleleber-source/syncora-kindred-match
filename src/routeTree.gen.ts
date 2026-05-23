@@ -13,6 +13,7 @@ import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as LegislativeRouteImport } from './routes/legislative'
 import { Route as JudgesRouteImport } from './routes/judges'
@@ -60,6 +61,11 @@ const ReviewsRoute = ReviewsRouteImport.update({
 const ProfessionalsRoute = ProfessionalsRouteImport.update({
   id: '/professionals',
   path: '/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PortalsRoute = PortalsRouteImport.update({
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -288,6 +296,7 @@ export interface FileRoutesById {
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
@@ -324,6 +333,7 @@ export interface FileRouteTypes {
     | '/judges'
     | '/legislative'
     | '/portals'
+    | '/pricing'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -358,6 +368,7 @@ export interface FileRouteTypes {
     | '/judges'
     | '/legislative'
     | '/portals'
+    | '/pricing'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -392,6 +403,7 @@ export interface FileRouteTypes {
     | '/judges'
     | '/legislative'
     | '/portals'
+    | '/pricing'
     | '/professionals'
     | '/reviews'
     | '/solicitor'
@@ -427,6 +439,7 @@ export interface RootRouteChildren {
   JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
   PortalsRoute: typeof PortalsRouteWithChildren
+  PricingRoute: typeof PricingRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
@@ -468,6 +481,13 @@ declare module '@tanstack/react-router' {
       path: '/professionals'
       fullPath: '/professionals'
       preLoaderRoute: typeof ProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/portals': {
@@ -716,6 +736,7 @@ const rootRouteChildren: RootRouteChildren = {
   JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
   PortalsRoute: PortalsRouteWithChildren,
+  PricingRoute: PricingRoute,
   ProfessionalsRoute: ProfessionalsRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
