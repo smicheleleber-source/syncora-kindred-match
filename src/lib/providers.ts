@@ -12,6 +12,14 @@ export interface Provider {
   budget_min: number;
   budget_max: number;
   bio: string;
+  // Supplier-supplied verification & availability detail
+  license_number?: string;
+  license_board?: string; // e.g. "Texas State Bar", "California Medical Board"
+  years_experience?: number;
+  verified?: boolean; // true once license_number + board look valid
+  next_available?: string; // ISO date string of soonest open slot
+  weekly_capacity?: number; // new matters they can take per week
+  contact_email?: string;
 }
 
 export const CATEGORIES = [

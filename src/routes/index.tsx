@@ -11,6 +11,8 @@ import {
   type MatchInput,
   type Urgency,
 } from "@/lib/providers";
+import { useProviders } from "@/lib/provider-store";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,10 +39,11 @@ function Index() {
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(5000);
   const [submitted, setSubmitted] = useState<MatchInput | null>(null);
+  const providerDirectory = useProviders();
 
   const matches = useMemo(
-    () => (submitted ? matchProviders(submitted) : []),
-    [submitted],
+    () => (submitted ? matchProviders(submitted, providerDirectory) : []),
+    [submitted, providerDirectory],
   );
 
   function onSubmit(e: React.FormEvent) {
@@ -97,6 +100,17 @@ function Index() {
             Start with the reason you're here, narrow to a practice area, then tell us
             about your case. We'll score every provider and surface your top three matches.
           </p>
+          <div className="mt-6 flex flex-wrap gap-2 text-sm">
+            <span className="rounded-full bg-primary px-4 py-1.5 font-medium text-primary-foreground">
+              Find a provider
+            </span>
+            <Link
+              to="/providers/join"
+              className="rounded-full border border-border bg-background px-4 py-1.5 font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              List your practice →
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -325,11 +339,32 @@ function Index() {
                         </div>
                         <h3 className="mt-1 text-lg font-semibold text-card-foreground">
                           {m.provider.name}
+                          {m.provider.verified && (
+                            <span
+                              title={`Verified · ${m.provider.license_board ?? "license on file"}`}
+                              className="ml-2 inline-flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 align-middle text-[10px] font-semibold uppercase tracking-wider text-accent-foreground ring-1 ring-accent/40"
+                            >
+                              ✓ Verified
+                            </span>
+                          )}
                         </h3>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {m.provider.location} · ${m.provider.budget_min.toLocaleString()}–$
                           {m.provider.budget_max.toLocaleString()}
                         </p>
+                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null) && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {m.provider.years_experience != null && (
+                              <span>{m.provider.years_experience} yrs experience</span>
+                            )}
+                            {m.provider.next_available && (
+                              <span> · Next open {m.provider.next_available}</span>
+                            )}
+                            {m.provider.weekly_capacity != null && (
+                              <span> · {m.provider.weekly_capacity}/wk capacity</span>
+                            )}
+                          </p>
+                        )}
                         {m.provider.specialties.length > 0 && (
                           <div className="mt-2 flex flex-wrap gap-1.5">
                             {m.provider.specialties.map((s) => {
