@@ -66,6 +66,8 @@ function strengthClass(s: ProofStrength) {
 function MatrixPage() {
   const m = useMatrix();
   const [docPanelOpen, setDocPanelOpen] = useState(false);
+  const [citationsPanelOpen, setCitationsPanelOpen] = useState(false);
+  const [draftClaimId, setDraftClaimId] = useState<string | null>(null);
 
   const overallPct = useMemo(() => {
     if (m.claims.length === 0) return 0;
@@ -118,6 +120,13 @@ function MatrixPage() {
             >
               Court documents ({m.documents.length})
             </button>
+            <button
+              type="button"
+              onClick={() => setCitationsPanelOpen(true)}
+              className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
+            >
+              Case law ({(m.citations ?? []).length})
+            </button>
             <Link
               to="/playbooks/litigation"
               className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
@@ -131,14 +140,37 @@ function MatrixPage() {
       <main className="mx-auto max-w-7xl px-6 py-10">
         <div className="space-y-6">
           {m.claims.map((claim) => (
-            <ClaimCard key={claim.id} claim={claim} docs={m.documents} />
+            <ClaimCard
+              key={claim.id}
+              claim={claim}
+              docs={m.documents}
+              citations={m.citations ?? []}
+              onBuildDraft={() => setDraftClaimId(claim.id)}
+            />
           ))}
           <AddClaimForm />
         </div>
       </main>
 
       {docPanelOpen && (
-        <DocumentPanel docs={m.documents} onClose={() => setDocPanelOpen(false)} />
+        <DocumentPanel
+          docs={m.documents}
+          citations={m.citations ?? []}
+          onClose={() => setDocPanelOpen(false)}
+        />
+      )}
+      {citationsPanelOpen && (
+        <CitationsPanel
+          citations={m.citations ?? []}
+          onClose={() => setCitationsPanelOpen(false)}
+        />
+      )}
+      {draftClaimId && (
+        <DraftModal
+          matrix={m}
+          claim={m.claims.find((c) => c.id === draftClaimId)!}
+          onClose={() => setDraftClaimId(null)}
+        />
       )}
     </div>
   );
