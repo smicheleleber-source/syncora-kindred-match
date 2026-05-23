@@ -296,14 +296,6 @@ function Index() {
         </form>
         )}
 
-          <button
-            type="submit"
-            className="mt-8 inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            Find my top 3 matches
-          </button>
-        </form>
-
         <section id="results" className="mt-12">
           {submitted ? (
             <>
