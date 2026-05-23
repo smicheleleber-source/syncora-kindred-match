@@ -222,6 +222,12 @@ function LitigationPlaybook() {
           <Link to="/connections" className="font-medium text-primary hover:underline">
             Bring it into a connection →
           </Link>
+          <span className="ml-2">
+            Need the proof-level view?{" "}
+            <Link to="/playbooks/matrix" className="font-medium text-primary hover:underline">
+              Open the litigation matrix →
+            </Link>
+          </span>
         </div>
       </main>
     </div>
