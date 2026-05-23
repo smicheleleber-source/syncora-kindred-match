@@ -569,12 +569,29 @@ function Index() {
           {submitted ? (
             <>
               <div className="flex items-baseline justify-between">
-                <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-                  Your top matches
-                </h2>
-                <span className="text-xs text-muted-foreground">
-                  Scored out of 100
-                </span>
+                <div>
+                  <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+                    Top matches for{" "}
+                    <span className="capitalize text-primary">
+                      {submitted.category}
+                    </span>
+                  </h2>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Need another area of law? Stack a second matter below.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={startAnotherMatter}
+                    className="rounded-full border border-primary/40 bg-primary/5 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/10"
+                  >
+                    + Add another need
+                  </button>
+                  <span className="text-xs text-muted-foreground">
+                    Scored out of 100
+                  </span>
+                </div>
               </div>
               <ol className="mt-6 space-y-4">
                 {matches.map((m, i) => (
