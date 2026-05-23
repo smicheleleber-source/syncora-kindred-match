@@ -13,6 +13,7 @@ import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
 import { Route as DonateRouteImport } from './routes/donate'
 import { Route as ConnectionsRouteImport } from './routes/connections'
+import { Route as CollabRouteImport } from './routes/collab'
 import { Route as CasesRouteImport } from './routes/cases'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
@@ -37,6 +38,11 @@ const DonateRoute = DonateRouteImport.update({
 const ConnectionsRoute = ConnectionsRouteImport.update({
   id: '/connections',
   path: '/connections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollabRoute = CollabRouteImport.update({
+  id: '/collab',
+  path: '/collab',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CasesRoute = CasesRouteImport.update({
@@ -68,6 +74,7 @@ const PlaybooksLitigationRoute = PlaybooksLitigationRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cases': typeof CasesRoute
+  '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/professionals': typeof ProfessionalsRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cases': typeof CasesRoute
+  '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/professionals': typeof ProfessionalsRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cases': typeof CasesRoute
+  '/collab': typeof CollabRoute
   '/connections': typeof ConnectionsRoute
   '/donate': typeof DonateRoute
   '/professionals': typeof ProfessionalsRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/cases'
+    | '/collab'
     | '/connections'
     | '/donate'
     | '/professionals'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/cases'
+    | '/collab'
     | '/connections'
     | '/donate'
     | '/professionals'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/cases'
+    | '/collab'
     | '/connections'
     | '/donate'
     | '/professionals'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CasesRoute: typeof CasesRoute
+  CollabRoute: typeof CollabRoute
   ConnectionsRoute: typeof ConnectionsRoute
   DonateRoute: typeof DonateRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
@@ -175,6 +188,13 @@ declare module '@tanstack/react-router' {
       path: '/connections'
       fullPath: '/connections'
       preLoaderRoute: typeof ConnectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collab': {
+      id: '/collab'
+      path: '/collab'
+      fullPath: '/collab'
+      preLoaderRoute: typeof CollabRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cases': {
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CasesRoute: CasesRoute,
+  CollabRoute: CollabRoute,
   ConnectionsRoute: ConnectionsRoute,
   DonateRoute: DonateRoute,
   ProfessionalsRoute: ProfessionalsRoute,
@@ -229,3 +250,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
