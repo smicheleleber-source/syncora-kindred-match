@@ -32,7 +32,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProvidersJoinRouteImport } from './routes/providers/join'
 import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PortalsProfessionalRouteImport } from './routes/portals.professional'
-import { Route as PortalsClientRouteImport } from './routes/portals.client'
+import { Route as PortalsClientRouteImport } from './routes/portals/client'
 import { Route as PortalsAgencyRouteImport } from './routes/portals.agency'
 import { Route as PortalsAdvertiserRouteImport } from './routes/portals.advertiser'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
@@ -752,3 +752,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
