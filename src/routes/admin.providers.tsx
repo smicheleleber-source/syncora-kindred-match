@@ -300,6 +300,9 @@ function AdminProvidersPage() {
                             specialties: on
                               ? draft.specialties.filter((x) => x !== s)
                               : [...draft.specialties, s],
+                            validated_specialties: on
+                              ? (draft.validated_specialties ?? []).filter((x) => x !== s)
+                              : draft.validated_specialties,
                           })
                         }
                         className={`rounded-full border px-2 py-0.5 text-xs ${on ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}
@@ -309,6 +312,43 @@ function AdminProvidersPage() {
                     );
                   })}
                 </div>
+              </Field>
+              <Field
+                label={`Validated specialties (${(draft.validated_specialties ?? []).length}/${draft.specialties.length})`}
+              >
+                <div className="flex max-h-32 flex-wrap gap-1 overflow-y-auto rounded border border-border bg-background p-2">
+                  {draft.specialties.length === 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      Add specialties first — then mark which ones are validated.
+                    </span>
+                  )}
+                  {draft.specialties.map((s) => {
+                    const validated = (draft.validated_specialties ?? []).includes(s);
+                    return (
+                      <button
+                        type="button"
+                        key={s}
+                        onClick={() => {
+                          const cur = draft.validated_specialties ?? [];
+                          setDraft({
+                            ...draft,
+                            validated_specialties: validated
+                              ? cur.filter((x) => x !== s)
+                              : [...cur, s],
+                          });
+                        }}
+                        className={`rounded-full border px-2 py-0.5 text-xs ${validated ? "border-emerald-600 bg-emerald-600/10 text-emerald-700" : "border-amber-500/60 bg-amber-500/10 text-amber-700"}`}
+                      >
+                        {validated ? "✓ " : "◷ "}
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Claimed (◷) = self-reported experience. Validated (✓) = confirmed by
+                  Syncora (license, references, or sample work).
+                </p>
               </Field>
               <Field label="Bio" className="md:col-span-2">
                 <textarea
