@@ -227,6 +227,37 @@ export const SPECIALTIES_BY_CATEGORY: Record<string, string[]> = {
   "clergy malpractice": [
     "clergy abuse", "institutional cover-up", "breach of confidence",
   ],
+  "mutual aid network": [
+    "food distribution", "rent relief", "medical bill help",
+    "childcare support", "disaster response",
+  ],
+  "worker cooperative": [
+    "tech", "trades", "agriculture", "food service", "creative services",
+  ],
+  "housing cooperative": [
+    "limited equity", "student housing", "senior housing", "affordable ownership",
+  ],
+  "tenant union": [
+    "rent strike", "eviction defense", "habitability", "rent control",
+  ],
+  "community land trust": [
+    "affordable homeownership", "commercial CLT", "agricultural CLT",
+  ],
+  "restorative justice circle": [
+    "youth diversion", "harm repair", "school-based", "reentry",
+  ],
+  "community defense fund": [
+    "bail fund", "ICE defense", "protest legal support", "police accountability",
+  ],
+  "neighborhood council": [
+    "participatory budgeting", "public safety", "land use", "civic tech",
+  ],
+  "credit union / lending circle": [
+    "tanda / cundina", "small-business loans", "emergency loans", "financial literacy",
+  ],
+  "indigenous self-governance": [
+    "tribal council", "land back", "traditional courts", "language revitalization",
+  ],
 };
 
 export const PROVIDERS: Provider[] = [
