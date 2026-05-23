@@ -19,6 +19,16 @@ export function addProvider(p: Provider) {
   emit();
 }
 
+export function updateProvider(id: string, patch: Partial<Provider>) {
+  providers = providers.map((p) => (p.id === id ? { ...p, ...patch } : p));
+  emit();
+}
+
+export function removeProvider(id: string) {
+  providers = providers.filter((p) => p.id !== id);
+  emit();
+}
+
 export function useProviders(): Provider[] {
   return useSyncExternalStore(
     (cb) => {
