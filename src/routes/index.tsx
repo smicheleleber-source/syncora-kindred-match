@@ -1033,6 +1033,106 @@ function SyncoraHero() {
 }
 
 function NetworkDiagram() {
+
+}
+
+function UserProfileCard() {
+  const { user, profile, roles, loading, signOut } = useAuth();
+
+  if (loading) {
+    return (
+      <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+        <div className="h-5 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-4 w-48 animate-pulse rounded bg-muted" />
+      </section>
+    );
+  }
+
+  if (!user) {
+    return (
+      <section className="mt-8 rounded-2xl border border-border bg-card p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div className="flex items-start gap-4">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <UserCircle2 className="h-6 w-6" />
+          </span>
+          <div>
+            <div className="text-base font-semibold text-card-foreground">Your profile</div>
+            <p className="mt-1 text-sm text-muted-foreground">Sign in to see your profile, role, and shortcuts to your work.</p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+          <Link
+            to="/auth"
+            search={{ mode: "signin", redirect: "/" }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110"
+          >
+            <LogIn className="h-4 w-4" /> Sign in
+          </Link>
+          <Link
+            to="/auth"
+            search={{ mode: "signup", redirect: "/" }}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+          >
+            Create account
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  const name = profile?.display_name?.trim() || user.email?.split("@")[0] || "there";
+  const initials = name.slice(0, 2).toUpperCase();
+  const primaryRole = roles[0];
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+      <div className="flex items-start gap-4">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+          {initials}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-base font-semibold text-card-foreground">Welcome back, {name}</div>
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">{user.email}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {primaryRole ? (
+              roles.map((r) => (
+                <span key={r} className="inline-flex items-center rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-medium text-accent">
+                  {ROLE_LABELS[r]}
+                </span>
+              ))
+            ) : (
+              <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                No role assigned yet
+              </span>
+            )}
+            {profile?.title ? (
+              <span className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
+                {profile.title}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link to="/employee/dashboard" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110">
+          Open dashboard <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link to="/employee/tasks" className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted">
+          My tasks
+        </Link>
+        <button
+          type="button"
+          onClick={() => signOut()}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
+        >
+          Sign out
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function _NetworkDiagram_orig() {
   const nodes = [
     { x: 50, y: 20, icon: Briefcase, ring: "bg-accent" },
     { x: 15, y: 60, icon: Scale, ring: "bg-primary" },
