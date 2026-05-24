@@ -300,3 +300,41 @@ function Stat({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+
+function ComplexityLine({
+  provider,
+}: {
+  provider: import("@/lib/providers").Provider;
+}) {
+  const validated = getValidatedComplexity(provider);
+  const pending = getClaimedPendingComplexity(provider);
+  return (
+    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+      <span>Handles:</span>
+      {validated.length > 0 ? (
+        validated.map((c) => (
+          <span
+            key={c}
+            className="inline-flex items-center gap-1 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold capitalize text-accent-foreground ring-1 ring-accent/40"
+          >
+            ✓ {c}
+          </span>
+        ))
+      ) : (
+        <span className="italic text-muted-foreground/80">
+          no validated tiers yet
+        </span>
+      )}
+      {pending.map((c) => (
+        <span
+          key={c}
+          className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold capitalize text-amber-700 ring-1 ring-amber-500/40 dark:text-amber-300"
+          title="Self-claimed — pending case-work validation"
+        >
+          {c} · claimed
+        </span>
+      ))}
+    </p>
+  );
+}
+}
