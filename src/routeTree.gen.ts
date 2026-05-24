@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
+import { Route as SupplyDemandRouteImport } from './routes/supply-demand'
 import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -49,6 +50,11 @@ import { Route as AdminEmployeesRouteImport } from './routes/admin.employees'
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupplyDemandRoute = SupplyDemandRouteImport.update({
+  id: '/supply-demand',
+  path: '/supply-demand',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SolicitorRoute = SolicitorRouteImport.update({
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/supply-demand': typeof SupplyDemandRoute
   '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/supply-demand': typeof SupplyDemandRoute
   '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
+  '/supply-demand': typeof SupplyDemandRoute
   '/trust': typeof TrustRoute
   '/admin/employees': typeof AdminEmployeesRoute
   '/admin/judges': typeof AdminJudgesRoute
@@ -366,6 +375,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/reviews'
     | '/solicitor'
+    | '/supply-demand'
     | '/trust'
     | '/admin/employees'
     | '/admin/judges'
@@ -404,6 +414,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/reviews'
     | '/solicitor'
+    | '/supply-demand'
     | '/trust'
     | '/admin/employees'
     | '/admin/judges'
@@ -442,6 +453,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/reviews'
     | '/solicitor'
+    | '/supply-demand'
     | '/trust'
     | '/admin/employees'
     | '/admin/judges'
@@ -481,6 +493,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
+  SupplyDemandRoute: typeof SupplyDemandRoute
   TrustRoute: typeof TrustRoute
   AdminEmployeesRoute: typeof AdminEmployeesRoute
   AdminJudgesRoute: typeof AdminJudgesRoute
@@ -499,6 +512,13 @@ declare module '@tanstack/react-router' {
       path: '/trust'
       fullPath: '/trust'
       preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/supply-demand': {
+      id: '/supply-demand'
+      path: '/supply-demand'
+      fullPath: '/supply-demand'
+      preLoaderRoute: typeof SupplyDemandRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/solicitor': {
@@ -802,6 +822,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
+  SupplyDemandRoute: SupplyDemandRoute,
   TrustRoute: TrustRoute,
   AdminEmployeesRoute: AdminEmployeesRoute,
   AdminJudgesRoute: AdminJudgesRoute,
