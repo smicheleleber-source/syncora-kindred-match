@@ -193,6 +193,33 @@ export function getExperienceYears(p: Provider): number | null {
   return yrs < 0 ? 0 : Math.floor(yrs);
 }
 
+// ---- Location / licensed-state helpers ----
+
+/** Extract the 2-letter state code from a "City, ST" location string. */
+export function parseStateFromLocation(loc: string): string | null {
+  const m = loc?.match(/,\s*([A-Za-z]{2})\b/);
+  return m ? m[1].toUpperCase() : null;
+}
+
+/** Extract the city portion ("City") from a "City, ST" location string. */
+export function parseCityFromLocation(loc: string): string | null {
+  const m = loc?.match(/^([^,]+),/);
+  return m ? m[1].trim() : null;
+}
+
+/**
+ * Returns the states a provider can practice in. Prefers the explicit
+ * `licensed_states` list; falls back to the state implied by their
+ * primary `location` so legacy seed entries still surface in supply maps.
+ */
+export function getLicensedStates(p: Provider): string[] {
+  if (p.licensed_states && p.licensed_states.length) {
+    return p.licensed_states.map((s) => s.toUpperCase());
+  }
+  const st = parseStateFromLocation(p.location);
+  return st ? [st] : [];
+}
+
 // ---- Continuing-education checklist ----
 
 export type CEKey =
