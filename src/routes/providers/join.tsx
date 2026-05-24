@@ -796,6 +796,109 @@ function JoinPage() {
             )}
           </Section>
 
+          <Section title="Continuing education (last 12 months)">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Check each CLE / continuing-education topic you've completed in
+              the last year. Add hours and the issuing provider where you can —
+              clients see this on your profile.
+            </p>
+            <div className="space-y-2">
+              {CE_CHECKLIST.map((item) => {
+                const entry = ce[item.key];
+                const checked = !!entry?.completed;
+                return (
+                  <div
+                    key={item.key}
+                    className="rounded-md border border-input bg-background p-3"
+                  >
+                    <label className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          setCe((prev) => ({
+                            ...prev,
+                            [item.key]: {
+                              ...(prev[item.key] ?? {}),
+                              completed: e.target.checked,
+                            },
+                          }))
+                        }
+                        className="mt-0.5 h-4 w-4 rounded border-input text-primary"
+                      />
+                      <span className="text-sm text-foreground">
+                        <strong className="block font-medium">
+                          {item.label}
+                          <span className="ml-2 text-[11px] font-normal text-muted-foreground">
+                            min {item.minHours} hr{item.minHours === 1 ? "" : "s"}
+                          </span>
+                        </strong>
+                        <span className="text-xs text-muted-foreground">
+                          {item.description}
+                        </span>
+                      </span>
+                    </label>
+                    {checked && (
+                      <div className="mt-3 grid gap-2 md:grid-cols-3">
+                        <input
+                          type="number"
+                          min={0}
+                          max={200}
+                          step={0.5}
+                          value={entry?.hours ?? ""}
+                          onChange={(e) =>
+                            setCe((prev) => ({
+                              ...prev,
+                              [item.key]: {
+                                ...(prev[item.key] ?? { completed: true }),
+                                completed: true,
+                                hours: Number(e.target.value) || 0,
+                              },
+                            }))
+                          }
+                          placeholder="Hours"
+                          className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                        />
+                        <input
+                          type="date"
+                          value={entry?.completed_on ?? ""}
+                          onChange={(e) =>
+                            setCe((prev) => ({
+                              ...prev,
+                              [item.key]: {
+                                ...(prev[item.key] ?? { completed: true }),
+                                completed: true,
+                                completed_on: e.target.value,
+                              },
+                            }))
+                          }
+                          className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                        />
+                        <input
+                          type="text"
+                          value={entry?.provider ?? ""}
+                          onChange={(e) =>
+                            setCe((prev) => ({
+                              ...prev,
+                              [item.key]: {
+                                ...(prev[item.key] ?? { completed: true }),
+                                completed: true,
+                                provider: e.target.value,
+                              },
+                            }))
+                          }
+                          placeholder="CLE provider / bar"
+                          maxLength={160}
+                          className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </Section>
+
           {library.length > 0 && (
             <Section title="Parameters other suppliers and clients commonly track">
               <p className="mb-3 text-xs text-muted-foreground">
