@@ -115,9 +115,9 @@ function ProviderDetail() {
                 {provider.budget_max.toLocaleString()}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                Availability: {provider.availability} urgency · Handles{" "}
-                {provider.complexity_supported.join(", ")}
+                Availability: {provider.availability} urgency
               </p>
+              <ComplexityLine provider={provider} />
             </div>
             {scored && (
               <div className="flex items-baseline gap-1 rounded-full bg-primary/10 px-3 py-1.5">
