@@ -17,7 +17,8 @@ import { useProviders } from "@/lib/provider-store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
 import { summarizeProvider, useReviews } from "@/lib/reviews-store";
-import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight, Users, Landmark, Megaphone } from "lucide-react";
+import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight, Users, Landmark, Megaphone, UserCircle2, LogIn } from "lucide-react";
+import { useAuth, ROLE_LABELS } from "@/lib/auth";
 
 type Matter = {
   id: string;
