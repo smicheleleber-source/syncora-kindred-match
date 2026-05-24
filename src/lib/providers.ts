@@ -76,6 +76,30 @@ export interface Provider {
   backup_firms?: BackupContact[];
   // Continuing-education attestations completed in the last 12 months.
   continuing_education?: Partial<Record<CEKey, CEEntry>>;
+  // Academic degrees (JD, LLM, MBA, MD, etc.). Self-reported on signup.
+  // `validated` is system-controlled — Syncora confirms with the issuing
+  // institution / NSC before the entry is shown as ✓ verified.
+  degrees?: Degree[];
+  // Board certifications and specialty credentials (e.g. "Board Certified —
+  // Family Law, Texas Board of Legal Specialization"). `validated` is set by
+  // Syncora after confirming with the issuing body.
+  certifications?: Certification[];
+}
+
+export interface Degree {
+  degree: string;        // e.g. "JD", "LLM", "MBA", "BA"
+  institution: string;   // e.g. "University of Texas School of Law"
+  field?: string;        // e.g. "Tax Law", "International Arbitration"
+  year?: number;         // year conferred
+  validated?: boolean;   // system-controlled
+}
+
+export interface Certification {
+  name: string;          // e.g. "Board Certified — Family Law"
+  issuer: string;        // e.g. "Texas Board of Legal Specialization"
+  year?: number;         // year issued
+  expires?: string;      // YYYY-MM-DD if applicable
+  validated?: boolean;   // system-controlled
 }
 
 // Flat discount applied (display only) when a lawyer has no paralegal.

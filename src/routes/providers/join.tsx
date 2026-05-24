@@ -12,7 +12,9 @@ import {
   type BackupContact,
   type CEEntry,
   type CEKey,
+  type Certification,
   type Complexity,
+  type Degree,
   type Domain,
   type EthicsKey,
   type FirmSize,
@@ -141,6 +143,42 @@ const supplierSchema = z.object({
       }),
     )
     .optional(),
+  degrees: z
+    .array(
+      z.object({
+        degree: z.string().trim().min(1, "Degree required").max(40),
+        institution: z.string().trim().min(2, "Institution required").max(160),
+        field: z.string().trim().max(120).optional().or(z.literal("")),
+        year: z
+          .number()
+          .int()
+          .min(1900)
+          .max(new Date().getFullYear() + 1)
+          .optional(),
+      }),
+    )
+    .max(15)
+    .optional(),
+  certifications: z
+    .array(
+      z.object({
+        name: z.string().trim().min(2, "Name required").max(160),
+        issuer: z.string().trim().min(2, "Issuer required").max(160),
+        year: z
+          .number()
+          .int()
+          .min(1900)
+          .max(new Date().getFullYear() + 1)
+          .optional(),
+        expires: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional()
+          .or(z.literal("")),
+      }),
+    )
+    .max(20)
+    .optional(),
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
@@ -202,6 +240,12 @@ function JoinPage() {
     { firm: "", attorney: "", contact: "" },
   ]);
   const [ce, setCe] = useState<Partial<Record<CEKey, CEEntry>>>({});
+  const [degrees, setDegrees] = useState<Degree[]>([
+    { degree: "", institution: "", field: "", year: undefined },
+  ]);
+  const [certifications, setCertifications] = useState<Certification[]>([
+    { name: "", issuer: "", year: undefined, expires: "" },
+  ]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
   const errorSummaryRef = useRef<HTMLDivElement | null>(null);
@@ -260,6 +304,22 @@ function JoinPage() {
         }))
         .filter((b) => b.firm),
       continuing_education: ce,
+      degrees: degrees
+        .map((d) => ({
+          degree: d.degree.trim(),
+          institution: d.institution.trim(),
+          field: d.field?.trim() || undefined,
+          year: d.year || undefined,
+        }))
+        .filter((d) => d.degree && d.institution),
+      certifications: certifications
+        .map((c) => ({
+          name: c.name.trim(),
+          issuer: c.issuer.trim(),
+          year: c.year || undefined,
+          expires: c.expires?.trim() || undefined,
+        }))
+        .filter((c) => c.name && c.issuer),
     };
     const parsed = supplierSchema.safeParse(payload);
     if (!parsed.success) {
@@ -317,6 +377,13 @@ function JoinPage() {
       ethics: v.ethics,
       backup_firms: v.backup_firms,
       continuing_education: v.continuing_education,
+      // All credentials enter as unvalidated claims — system flips
+      // `validated` after confirmation with the issuing institution / body.
+      degrees: (v.degrees ?? []).map((d) => ({ ...d, validated: false })),
+      certifications: (v.certifications ?? []).map((c) => ({
+        ...c,
+        validated: false,
+      })),
     });
 
     setSuccess(
@@ -893,6 +960,207 @@ function JoinPage() {
                 </button>
               </div>
             )}
+          </Section>
+
+          <Section title="Degrees & education">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Add the academic degrees that qualify you for this practice.
+              Each entry is verified by Syncora against the institution's
+              registrar / National Student Clearinghouse and shown with a ✓
+              once confirmed.
+            </p>
+            <div className="space-y-2">
+              {degrees.map((d, i) => (
+                <div
+                  key={i}
+                  className="grid gap-2 rounded-md border border-input bg-background p-3 md:grid-cols-[0.8fr_1.6fr_1.2fr_0.6fr_auto]"
+                >
+                  <input
+                    type="text"
+                    value={d.degree}
+                    onChange={(e) =>
+                      setDegrees((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, degree: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    placeholder="JD / LLM / MBA"
+                    maxLength={40}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={d.institution}
+                    onChange={(e) =>
+                      setDegrees((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, institution: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    placeholder="Institution *"
+                    maxLength={160}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={d.field ?? ""}
+                    onChange={(e) =>
+                      setDegrees((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, field: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    placeholder="Field (optional)"
+                    maxLength={120}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="number"
+                    value={d.year ?? ""}
+                    min={1900}
+                    max={new Date().getFullYear() + 1}
+                    onChange={(e) =>
+                      setDegrees((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i
+                            ? { ...x, year: Number(e.target.value) || undefined }
+                            : x,
+                        ),
+                      )
+                    }
+                    placeholder="Year"
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setDegrees((prev) =>
+                        prev.length === 1
+                          ? [{ degree: "", institution: "", field: "", year: undefined }]
+                          : prev.filter((_, idx) => idx !== i),
+                      )
+                    }
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setDegrees((prev) => [
+                  ...prev,
+                  { degree: "", institution: "", field: "", year: undefined },
+                ])
+              }
+              className="mt-2 rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/40"
+            >
+              + Add another degree
+            </button>
+          </Section>
+
+          <Section title="Certifications & board specialties">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Board certifications, specialty credentials, and active
+              professional certifications. Each is verified by Syncora with
+              the issuing body and marked ✓ once confirmed.
+            </p>
+            <div className="space-y-2">
+              {certifications.map((c, i) => (
+                <div
+                  key={i}
+                  className="grid gap-2 rounded-md border border-input bg-background p-3 md:grid-cols-[1.6fr_1.4fr_0.6fr_0.9fr_auto]"
+                >
+                  <input
+                    type="text"
+                    value={c.name}
+                    onChange={(e) =>
+                      setCertifications((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, name: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    placeholder="Certification name *"
+                    maxLength={160}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={c.issuer}
+                    onChange={(e) =>
+                      setCertifications((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, issuer: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    placeholder="Issuing body *"
+                    maxLength={160}
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="number"
+                    value={c.year ?? ""}
+                    min={1900}
+                    max={new Date().getFullYear() + 1}
+                    onChange={(e) =>
+                      setCertifications((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i
+                            ? { ...x, year: Number(e.target.value) || undefined }
+                            : x,
+                        ),
+                      )
+                    }
+                    placeholder="Year"
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <input
+                    type="date"
+                    value={c.expires ?? ""}
+                    onChange={(e) =>
+                      setCertifications((prev) =>
+                        prev.map((x, idx) =>
+                          idx === i ? { ...x, expires: e.target.value } : x,
+                        ),
+                      )
+                    }
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCertifications((prev) =>
+                        prev.length === 1
+                          ? [{ name: "", issuer: "", year: undefined, expires: "" }]
+                          : prev.filter((_, idx) => idx !== i),
+                      )
+                    }
+                    className="rounded-md border border-input bg-background px-2 py-1.5 text-xs text-muted-foreground hover:text-destructive"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                setCertifications((prev) => [
+                  ...prev,
+                  { name: "", issuer: "", year: undefined, expires: "" },
+                ])
+              }
+              className="mt-2 rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/40"
+            >
+              + Add another certification
+            </button>
           </Section>
 
           <Section title="Continuing education (last 12 months)">
