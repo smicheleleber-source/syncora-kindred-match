@@ -366,6 +366,7 @@ export const PROVIDERS: Provider[] = [
     hourly_rate: 425,
     firm_size: "mid",
     gender_composition: "mixed",
+    has_paralegal: true,
   },
   {
     id: "2",
@@ -462,6 +463,7 @@ export const PROVIDERS: Provider[] = [
     hourly_rate: 150,
     firm_size: "solo",
     gender_composition: "predominantly_female",
+    has_paralegal: false,
   },
   {
     id: "9",
