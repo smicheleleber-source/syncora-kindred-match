@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
+  getExperienceYears,
   getValidatedComplexity,
   getClaimedPendingComplexity,
   isSoloPractitioner,
@@ -136,7 +137,7 @@ function ProviderDetail() {
             {provider.bio || "No bio provided."}
           </p>
 
-          {(provider.years_experience != null ||
+          {(provider.practice_start_date ||
             provider.hourly_rate != null ||
             provider.firm_size ||
             provider.gender_composition ||
@@ -144,9 +145,21 @@ function ProviderDetail() {
             provider.weekly_capacity != null ||
             provider.next_available) && (
             <dl className="mt-4 grid grid-cols-2 gap-3 text-xs sm:grid-cols-3">
-              {provider.years_experience != null && (
-                <Stat label="Experience" value={`${provider.years_experience} yrs`} />
-              )}
+              {provider.practice_start_date && (() => {
+                const yrs = getExperienceYears(provider);
+                if (yrs == null) return null;
+                const validated = provider.experience_validated === true;
+                return (
+                  <Stat
+                    label="Experience"
+                    value={
+                      validated
+                        ? `${yrs} yrs ✓`
+                        : `${yrs} yrs · claimed`
+                    }
+                  />
+                );
+              })()}
               {provider.hourly_rate != null && provider.hourly_rate > 0 && (
                 <Stat
                   label="Hourly rate"

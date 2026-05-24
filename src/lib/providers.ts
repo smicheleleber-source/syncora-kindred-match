@@ -35,7 +35,16 @@ export interface Provider {
   // Supplier-supplied verification & availability detail
   license_number?: string;
   license_board?: string; // e.g. "Texas State Bar", "California Medical Board"
-  years_experience?: number;
+  // Date the professional entered practice (YYYY-MM-DD). Self-reported on
+  // signup; years of experience are DERIVED from this date — never entered
+  // directly. Treated as a claim until `experience_validated` is set true
+  // by Syncora (cross-checked against the licensing board's admission record
+  // and any tool-tracked case history).
+  practice_start_date?: string;
+  // System-controlled: true ONLY after Syncora confirms the practice-start
+  // date against the issuing board's admission record and/or in-tool case
+  // history. Never self-set by the professional.
+  experience_validated?: boolean;
   // System-controlled: set to true ONLY after Syncora confirms the license
   // with the issuing board. Never self-set by the professional on signup.
   verified?: boolean;
@@ -159,6 +168,24 @@ export function getValidatedComplexity(p: Provider): Complexity[] {
 export function getClaimedPendingComplexity(p: Provider): Complexity[] {
   const validated = new Set(getValidatedComplexity(p));
   return p.complexity_supported.filter((c) => !validated.has(c));
+}
+
+// ---- Experience (derived from date of entry into practice) ----
+//
+// We never store a raw "years_experience" number — that would let a
+// professional inflate their tenure. Instead we store a single date
+// (`practice_start_date`) and DERIVE the years. The derived number is
+// only treated as confirmed when `experience_validated === true` (Syncora
+// has cross-checked the date against the licensing board's admission
+// record and/or the in-tool case history).
+
+export function getExperienceYears(p: Provider): number | null {
+  if (!p.practice_start_date) return null;
+  const start = new Date(p.practice_start_date);
+  if (Number.isNaN(start.getTime())) return null;
+  const ms = Date.now() - start.getTime();
+  const yrs = ms / (1000 * 60 * 60 * 24 * 365.25);
+  return yrs < 0 ? 0 : Math.floor(yrs);
 }
 
 // ---- Continuing-education checklist ----
@@ -1076,7 +1103,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 1500,
     budget_max: 6000,
     bio: "Court-appointed guardian ad litem representing the best interests of children in custody and dependency matters.",
-    years_experience: 12,
+    practice_start_date: "2014-01-01", experience_validated: true,
     hourly_rate: 175,
     firm_size: "solo",
     pro_bono: true,
@@ -1092,7 +1119,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 800,
     budget_max: 4500,
     bio: "Trained family and civil mediators offering structured, neutral resolution outside the courtroom.",
-    years_experience: 9,
+    practice_start_date: "2017-01-01", experience_validated: true,
     hourly_rate: 220,
     firm_size: "small",
   },
@@ -1107,7 +1134,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 3000,
     budget_max: 18000,
     bio: "Former judges and senior counsel providing AAA/JAMS-style binding arbitration.",
-    years_experience: 22,
+    practice_start_date: "2004-01-01", experience_validated: true,
     hourly_rate: 450,
     firm_size: "small",
   },
@@ -1122,7 +1149,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 1200,
     budget_max: 5500,
     bio: "Court-appointed parenting coordinators helping high-conflict families implement custody orders.",
-    years_experience: 14,
+    practice_start_date: "2012-01-01", experience_validated: true,
     hourly_rate: 200,
     firm_size: "solo",
   },
@@ -1137,7 +1164,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 100,
     budget_max: 250,
     bio: "Licensed clinical therapists offering trauma-informed care, sliding-scale slots, and court-coordinated treatment.",
-    years_experience: 10,
+    practice_start_date: "2016-01-01", experience_validated: true,
     hourly_rate: 150,
     pro_bono: true,
     firm_size: "small",
@@ -1153,7 +1180,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 900,
     budget_max: 4000,
     bio: "LCSW-led practice supporting attorneys with mitigation, child welfare, and case-management work.",
-    years_experience: 11,
+    practice_start_date: "2015-01-01", experience_validated: true,
     hourly_rate: 165,
     firm_size: "solo",
   },
@@ -1168,7 +1195,7 @@ export const PROVIDERS: Provider[] = [
     budget_min: 4500,
     budget_max: 15000,
     bio: "Licensed psychologists conducting court-ordered custody and risk evaluations.",
-    years_experience: 18,
+    practice_start_date: "2008-01-01", experience_validated: true,
     hourly_rate: 300,
     firm_size: "small",
   },

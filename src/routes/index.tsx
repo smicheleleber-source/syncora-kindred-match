@@ -6,6 +6,7 @@ import {
   DOMAIN_DESCRIPTIONS,
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
+  getExperienceYears,
   matchProviders,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
@@ -521,11 +522,18 @@ function Index() {
                             </p>
                           );
                         })()}
-                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.years_experience != null || m.provider.hourly_rate != null || m.provider.firm_size || m.provider.gender_composition || m.provider.pro_bono) && (
+                        {(m.provider.next_available || m.provider.weekly_capacity != null || m.provider.practice_start_date || m.provider.hourly_rate != null || m.provider.firm_size || m.provider.gender_composition || m.provider.pro_bono) && (
                           <p className="mt-1 text-xs text-muted-foreground">
-                            {m.provider.years_experience != null && (
-                              <span>{m.provider.years_experience} yrs experience</span>
-                            )}
+                            {m.provider.practice_start_date && (() => {
+                              const yrs = getExperienceYears(m.provider);
+                              if (yrs == null) return null;
+                              return (
+                                <span>
+                                  {yrs} yrs experience
+                                  {m.provider.experience_validated ? " ✓" : " (claimed)"}
+                                </span>
+                              );
+                            })()}
                             {m.provider.next_available && (
                               <span> · Next open {m.provider.next_available}</span>
                             )}
