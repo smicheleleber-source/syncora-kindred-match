@@ -234,6 +234,101 @@ function ProviderDetail() {
 
         {isSoloLawyer && <SoloLawyerBenefits className="mt-6" variant="profile" />}
 
+        {((provider.degrees && provider.degrees.length > 0) ||
+          (provider.certifications && provider.certifications.length > 0)) && (
+          <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold">Credentials</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Degrees and certifications are self-reported on signup. A{" "}
+              <span className="text-emerald-600">✓</span> means Syncora has
+              confirmed the entry with the issuing institution or board; a{" "}
+              <span className="text-amber-600">◷</span> means it is still
+              pending validation.
+            </p>
+
+            {provider.degrees && provider.degrees.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  Degrees & education
+                </h3>
+                <ul className="mt-2 space-y-2">
+                  {provider.degrees.map((d, i) => (
+                    <li
+                      key={`${d.degree}-${i}`}
+                      className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    >
+                      <span
+                        title={
+                          d.validated
+                            ? "Validated by Syncora"
+                            : "Claimed — pending validation"
+                        }
+                        className={
+                          "mt-0.5 text-xs " +
+                          (d.validated ? "text-emerald-600" : "text-amber-600")
+                        }
+                      >
+                        {d.validated ? "✓" : "◷"}
+                      </span>
+                      <span className="flex-1">
+                        <span className="font-medium">{d.degree}</span>
+                        {d.field ? `, ${d.field}` : ""} ·{" "}
+                        <span className="text-foreground/80">{d.institution}</span>
+                        {d.year ? (
+                          <span className="text-muted-foreground"> · {d.year}</span>
+                        ) : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {provider.certifications && provider.certifications.length > 0 && (
+              <div className="mt-4">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  Certifications & board specialties
+                </h3>
+                <ul className="mt-2 space-y-2">
+                  {provider.certifications.map((c, i) => (
+                    <li
+                      key={`${c.name}-${i}`}
+                      className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    >
+                      <span
+                        title={
+                          c.validated
+                            ? "Validated by Syncora"
+                            : "Claimed — pending validation"
+                        }
+                        className={
+                          "mt-0.5 text-xs " +
+                          (c.validated ? "text-emerald-600" : "text-amber-600")
+                        }
+                      >
+                        {c.validated ? "✓" : "◷"}
+                      </span>
+                      <span className="flex-1">
+                        <span className="font-medium">{c.name}</span> ·{" "}
+                        <span className="text-foreground/80">{c.issuer}</span>
+                        {c.year ? (
+                          <span className="text-muted-foreground"> · {c.year}</span>
+                        ) : null}
+                        {c.expires ? (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            · expires {c.expires}
+                          </span>
+                        ) : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </section>
+        )}
+
         <div className="mt-6">
           <EthicsChecklist
             provider={provider}
