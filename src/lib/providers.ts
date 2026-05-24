@@ -411,6 +411,9 @@ export const PROVIDERS: Provider[] = [
     budget_min: 500,
     budget_max: 2500,
     bio: "Flat-fee uncontested divorce and document prep.",
+    firm_size: "solo",
+    hourly_rate: 175,
+    has_paralegal: false,
   },
   {
     id: "5",
