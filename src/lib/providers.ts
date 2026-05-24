@@ -134,6 +134,31 @@ export function isSoloPractitioner(p: Provider): boolean {
   return p.firm_size === "solo" || p.has_paralegal === false;
 }
 
+// ---- Complexity validation ----
+//
+// A professional self-declares which complexity tiers they handle. The
+// platform only treats a tier as "confirmed" once it appears in
+// `validated_complexity` (proven by completed case work). Until then, the
+// tier is a pending claim — visible to clients but not counted as a
+// validated capability for matching purposes.
+//
+// Special rule: "complex" ALWAYS requires validation. An unproven "complex"
+// claim is downgraded and shown as pending.
+
+export function getValidatedComplexity(p: Provider): Complexity[] {
+  if (p.validated_complexity) {
+    return p.complexity_supported.filter((c) => p.validated_complexity!.includes(c));
+  }
+  // No explicit validation record: trust simple/moderate self-claims,
+  // but require proof for "complex".
+  return p.complexity_supported.filter((c) => c !== "complex");
+}
+
+export function getClaimedPendingComplexity(p: Provider): Complexity[] {
+  const validated = new Set(getValidatedComplexity(p));
+  return p.complexity_supported.filter((c) => !validated.has(c));
+}
+
 // ---- Continuing-education checklist ----
 
 export type CEKey =
