@@ -1033,7 +1033,7 @@ function SyncoraHero() {
 }
 
 function NetworkDiagram() {
-
+  return <_NetworkDiagram_orig />;
 }
 
 function UserProfileCard() {
