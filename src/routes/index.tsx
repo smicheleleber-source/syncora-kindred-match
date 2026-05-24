@@ -981,12 +981,11 @@ function SyncoraHero() {
           <div className="relative grid gap-8 p-8 md:grid-cols-[1.1fr_1fr] md:gap-6 md:p-12">
             <div className="flex flex-col justify-center">
               <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-                Find the right professional—
-                <span className="block italic font-normal opacity-90">exactly when you need them.</span>
+                One platform for legal coordination.
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
-                Seamlessly connecting clients with the right professionals — based
-                on real-time availability, location, and expertise.
+                Syncora connects clients, professionals, agencies, and partners —
+                so everyone moves forward with clarity and confidence.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
@@ -996,10 +995,10 @@ function SyncoraHero() {
                   Get Matched Now <ArrowRight className="h-4 w-4" />
                 </a>
                 <Link
-                  to="/portals"
+                  to="/professionals"
                   className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/10 px-5 py-2.5 text-sm font-medium text-primary-foreground backdrop-blur transition hover:bg-primary-foreground/20"
                 >
-                  Get started with Syncora
+                  Join as a Professional
                 </Link>
               </div>
             </div>
