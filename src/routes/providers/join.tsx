@@ -111,6 +111,10 @@ const supplierSchema = z.object({
     "prefer_not_to_say",
   ]).optional(),
   has_paralegal: z.boolean().optional(),
+  licensed_states: z
+    .array(z.string().regex(/^[A-Z]{2}$/, "Use 2-letter state codes"))
+    .max(56, "Too many states")
+    .optional(),
   ethics: z.record(z.string(), z.boolean()).optional(),
   backup_firms: z
     .array(
@@ -192,6 +196,7 @@ function JoinPage() {
     undefined,
   );
   const [hasParalegal, setHasParalegal] = useState<boolean>(true);
+  const [licensedStatesText, setLicensedStatesText] = useState("");
   const [ethics, setEthics] = useState<Partial<Record<EthicsKey, boolean>>>({});
   const [backupFirms, setBackupFirms] = useState<BackupContact[]>([
     { firm: "", attorney: "", contact: "" },
@@ -215,6 +220,14 @@ function JoinPage() {
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSuccess(null);
+    const licensedStates = Array.from(
+      new Set(
+        licensedStatesText
+          .split(/[,\s]+/)
+          .map((s) => s.trim().toUpperCase())
+          .filter(Boolean),
+      ),
+    );
     const payload = {
       name,
       contact_email: email,
@@ -237,6 +250,7 @@ function JoinPage() {
       firm_size: firmSize,
       gender_composition: genderComp,
       has_paralegal: hasParalegal,
+      licensed_states: licensedStates.length ? licensedStates : undefined,
       ethics,
       backup_firms: backupFirms
         .map((b) => ({
