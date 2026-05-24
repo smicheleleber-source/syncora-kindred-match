@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
+  isSoloPractitioner,
   matchProviders,
   SOLO_LAWYER_DISCOUNT_PCT,
   type MatchInput,
@@ -10,6 +11,7 @@ import {
 } from "@/lib/providers";
 import { useProviders } from "@/lib/provider-store";
 import { SoloLawyerBenefits } from "@/components/SoloLawyerBenefits";
+import { EthicsChecklist } from "@/components/EthicsChecklist";
 
 const MATCH_INPUT_KEY = "syncora.lastMatchInput.v1";
 
@@ -214,6 +216,13 @@ function ProviderDetail() {
         </div>
 
         {isSoloLawyer && <SoloLawyerBenefits className="mt-6" variant="profile" />}
+
+        <div className="mt-6">
+          <EthicsChecklist
+            provider={provider}
+            soloRequired={isSoloPractitioner(provider)}
+          />
+        </div>
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-6">
           <h2 className="text-lg font-semibold">Why this match ranked here</h2>
