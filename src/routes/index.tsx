@@ -6,6 +6,7 @@ import {
   DOMAIN_DESCRIPTIONS,
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
+  getExperienceYears,
   matchProviders,
   SPECIALTIES_BY_CATEGORY,
   type Complexity,
