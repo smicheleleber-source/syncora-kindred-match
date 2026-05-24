@@ -1011,20 +1011,20 @@ function SyncoraHero() {
           </div>
         </section>
 
-        {/* Service tiles */}
+        {/* User types */}
         <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SERVICE_TILES.map((t) => (
+          {USER_TYPES.map((u) => (
             <Link
-              key={t.name}
-              to="/services/$service"
-              params={{ service: t.slug }}
+              key={u.name}
+              to={u.to}
               className="group rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${t.tint}`}>
-                <t.icon className="h-5 w-5" />
+              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${u.tint}`}>
+                <u.icon className="h-5 w-5" />
               </span>
-              <div className="mt-4 text-base font-semibold text-card-foreground">{t.name}</div>
-              <p className="mt-1 text-sm text-muted-foreground">{t.desc}</p>
+              <div className="mt-4 text-base font-semibold text-card-foreground">{u.name}</div>
+              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{u.who}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{u.desc}</p>
             </Link>
           ))}
         </section>
