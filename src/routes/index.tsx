@@ -968,7 +968,7 @@ function SyncoraHero() {
             </span>
           </div>
           <p className="mt-3 text-base text-accent md:text-lg">
-            Intelligent Matching for the Services You Need.
+            Built for clients, professionals, agencies, and partners.
           </p>
         </div>
 
