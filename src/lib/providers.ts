@@ -1307,20 +1307,31 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
       note: specialtyNote,
     });
 
-    const complexityFit = provider.complexity_supported.includes(input.complexity);
+    const validatedComplexity = getValidatedComplexity(provider);
+    const claimedOnly = getClaimedPendingComplexity(provider);
+    const validatedFit = validatedComplexity.includes(input.complexity);
+    const claimedFit = !validatedFit && claimedOnly.includes(input.complexity);
     const adjacentFit =
-      !complexityFit &&
-      provider.complexity_supported.some((c) => Math.abs(rankComplexity(c) - rankComplexity(input.complexity)) === 1);
-    const complexityPts = complexityFit ? 25 : adjacentFit ? 12 : 0;
+      !validatedFit &&
+      !claimedFit &&
+      provider.complexity_supported.some(
+        (c) => Math.abs(rankComplexity(c) - rankComplexity(input.complexity)) === 1,
+      );
+    // Validated capability gets full credit; an unproven self-claim gets
+    // partial credit (same weight as an adjacent tier) until case work
+    // confirms it.
+    const complexityPts = validatedFit ? 25 : claimedFit ? 12 : adjacentFit ? 12 : 0;
     breakdown.push({
       label: "Complexity",
       points: complexityPts,
       max: 25,
-      note: complexityFit
-        ? `Handles ${input.complexity} cases`
-        : adjacentFit
-          ? `Handles adjacent complexity (${provider.complexity_supported.join(", ")})`
-          : `Doesn't typically handle ${input.complexity} cases`,
+      note: validatedFit
+        ? `Validated for ${input.complexity} cases (confirmed by case work)`
+        : claimedFit
+          ? `Claims ${input.complexity} — pending case-work validation`
+          : adjacentFit
+            ? `Handles adjacent complexity (${provider.complexity_supported.join(", ")})`
+            : `Doesn't typically handle ${input.complexity} cases`,
     });
 
     const availDelta = urgencyRank[provider.availability] - urgencyRank[input.urgency];
