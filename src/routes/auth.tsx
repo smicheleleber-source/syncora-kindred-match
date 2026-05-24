@@ -24,6 +24,13 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+const TEST_PERSONAS = [
+  { label: "Client", email: "client.test@syncoraconnect.com", password: "Syncora-Client-mBwFAw!" },
+  { label: "Attorney", email: "attorney.test@syncoraconnect.com", password: "Syncora-Attorney-o4dMA!" },
+  { label: "Gov Official", email: "govofficial.test@syncoraconnect.com", password: "Syncora-Government-uMe2Ww!" },
+  { label: "Advisor", email: "advisor.test@syncoraconnect.com", password: "Syncora-Advisor-SmTHFw!" },
+];
+
 function AuthPage() {
   const { signIn, signUp, audit } = useAuth();
   const search = useSearch({ from: "/auth" });
@@ -49,9 +56,26 @@ function AuthPage() {
           ? await signIn(email, password)
           : await signUp(email, password, displayName);
       if (res.error) return setError(res.error);
-      // best-effort audit (no-op if no session yet on signup w/ email confirm)
       void audit({
         action: mode === "signin" ? "auth.sign_in" : "auth.sign_up",
+        resource_type: "auth.user",
+      });
+      navigate({ to: search.redirect });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function signInAs(persona: (typeof TEST_PERSONAS)[number]) {
+    setError(null);
+    setEmail(persona.email);
+    setPassword(persona.password);
+    setBusy(true);
+    try {
+      const res = await signIn(persona.email, persona.password);
+      if (res.error) return setError(res.error);
+      void audit({
+        action: "auth.sign_in",
         resource_type: "auth.user",
       });
       navigate({ to: search.redirect });
@@ -170,6 +194,28 @@ function AuthPage() {
             delegates roles via Admin → Employees.
           </p>
         </form>
+
+        {mode === "signin" && (
+          <div className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <h2 className="mb-3 text-sm font-semibold text-foreground">Test personas</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {TEST_PERSONAS.map((p) => (
+                <button
+                  key={p.label}
+                  type="button"
+                  disabled={busy}
+                  onClick={() => signInAs(p)}
+                  className="rounded-md border border-border bg-background px-3 py-2 text-xs font-medium text-foreground hover:bg-muted disabled:opacity-50"
+                >
+                  Sign in as {p.label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-3 text-[10px] text-muted-foreground">
+              These one-click buttons use pre-seeded test accounts for QA.
+            </p>
+          </div>
+        )}
       </main>
     </div>
   );
