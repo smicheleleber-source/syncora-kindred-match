@@ -13,6 +13,7 @@ import { useProviders } from "@/lib/provider-store";
 import { SoloLawyerBenefits } from "@/components/SoloLawyerBenefits";
 import { EthicsChecklist } from "@/components/EthicsChecklist";
 import { CEChecklist } from "@/components/CEChecklist";
+import { ProviderReviews } from "@/components/ProviderReviews";
 
 const MATCH_INPUT_KEY = "syncora.lastMatchInput.v1";
 
@@ -227,6 +228,10 @@ function ProviderDetail() {
 
         <div className="mt-6">
           <CEChecklist provider={provider} />
+        </div>
+
+        <div className="mt-6">
+          <ProviderReviews provider={provider} />
         </div>
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-6">
