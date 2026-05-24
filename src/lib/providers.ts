@@ -45,10 +45,85 @@ export interface Provider {
   // Solo / no-paralegal practitioners: when false, the client gets direct
   // availability (no gatekeeper) and an automatic reduced rate.
   has_paralegal?: boolean;
+  // Ethical attestations. Each key maps to a checklist item the professional
+  // affirms on listing. See ETHICS_CHECKLIST below for the canonical items.
+  ethics?: Partial<Record<EthicsKey, boolean>>;
+  // Backup-coverage relationships. Required for solo / no-paralegal
+  // practitioners so clients aren't stranded if the lawyer is unavailable.
+  backup_firms?: BackupContact[];
 }
 
 // Flat discount applied (display only) when a lawyer has no paralegal.
 export const SOLO_LAWYER_DISCOUNT_PCT = 15;
+
+// ---- Ethical checklist ----
+
+export type EthicsKey =
+  | "conflict_check"
+  | "fee_transparency"
+  | "written_engagement"
+  | "confidentiality"
+  | "competence_referral"
+  | "trust_account"
+  | "backup_coverage";
+
+export interface EthicsItem {
+  key: EthicsKey;
+  label: string;
+  description: string;
+  /** When true, this item only applies to solo / no-paralegal practitioners. */
+  soloOnly?: boolean;
+}
+
+export const ETHICS_CHECKLIST: EthicsItem[] = [
+  {
+    key: "conflict_check",
+    label: "Conflict-of-interest check",
+    description: "I run a documented conflict check before accepting any new matter.",
+  },
+  {
+    key: "written_engagement",
+    label: "Written engagement letter",
+    description: "I provide a signed engagement letter setting scope, fees, and termination terms.",
+  },
+  {
+    key: "fee_transparency",
+    label: "Fee transparency",
+    description: "Hourly rate, retainer, and likely costs are disclosed in writing before the client commits.",
+  },
+  {
+    key: "confidentiality",
+    label: "Confidentiality & privilege",
+    description: "I maintain client confidentiality and protect privileged communications per applicable bar rules.",
+  },
+  {
+    key: "competence_referral",
+    label: "Competence & referral",
+    description: "If a matter exceeds my competence, I refer the client to a qualified colleague rather than continue alone.",
+  },
+  {
+    key: "trust_account",
+    label: "Client-trust account",
+    description: "Client funds are held in a separate IOLTA / trust account, never commingled with operating funds.",
+  },
+  {
+    key: "backup_coverage",
+    label: "Backup-coverage relationships",
+    description:
+      "As a solo / no-paralegal practitioner, I have standing arrangements with at least one other attorney or firm to cover emergencies, deadlines, and extended absences.",
+    soloOnly: true,
+  },
+];
+
+export interface BackupContact {
+  firm: string;
+  attorney?: string;
+  contact?: string; // email or phone
+}
+
+export function isSoloPractitioner(p: Provider): boolean {
+  return p.firm_size === "solo" || p.has_paralegal === false;
+}
 
 export const FIRM_SIZE_LABELS: Record<FirmSize, string> = {
   solo: "Solo practitioner",
