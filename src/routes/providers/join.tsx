@@ -419,6 +419,28 @@ function JoinPage() {
                 />
               </Field>
               <Field
+                label="States licensed to practice in"
+                error={errors.licensed_states}
+              >
+                <Input
+                  value={licensedStatesText}
+                  onChange={setLicensedStatesText}
+                  placeholder="TX, NM, OK"
+                  maxLength={200}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Comma-separated 2-letter state codes. Each state is verified
+                  against its bar admission record. Use the{" "}
+                  <Link
+                    to="/supply-demand"
+                    className="font-medium text-primary hover:underline"
+                  >
+                    supply-vs-demand map
+                  </Link>{" "}
+                  to decide whether to get licensed in another state.
+                </p>
+              </Field>
+              <Field
                 label="Date of entry into practice"
                 error={errors.practice_start_date}
               >
