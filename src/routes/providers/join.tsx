@@ -313,6 +313,7 @@ function JoinPage() {
       firm_size: v.firm_size,
       gender_composition: v.gender_composition,
       has_paralegal: v.has_paralegal,
+      licensed_states: v.licensed_states,
       ethics: v.ethics,
       backup_firms: v.backup_firms,
       continuing_education: v.continuing_education,
