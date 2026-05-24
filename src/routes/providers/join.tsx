@@ -609,7 +609,170 @@ function JoinPage() {
                   I offer pro bono / sliding-scale services
                 </span>
               </label>
+              <label className="flex items-center gap-3 rounded-md border border-input bg-background px-3 py-2.5">
+                <input
+                  type="checkbox"
+                  checked={hasParalegal}
+                  onChange={(e) => setHasParalegal(e.target.checked)}
+                  className="h-4 w-4 rounded border-input text-primary"
+                />
+                <span className="text-sm text-foreground">
+                  I work with a paralegal / support staff
+                </span>
+              </label>
             </div>
+          </Section>
+
+          <Section title="Ethical checklist">
+            <p className="mb-3 text-xs text-muted-foreground">
+              Attest to the standards you uphold with every client. Solo
+              practitioners must additionally confirm backup-coverage
+              arrangements.
+            </p>
+            <div className="space-y-2">
+              {ETHICS_CHECKLIST.filter((i) => (i.soloOnly ? isSolo : true)).map(
+                (item) => {
+                  const checked = !!ethics[item.key];
+                  const err = errors[`ethics.${item.key}`];
+                  return (
+                    <label
+                      key={item.key}
+                      className={
+                        "flex items-start gap-3 rounded-md border bg-background px-3 py-2.5 " +
+                        (err ? "border-destructive" : "border-input")
+                      }
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) =>
+                          setEthics((prev) => ({
+                            ...prev,
+                            [item.key]: e.target.checked,
+                          }))
+                        }
+                        className="mt-0.5 h-4 w-4 rounded border-input text-primary"
+                      />
+                      <span className="text-sm text-foreground">
+                        <strong className="block font-medium">
+                          {item.label}
+                          {item.soloOnly && (
+                            <span className="ml-2 rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent-foreground">
+                              Solo required
+                            </span>
+                          )}
+                        </strong>
+                        <span className="text-xs text-muted-foreground">
+                          {item.description}
+                        </span>
+                        {err && (
+                          <span className="mt-1 block text-xs text-destructive">
+                            {err}
+                          </span>
+                        )}
+                      </span>
+                    </label>
+                  );
+                },
+              )}
+            </div>
+
+            {isSolo && (
+              <div className="mt-5">
+                <div className="mb-1.5 text-sm font-medium text-foreground">
+                  Backup-coverage firms / attorneys
+                </div>
+                <p className="mb-2 text-xs text-muted-foreground">
+                  List at least one outside attorney or firm you have a
+                  standing arrangement with to cover deadlines and emergencies.
+                </p>
+                {errors.backup_firms && (
+                  <p className="mb-2 text-xs text-destructive">
+                    {errors.backup_firms}
+                  </p>
+                )}
+                <div className="space-y-2">
+                  {backupFirms.map((b, i) => (
+                    <div
+                      key={i}
+                      className="grid gap-2 rounded-md border border-input bg-background p-3 md:grid-cols-[1.4fr_1fr_1.2fr_auto]"
+                    >
+                      <input
+                        type="text"
+                        value={b.firm}
+                        onChange={(e) =>
+                          setBackupFirms((prev) =>
+                            prev.map((x, idx) =>
+                              idx === i ? { ...x, firm: e.target.value } : x,
+                            ),
+                          )
+                        }
+                        placeholder="Firm name *"
+                        maxLength={120}
+                        className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                      />
+                      <input
+                        type="text"
+                        value={b.attorney ?? ""}
+                        onChange={(e) =>
+                          setBackupFirms((prev) =>
+                            prev.map((x, idx) =>
+                              idx === i
+                                ? { ...x, attorney: e.target.value }
+                                : x,
+                            ),
+                          )
+                        }
+                        placeholder="Lead attorney"
+                        maxLength={120}
+                        className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                      />
+                      <input
+                        type="text"
+                        value={b.contact ?? ""}
+                        onChange={(e) =>
+                          setBackupFirms((prev) =>
+                            prev.map((x, idx) =>
+                              idx === i
+                                ? { ...x, contact: e.target.value }
+                                : x,
+                            ),
+                          )
+                        }
+                        placeholder="Email or phone"
+                        maxLength={160}
+                        className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBackupFirms((prev) =>
+                            prev.length === 1
+                              ? [{ firm: "", attorney: "", contact: "" }]
+                              : prev.filter((_, idx) => idx !== i),
+                          )
+                        }
+                        className="rounded-md border border-input bg-background px-2 py-1.5 text-xs text-muted-foreground hover:text-destructive"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setBackupFirms((prev) => [
+                      ...prev,
+                      { firm: "", attorney: "", contact: "" },
+                    ])
+                  }
+                  className="mt-2 rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary/40"
+                >
+                  + Add another firm
+                </button>
+              </div>
+            )}
           </Section>
 
           {library.length > 0 && (
