@@ -3,12 +3,15 @@ import { useMemo, useState } from "react";
 import { z } from "zod";
 import {
   CATEGORIES_BY_DOMAIN,
+  CE_CHECKLIST,
   DOMAINS,
   ETHICS_CHECKLIST,
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
   SPECIALTIES_BY_CATEGORY,
   type BackupContact,
+  type CEEntry,
+  type CEKey,
   type Complexity,
   type Domain,
   type EthicsKey,
@@ -110,6 +113,21 @@ const supplierSchema = z.object({
     )
     .max(10)
     .optional(),
+  continuing_education: z
+    .record(
+      z.string(),
+      z.object({
+        completed: z.boolean(),
+        hours: z.number().min(0).max(200).optional(),
+        completed_on: z
+          .string()
+          .regex(/^\d{4}-\d{2}-\d{2}$/)
+          .optional()
+          .or(z.literal("")),
+        provider: z.string().trim().max(160).optional().or(z.literal("")),
+      }),
+    )
+    .optional(),
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
@@ -169,6 +187,7 @@ function JoinPage() {
   const [backupFirms, setBackupFirms] = useState<BackupContact[]>([
     { firm: "", attorney: "", contact: "" },
   ]);
+  const [ce, setCe] = useState<Partial<Record<CEKey, CEEntry>>>({});
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -216,6 +235,7 @@ function JoinPage() {
           contact: b.contact?.trim() || undefined,
         }))
         .filter((b) => b.firm),
+      continuing_education: ce,
     };
     const parsed = supplierSchema.safeParse(payload);
     if (!parsed.success) {
@@ -265,6 +285,7 @@ function JoinPage() {
       has_paralegal: v.has_paralegal,
       ethics: v.ethics,
       backup_firms: v.backup_firms,
+      continuing_education: v.continuing_education,
     });
 
     setSuccess(
