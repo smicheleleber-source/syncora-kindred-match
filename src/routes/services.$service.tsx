@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Users, Landmark, Megaphone } from "lucide-react";
+import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Users, Landmark, Lightbulb } from "lucide-react";
 
 type ServiceKey = "legal" | "health" | "home" | "finance";
 
@@ -39,27 +39,27 @@ function rolesFor(service: ServiceKey): RoleOption[] {
     },
     {
       key: "professional",
-      label: "I'm a professional",
-      who: "I provide this service",
+      label: "I'm an attorney",
+      who: "I provide legal services",
       desc: "Join the directory, set your specialties, and receive matched clients.",
       to: proDest,
-      icon: Briefcase,
+      icon: Scale,
     },
     {
       key: "agency",
-      label: "I'm a government agency",
+      label: "I'm a government official",
       who: "Public-sector / court",
       desc: "Agency workspace: matter management, receipts, calendars, risk review.",
       to: "/portals/agency",
       icon: Landmark,
     },
     {
-      key: "advertiser",
-      label: "I'm an advertiser",
-      who: "Sponsor or partner",
-      desc: "Place sponsored placements in front of the right audience segments.",
-      to: "/portals/advertiser",
-      icon: Megaphone,
+      key: "advisor",
+      label: "I'm an advisor",
+      who: "Financial advisor, CPA, consultant",
+      desc: "Refer clients to vetted attorneys and collaborate on shared matters.",
+      to: "/portals/advisor",
+      icon: Lightbulb,
     },
   ];
 }

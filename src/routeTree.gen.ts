@@ -38,6 +38,7 @@ import { Route as ProvidersIdRouteImport } from './routes/providers.$id'
 import { Route as PortalsProfessionalRouteImport } from './routes/portals.professional'
 import { Route as PortalsClientRouteImport } from './routes/portals/client'
 import { Route as PortalsAgencyRouteImport } from './routes/portals.agency'
+import { Route as PortalsAdvisorRouteImport } from './routes/portals.advisor'
 import { Route as PortalsAdvertiserRouteImport } from './routes/portals.advertiser'
 import { Route as PlaybooksMatrixRouteImport } from './routes/playbooks.matrix'
 import { Route as PlaybooksLitigationRouteImport } from './routes/playbooks.litigation'
@@ -192,6 +193,11 @@ const PortalsAgencyRoute = PortalsAgencyRouteImport.update({
   path: '/agency',
   getParentRoute: () => PortalsRoute,
 } as any)
+const PortalsAdvisorRoute = PortalsAdvisorRouteImport.update({
+  id: '/advisor',
+  path: '/advisor',
+  getParentRoute: () => PortalsRoute,
+} as any)
 const PortalsAdvertiserRoute = PortalsAdvertiserRouteImport.update({
   id: '/advertiser',
   path: '/advertiser',
@@ -265,6 +271,7 @@ export interface FileRoutesByFullPath {
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/advisor': typeof PortalsAdvisorRoute
   '/portals/agency': typeof PortalsAgencyRoute
   '/portals/client': typeof PortalsClientRoute
   '/portals/professional': typeof PortalsProfessionalRoute
@@ -304,6 +311,7 @@ export interface FileRoutesByTo {
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/advisor': typeof PortalsAdvisorRoute
   '/portals/agency': typeof PortalsAgencyRoute
   '/portals/client': typeof PortalsClientRoute
   '/portals/professional': typeof PortalsProfessionalRoute
@@ -344,6 +352,7 @@ export interface FileRoutesById {
   '/playbooks/litigation': typeof PlaybooksLitigationRoute
   '/playbooks/matrix': typeof PlaybooksMatrixRoute
   '/portals/advertiser': typeof PortalsAdvertiserRoute
+  '/portals/advisor': typeof PortalsAdvisorRoute
   '/portals/agency': typeof PortalsAgencyRoute
   '/portals/client': typeof PortalsClientRoute
   '/portals/professional': typeof PortalsProfessionalRoute
@@ -385,6 +394,7 @@ export interface FileRouteTypes {
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/portals/advertiser'
+    | '/portals/advisor'
     | '/portals/agency'
     | '/portals/client'
     | '/portals/professional'
@@ -424,6 +434,7 @@ export interface FileRouteTypes {
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/portals/advertiser'
+    | '/portals/advisor'
     | '/portals/agency'
     | '/portals/client'
     | '/portals/professional'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/playbooks/litigation'
     | '/playbooks/matrix'
     | '/portals/advertiser'
+    | '/portals/advisor'
     | '/portals/agency'
     | '/portals/client'
     | '/portals/professional'
@@ -710,6 +722,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortalsAgencyRouteImport
       parentRoute: typeof PortalsRoute
     }
+    '/portals/advisor': {
+      id: '/portals/advisor'
+      path: '/advisor'
+      fullPath: '/portals/advisor'
+      preLoaderRoute: typeof PortalsAdvisorRouteImport
+      parentRoute: typeof PortalsRoute
+    }
     '/portals/advertiser': {
       id: '/portals/advertiser'
       path: '/advertiser'
@@ -785,6 +804,7 @@ const EmployeeRouteWithChildren = EmployeeRoute._addFileChildren(
 
 interface PortalsRouteChildren {
   PortalsAdvertiserRoute: typeof PortalsAdvertiserRoute
+  PortalsAdvisorRoute: typeof PortalsAdvisorRoute
   PortalsAgencyRoute: typeof PortalsAgencyRoute
   PortalsClientRoute: typeof PortalsClientRoute
   PortalsProfessionalRoute: typeof PortalsProfessionalRoute
@@ -792,6 +812,7 @@ interface PortalsRouteChildren {
 
 const PortalsRouteChildren: PortalsRouteChildren = {
   PortalsAdvertiserRoute: PortalsAdvertiserRoute,
+  PortalsAdvisorRoute: PortalsAdvisorRoute,
   PortalsAgencyRoute: PortalsAgencyRoute,
   PortalsClientRoute: PortalsClientRoute,
   PortalsProfessionalRoute: PortalsProfessionalRoute,
