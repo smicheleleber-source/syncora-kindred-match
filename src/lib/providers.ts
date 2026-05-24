@@ -63,6 +63,11 @@ export interface Provider {
   // Solo / no-paralegal practitioners: when false, the client gets direct
   // availability (no gatekeeper) and an automatic reduced rate.
   has_paralegal?: boolean;
+  // States the professional is licensed/admitted to practice in (USPS 2-letter
+  // codes, e.g. ["TX","NM"]). Self-reported on signup; intersected with
+  // license-board verification to confirm. Used by the supply-vs-demand
+  // dashboard so a lawyer can decide whether to get licensed in a new state.
+  licensed_states?: string[];
   // Ethical attestations. Each key maps to a checklist item the professional
   // affirms on listing. See ETHICS_CHECKLIST below for the canonical items.
   ethics?: Partial<Record<EthicsKey, boolean>>;
