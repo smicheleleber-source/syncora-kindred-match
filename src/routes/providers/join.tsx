@@ -474,6 +474,15 @@ function JoinPage() {
               <div className="mb-1.5 text-sm font-medium text-foreground">
                 Complexity levels you handle
               </div>
+              <p className="mb-2 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200">
+                <strong>How this is validated:</strong> you self-identify the
+                tiers you handle here. <em>Simple</em> and <em>moderate</em>{" "}
+                claims are accepted as-is.{" "}
+                <strong>"Complex" must be proven by completed case work</strong>{" "}
+                — until then it shows on your profile as{" "}
+                <em>claimed · pending validation</em> and earns reduced points
+                in client matching.
+              </p>
               {errors.complexity_supported && (
                 <p className="mb-1 text-xs text-destructive">
                   {errors.complexity_supported}

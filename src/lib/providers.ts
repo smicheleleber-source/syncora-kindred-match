@@ -20,6 +20,13 @@ export interface Provider {
   // self-reported experience that still needs validation.
   validated_specialties?: string[];
   complexity_supported: Complexity[];
+  // Subset of `complexity_supported` that the Syncora system has independently
+  // validated against completed case work (closed matters, peer review,
+  // outcome verification). Anything in `complexity_supported` but NOT in
+  // `validated_complexity` is treated as a self-claim that still needs proof.
+  // Required for "complex" — unvalidated complex claims do not count for
+  // matching or display as a confirmed capability.
+  validated_complexity?: Complexity[];
   availability: Urgency; // soonest urgency they can handle
   location: string;
   budget_min: number;
@@ -125,6 +132,31 @@ export interface BackupContact {
 
 export function isSoloPractitioner(p: Provider): boolean {
   return p.firm_size === "solo" || p.has_paralegal === false;
+}
+
+// ---- Complexity validation ----
+//
+// A professional self-declares which complexity tiers they handle. The
+// platform only treats a tier as "confirmed" once it appears in
+// `validated_complexity` (proven by completed case work). Until then, the
+// tier is a pending claim — visible to clients but not counted as a
+// validated capability for matching purposes.
+//
+// Special rule: "complex" ALWAYS requires validation. An unproven "complex"
+// claim is downgraded and shown as pending.
+
+export function getValidatedComplexity(p: Provider): Complexity[] {
+  if (p.validated_complexity) {
+    return p.complexity_supported.filter((c) => p.validated_complexity!.includes(c));
+  }
+  // No explicit validation record: trust simple/moderate self-claims,
+  // but require proof for "complex".
+  return p.complexity_supported.filter((c) => c !== "complex");
+}
+
+export function getClaimedPendingComplexity(p: Provider): Complexity[] {
+  const validated = new Set(getValidatedComplexity(p));
+  return p.complexity_supported.filter((c) => !validated.has(c));
 }
 
 // ---- Continuing-education checklist ----
@@ -505,6 +537,7 @@ export const PROVIDERS: Provider[] = [
     category: "family law",
     specialties: ["custody", "divorce", "high-asset", "prenuptial agreement"],
     complexity_supported: ["moderate", "complex"],
+    validated_complexity: ["moderate", "complex"],
     availability: "high",
     location: "Austin, TX",
     budget_min: 3000,
@@ -538,6 +571,8 @@ export const PROVIDERS: Provider[] = [
     category: "family law",
     specialties: ["custody", "divorce", "domestic violence", "child support"],
     complexity_supported: ["simple", "moderate", "complex"],
+    // "complex" left unvalidated — shows as a pending claim on the profile.
+    validated_complexity: ["simple", "moderate"],
     availability: "high",
     location: "Dallas, TX",
     budget_min: 2000,
@@ -1275,20 +1310,31 @@ export function matchProviders(input: MatchInput, providers: Provider[] = PROVID
       note: specialtyNote,
     });
 
-    const complexityFit = provider.complexity_supported.includes(input.complexity);
+    const validatedComplexity = getValidatedComplexity(provider);
+    const claimedOnly = getClaimedPendingComplexity(provider);
+    const validatedFit = validatedComplexity.includes(input.complexity);
+    const claimedFit = !validatedFit && claimedOnly.includes(input.complexity);
     const adjacentFit =
-      !complexityFit &&
-      provider.complexity_supported.some((c) => Math.abs(rankComplexity(c) - rankComplexity(input.complexity)) === 1);
-    const complexityPts = complexityFit ? 25 : adjacentFit ? 12 : 0;
+      !validatedFit &&
+      !claimedFit &&
+      provider.complexity_supported.some(
+        (c) => Math.abs(rankComplexity(c) - rankComplexity(input.complexity)) === 1,
+      );
+    // Validated capability gets full credit; an unproven self-claim gets
+    // partial credit (same weight as an adjacent tier) until case work
+    // confirms it.
+    const complexityPts = validatedFit ? 25 : claimedFit ? 12 : adjacentFit ? 12 : 0;
     breakdown.push({
       label: "Complexity",
       points: complexityPts,
       max: 25,
-      note: complexityFit
-        ? `Handles ${input.complexity} cases`
-        : adjacentFit
-          ? `Handles adjacent complexity (${provider.complexity_supported.join(", ")})`
-          : `Doesn't typically handle ${input.complexity} cases`,
+      note: validatedFit
+        ? `Validated for ${input.complexity} cases (confirmed by case work)`
+        : claimedFit
+          ? `Claims ${input.complexity} — pending case-work validation`
+          : adjacentFit
+            ? `Handles adjacent complexity (${provider.complexity_supported.join(", ")})`
+            : `Doesn't typically handle ${input.complexity} cases`,
     });
 
     const availDelta = urgencyRank[provider.availability] - urgencyRank[input.urgency];
