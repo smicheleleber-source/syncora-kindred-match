@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import {
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
+  getValidatedComplexity,
+  getClaimedPendingComplexity,
   isSoloPractitioner,
   matchProviders,
   SOLO_LAWYER_DISCOUNT_PCT,
