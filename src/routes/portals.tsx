@@ -4,17 +4,17 @@ import { Users, Briefcase, Landmark, Megaphone, ShieldCheck } from "lucide-react
 export const Route = createFileRoute("/portals")({
   head: () => ({
     meta: [
-      { title: "Choose your portal — Syncora Connect" },
+      { title: "Syncora Connect — One platform for legal coordination" },
       {
         name: "description",
         content:
-          "Pick the Syncora Connect portal that fits you: client, professional, government agency, advertiser, or employee. Each portal bundles the tools and workflows for that role.",
+          "Syncora Connect simplifies legal coordination. Whether you're a client seeking help, a professional managing matters, or an agency tracking cases — everything connects here.",
       },
-      { property: "og:title", content: "Choose your portal — Syncora Connect" },
+      { property: "og:title", content: "Syncora Connect — One platform for legal coordination" },
       {
         property: "og:description",
         content:
-          "One door per audience. Clients, professionals, government agencies, advertisers, and employees each get a dedicated workspace.",
+          "A unified platform for clients, professionals, agencies, and partners to coordinate legal matters, track cases, and collaborate securely.",
       },
     ],
   }),
@@ -80,11 +80,11 @@ function PortalsPage() {
         <div className="text-center">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Syncora Connect</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
-            Are you a…
+            Why use Syncora?
           </h1>
           <p className="mx-auto mt-3 max-w-2xl text-base text-muted-foreground">
-            Choose your portal. Each one bundles the tools and workflows for your role —
-            so you only see what's relevant to you.
+            One platform that connects every side of legal coordination —
+            so clients, professionals, agencies, and partners move forward together.
           </p>
         </div>
 
