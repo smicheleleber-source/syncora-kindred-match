@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { z } from "zod";
 import {
   CATEGORIES_BY_DOMAIN,
@@ -190,6 +190,7 @@ function JoinPage() {
   const [ce, setCe] = useState<Partial<Record<CEKey, CEEntry>>>({});
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
 
   const specialtyOptions = useMemo(
     () => SPECIALTIES_BY_CATEGORY[category] ?? [],
@@ -245,6 +246,14 @@ function JoinPage() {
         if (!fe[key]) fe[key] = issue.message;
       }
       setErrors(fe);
+      // Surface validation errors: scroll the error summary into view and focus it.
+      requestAnimationFrame(() => {
+        const el = errorSummaryRef.current;
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+          el.focus();
+        }
+      });
       return;
     }
     setErrors({});
@@ -337,6 +346,28 @@ function JoinPage() {
           {success && (
             <div className="mb-6 rounded-lg border border-accent/40 bg-accent/10 px-4 py-3 text-sm text-foreground">
               {success}
+            </div>
+          )}
+
+          {Object.keys(errors).length > 0 && (
+            <div
+              ref={errorSummaryRef}
+              tabIndex={-1}
+              role="alert"
+              aria-live="assertive"
+              className="mb-6 rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-foreground outline-none"
+            >
+              <p className="font-semibold text-destructive">
+                Please fix {Object.keys(errors).length} issue
+                {Object.keys(errors).length === 1 ? "" : "s"} before submitting:
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+                {Object.entries(errors).map(([key, msg]) => (
+                  <li key={key}>
+                    <span className="font-medium text-foreground">{key}:</span> {msg}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
