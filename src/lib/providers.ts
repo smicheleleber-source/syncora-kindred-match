@@ -170,6 +170,24 @@ export function getClaimedPendingComplexity(p: Provider): Complexity[] {
   return p.complexity_supported.filter((c) => !validated.has(c));
 }
 
+// ---- Experience (derived from date of entry into practice) ----
+//
+// We never store a raw "years_experience" number — that would let a
+// professional inflate their tenure. Instead we store a single date
+// (`practice_start_date`) and DERIVE the years. The derived number is
+// only treated as confirmed when `experience_validated === true` (Syncora
+// has cross-checked the date against the licensing board's admission
+// record and/or the in-tool case history).
+
+export function getExperienceYears(p: Provider): number | null {
+  if (!p.practice_start_date) return null;
+  const start = new Date(p.practice_start_date);
+  if (Number.isNaN(start.getTime())) return null;
+  const ms = Date.now() - start.getTime();
+  const yrs = ms / (1000 * 60 * 60 * 24 * 365.25);
+  return yrs < 0 ? 0 : Math.floor(yrs);
+}
+
 // ---- Continuing-education checklist ----
 
 export type CEKey =
