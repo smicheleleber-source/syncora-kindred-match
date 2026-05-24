@@ -35,7 +35,16 @@ export interface Provider {
   // Supplier-supplied verification & availability detail
   license_number?: string;
   license_board?: string; // e.g. "Texas State Bar", "California Medical Board"
-  years_experience?: number;
+  // Date the professional entered practice (YYYY-MM-DD). Self-reported on
+  // signup; years of experience are DERIVED from this date — never entered
+  // directly. Treated as a claim until `experience_validated` is set true
+  // by Syncora (cross-checked against the licensing board's admission record
+  // and any tool-tracked case history).
+  practice_start_date?: string;
+  // System-controlled: true ONLY after Syncora confirms the practice-start
+  // date against the issuing board's admission record and/or in-tool case
+  // history. Never self-set by the professional.
+  experience_validated?: boolean;
   // System-controlled: set to true ONLY after Syncora confirms the license
   // with the issuing board. Never self-set by the professional on signup.
   verified?: boolean;
