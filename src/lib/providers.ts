@@ -36,7 +36,9 @@ export interface Provider {
   license_number?: string;
   license_board?: string; // e.g. "Texas State Bar", "California Medical Board"
   years_experience?: number;
-  verified?: boolean; // true once license_number + board look valid
+  // System-controlled: set to true ONLY after Syncora confirms the license
+  // with the issuing board. Never self-set by the professional on signup.
+  verified?: boolean;
   next_available?: string; // ISO date string of soonest open slot
   weekly_capacity?: number; // new matters they can take per week
   contact_email?: string;
