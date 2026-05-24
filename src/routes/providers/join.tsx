@@ -259,14 +259,6 @@ function JoinPage() {
     setErrors({});
     const v = parsed.data;
 
-    // "Verification" — simple heuristic on the validated fields. A real system
-    // would call an external license registry; we mark verified when the
-    // license + board look complete and experience is plausible.
-    const verified =
-      v.license_number.length >= 4 &&
-      v.license_board.length >= 4 &&
-      v.years_experience >= 1;
-
     addProvider({
       id: `s-${Date.now()}`,
       name: v.name,
@@ -283,7 +275,10 @@ function JoinPage() {
       license_number: v.license_number,
       license_board: v.license_board,
       years_experience: v.years_experience,
-      verified,
+      // `verified` is a system-controlled attribute. It is NEVER set by the
+      // professional on signup — Syncora staff (or an automated license-board
+      // check) flips it on only after the license + identity are confirmed.
+      verified: false,
       next_available: v.next_available || undefined,
       weekly_capacity: v.weekly_capacity,
       contact_email: v.contact_email,
@@ -298,9 +293,7 @@ function JoinPage() {
     });
 
     setSuccess(
-      verified
-        ? "Your practice is live and verified. Clients can match with you now."
-        : "Listing saved. Verification pending review of your license details.",
+      "Listing saved. Verification is performed by Syncora — your profile will show as unverified until our team confirms your license with the issuing board.",
     );
     setTimeout(() => navigate({ to: "/" }), 1500);
   }
