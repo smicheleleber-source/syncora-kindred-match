@@ -537,6 +537,7 @@ export const PROVIDERS: Provider[] = [
     category: "family law",
     specialties: ["custody", "divorce", "high-asset", "prenuptial agreement"],
     complexity_supported: ["moderate", "complex"],
+    validated_complexity: ["moderate", "complex"],
     availability: "high",
     location: "Austin, TX",
     budget_min: 3000,
@@ -570,6 +571,8 @@ export const PROVIDERS: Provider[] = [
     category: "family law",
     specialties: ["custody", "divorce", "domestic violence", "child support"],
     complexity_supported: ["simple", "moderate", "complex"],
+    // "complex" left unvalidated — shows as a pending claim on the profile.
+    validated_complexity: ["simple", "moderate"],
     availability: "high",
     location: "Dallas, TX",
     budget_min: 2000,
