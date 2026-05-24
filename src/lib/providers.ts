@@ -51,6 +51,8 @@ export interface Provider {
   // Backup-coverage relationships. Required for solo / no-paralegal
   // practitioners so clients aren't stranded if the lawyer is unavailable.
   backup_firms?: BackupContact[];
+  // Continuing-education attestations completed in the last 12 months.
+  continuing_education?: Partial<Record<CEKey, CEEntry>>;
 }
 
 // Flat discount applied (display only) when a lawyer has no paralegal.
@@ -124,6 +126,77 @@ export interface BackupContact {
 export function isSoloPractitioner(p: Provider): boolean {
   return p.firm_size === "solo" || p.has_paralegal === false;
 }
+
+// ---- Continuing-education checklist ----
+
+export type CEKey =
+  | "ethics_cle"
+  | "technology_competence"
+  | "trust_accounting"
+  | "diversity_bias"
+  | "wellness_substance"
+  | "practice_area_update"
+  | "cybersecurity_privacy";
+
+export interface CEItem {
+  key: CEKey;
+  label: string;
+  description: string;
+  /** Minimum hours expected within the last 12 months. */
+  minHours: number;
+}
+
+export interface CEEntry {
+  completed: boolean;
+  hours?: number;
+  completed_on?: string; // YYYY-MM-DD
+  provider?: string; // CLE provider / bar name
+}
+
+export const CE_CHECKLIST: CEItem[] = [
+  {
+    key: "ethics_cle",
+    label: "Ethics / professional responsibility CLE",
+    description: "Annual bar-required ethics or professional-responsibility credit.",
+    minHours: 1,
+  },
+  {
+    key: "technology_competence",
+    label: "Technology competence",
+    description: "Duty of technology competence — modern tools, e-filing, e-discovery.",
+    minHours: 1,
+  },
+  {
+    key: "trust_accounting",
+    label: "Trust accounting / IOLTA",
+    description: "Handling client funds, reconciliation, and IOLTA compliance.",
+    minHours: 1,
+  },
+  {
+    key: "diversity_bias",
+    label: "Diversity, equity & implicit bias",
+    description: "Bias awareness and inclusive client service training.",
+    minHours: 1,
+  },
+  {
+    key: "wellness_substance",
+    label: "Lawyer wellness / substance abuse",
+    description: "Mental health and substance-abuse awareness for legal professionals.",
+    minHours: 1,
+  },
+  {
+    key: "practice_area_update",
+    label: "Practice-area update",
+    description: "Current-year update CLE in your primary practice area.",
+    minHours: 3,
+  },
+  {
+    key: "cybersecurity_privacy",
+    label: "Cybersecurity & client privacy",
+    description: "Securing client data, breach response, and privilege protection.",
+    minHours: 1,
+  },
+];
 
 export const FIRM_SIZE_LABELS: Record<FirmSize, string> = {
   solo: "Solo practitioner",
