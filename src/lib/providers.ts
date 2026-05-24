@@ -63,6 +63,11 @@ export interface Provider {
   // Solo / no-paralegal practitioners: when false, the client gets direct
   // availability (no gatekeeper) and an automatic reduced rate.
   has_paralegal?: boolean;
+  // States the professional is licensed/admitted to practice in (USPS 2-letter
+  // codes, e.g. ["TX","NM"]). Self-reported on signup; intersected with
+  // license-board verification to confirm. Used by the supply-vs-demand
+  // dashboard so a lawyer can decide whether to get licensed in a new state.
+  licensed_states?: string[];
   // Ethical attestations. Each key maps to a checklist item the professional
   // affirms on listing. See ETHICS_CHECKLIST below for the canonical items.
   ethics?: Partial<Record<EthicsKey, boolean>>;
@@ -186,6 +191,33 @@ export function getExperienceYears(p: Provider): number | null {
   const ms = Date.now() - start.getTime();
   const yrs = ms / (1000 * 60 * 60 * 24 * 365.25);
   return yrs < 0 ? 0 : Math.floor(yrs);
+}
+
+// ---- Location / licensed-state helpers ----
+
+/** Extract the 2-letter state code from a "City, ST" location string. */
+export function parseStateFromLocation(loc: string): string | null {
+  const m = loc?.match(/,\s*([A-Za-z]{2})\b/);
+  return m ? m[1].toUpperCase() : null;
+}
+
+/** Extract the city portion ("City") from a "City, ST" location string. */
+export function parseCityFromLocation(loc: string): string | null {
+  const m = loc?.match(/^([^,]+),/);
+  return m ? m[1].trim() : null;
+}
+
+/**
+ * Returns the states a provider can practice in. Prefers the explicit
+ * `licensed_states` list; falls back to the state implied by their
+ * primary `location` so legacy seed entries still surface in supply maps.
+ */
+export function getLicensedStates(p: Provider): string[] {
+  if (p.licensed_states && p.licensed_states.length) {
+    return p.licensed_states.map((s) => s.toUpperCase());
+  }
+  const st = parseStateFromLocation(p.location);
+  return st ? [st] : [];
 }
 
 // ---- Continuing-education checklist ----

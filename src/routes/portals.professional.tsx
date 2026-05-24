@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { UserPlus, Briefcase, BookOpen, Users, MessageSquare, Calendar, FileText, Layers, Wallet } from "lucide-react";
+import { UserPlus, Briefcase, BookOpen, Users, MessageSquare, Calendar, FileText, Layers, Wallet, BarChart3 } from "lucide-react";
 import { PortalHeader, ToolSection, type Tool } from "@/components/PortalCard";
 
 export const Route = createFileRoute("/portals/professional")({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/portals/professional")({
 
 const ONBOARD: Tool[] = [
   { to: "/providers/join", label: "Join the directory", desc: "List your firm, declare specialties (validated later), and start receiving matched clients.", icon: UserPlus },
+  { to: "/supply-demand", label: "Supply vs demand", desc: "See where clients need lawyers and where supply is thin, by city and state — to decide where to get licensed next.", icon: BarChart3 },
   { to: "/professionals", label: "Browse peers", desc: "See how your peers describe their practice and specialties.", icon: Users },
 ];
 const PRACTICE: Tool[] = [
