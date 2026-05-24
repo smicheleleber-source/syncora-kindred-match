@@ -565,8 +565,11 @@ function JoinPage() {
 
           <Section title="Verification">
             <p className="mb-3 text-xs text-muted-foreground">
-              We verify license details against the issuing board. Verified
-              listings get a badge and rank above unverified ones.
+              <strong>Verification is system-controlled.</strong> You provide
+              your license details here; Syncora checks them against the
+              issuing board and flips the <em>Verified</em> badge on after
+              confirmation. You cannot mark your own listing as verified.
+              Verified listings rank above unverified ones.
             </p>
             <div className="grid gap-4 md:grid-cols-2">
               <Field
