@@ -181,7 +181,7 @@ function JoinPage() {
   const [weeklyCapacity, setWeeklyCapacity] = useState(3);
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(8000);
-  const [years, setYears] = useState(5);
+  const [practiceStart, setPracticeStart] = useState("");
   const [licenseNumber, setLicenseNumber] = useState("");
   const [licenseBoard, setLicenseBoard] = useState("");
   const [bio, setBio] = useState("");
@@ -228,7 +228,7 @@ function JoinPage() {
       weekly_capacity: weeklyCapacity,
       budget_min: budgetMin,
       budget_max: budgetMax,
-      years_experience: years,
+      practice_start_date: practiceStart,
       license_number: licenseNumber,
       license_board: licenseBoard,
       bio,
@@ -283,7 +283,10 @@ function JoinPage() {
       bio: v.bio,
       license_number: v.license_number,
       license_board: v.license_board,
-      years_experience: v.years_experience,
+      practice_start_date: v.practice_start_date,
+      // Experience validation is system-controlled — Syncora cross-checks the
+      // date against the licensing board and accumulated case work.
+      experience_validated: false,
       // `verified` is a system-controlled attribute. It is NEVER set by the
       // professional on signup — Syncora staff (or an automated license-board
       // check) flips it on only after the license + identity are confirmed.
@@ -400,8 +403,22 @@ function JoinPage() {
                   maxLength={80}
                 />
               </Field>
-              <Field label="Years of experience" error={errors.years_experience}>
-                <NumInput value={years} onChange={setYears} min={0} max={80} />
+              <Field
+                label="Date of entry into practice"
+                error={errors.practice_start_date}
+              >
+                <input
+                  type="date"
+                  value={practiceStart}
+                  onChange={(e) => setPracticeStart(e.target.value)}
+                  max={new Date().toISOString().slice(0, 10)}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Experience is derived from this date and only shows as
+                  validated after Syncora cross-checks it with the licensing
+                  board and your in-tool case history.
+                </p>
               </Field>
             </div>
           </Section>
