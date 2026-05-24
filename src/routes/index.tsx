@@ -923,23 +923,6 @@ function Stepper({
 
 // ---------- Syncora Connect hero ----------
 
-type UserType = {
-  name: string;
-  slug: string;
-  who: string;
-  desc: string;
-  icon: React.ComponentType<{ className?: string }>;
-  tint: string;
-  to: string;
-};
-
-const USER_TYPES: UserType[] = [
-  { name: "Client", slug: "client", who: "I need legal help", desc: "Describe your matter, get matched with vetted professionals, and track your case.", icon: Users, tint: "bg-primary text-primary-foreground", to: "#intake" },
-  { name: "Professional", slug: "professional", who: "Attorney, mediator, GAL, counselor", desc: "Join the directory, validate your credentials, and respond to matched clients.", icon: Briefcase, tint: "bg-accent text-accent-foreground", to: "/professionals" },
-  { name: "Government Agency", slug: "agency", who: "Solicitor, judge, court staff, agency counsel", desc: "Manage public-sector matters, track court calendars, and review risk.", icon: Landmark, tint: "bg-emerald-600 text-primary-foreground", to: "/portals/agency" },
-  { name: "Partner / Advertiser", slug: "advertiser", who: "Sponsor, partner, vendor", desc: "Place sponsored placements and review audience delivery analytics.", icon: Megaphone, tint: "bg-amber-500 text-primary-foreground", to: "/advertise" },
-];
-
 const VALUE_PROPS = [
   { icon: Lightbulb, title: "Intelligent Matching", desc: "Smartly aligns your needs with the best possible providers." },
   { icon: Clock, title: "Timing & Fit", desc: "Simple cases matched quickly, complex cases matched carefully." },
