@@ -4,10 +4,12 @@ import {
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
   matchProviders,
+  SOLO_LAWYER_DISCOUNT_PCT,
   type MatchInput,
   type ScoredProvider,
 } from "@/lib/providers";
 import { useProviders } from "@/lib/provider-store";
+import { SoloLawyerBenefits } from "@/components/SoloLawyerBenefits";
 
 const MATCH_INPUT_KEY = "syncora.lastMatchInput.v1";
 
@@ -65,6 +67,16 @@ function ProviderDetail() {
   const scored: ScoredProvider | null = lastInput
     ? matchProviders(lastInput, [provider])[0] ?? null
     : null;
+
+  const isSoloLawyer =
+    provider.has_paralegal === false &&
+    /law|legal|attorney|defense|injury|estate|immigration|tax|employment|business|real estate|family/i.test(
+      provider.category,
+    );
+  const displayRate =
+    isSoloLawyer && provider.hourly_rate
+      ? Math.round(provider.hourly_rate * (1 - SOLO_LAWYER_DISCOUNT_PCT / 100))
+      : provider.hourly_rate;
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
@@ -130,7 +142,14 @@ function ProviderDetail() {
                 <Stat label="Experience" value={`${provider.years_experience} yrs`} />
               )}
               {provider.hourly_rate != null && provider.hourly_rate > 0 && (
-                <Stat label="Hourly rate" value={`$${provider.hourly_rate}`} />
+                <Stat
+                  label="Hourly rate"
+                  value={
+                    isSoloLawyer
+                      ? `$${displayRate} (−${SOLO_LAWYER_DISCOUNT_PCT}%)`
+                      : `$${provider.hourly_rate}`
+                  }
+                />
               )}
               {provider.weekly_capacity != null && (
                 <Stat label="Weekly capacity" value={`${provider.weekly_capacity}`} />
@@ -193,6 +212,8 @@ function ProviderDetail() {
             </>
           )}
         </div>
+
+        {isSoloLawyer && <SoloLawyerBenefits className="mt-6" variant="profile" />}
 
         <section className="mt-6 rounded-2xl border border-border bg-card p-6">
           <h2 className="text-lg font-semibold">Why this match ranked here</h2>
