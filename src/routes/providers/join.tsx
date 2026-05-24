@@ -4,11 +4,14 @@ import { z } from "zod";
 import {
   CATEGORIES_BY_DOMAIN,
   DOMAINS,
+  ETHICS_CHECKLIST,
   FIRM_SIZE_LABELS,
   GENDER_LABELS,
   SPECIALTIES_BY_CATEGORY,
+  type BackupContact,
   type Complexity,
   type Domain,
+  type EthicsKey,
   type FirmSize,
   type GenderComposition,
   type Urgency,
@@ -95,9 +98,41 @@ const supplierSchema = z.object({
     "all_female",
     "prefer_not_to_say",
   ]).optional(),
+  has_paralegal: z.boolean().optional(),
+  ethics: z.record(z.string(), z.boolean()).optional(),
+  backup_firms: z
+    .array(
+      z.object({
+        firm: z.string().trim().min(2, "Firm name required").max(120),
+        attorney: z.string().trim().max(120).optional().or(z.literal("")),
+        contact: z.string().trim().max(160).optional().or(z.literal("")),
+      }),
+    )
+    .max(10)
+    .optional(),
 }).refine((v) => v.budget_max >= v.budget_min, {
   message: "Max budget must be ≥ min budget",
   path: ["budget_max"],
+}).superRefine((v, ctx) => {
+  const isSolo = v.firm_size === "solo" || v.has_paralegal === false;
+  if (!isSolo) return;
+  // Solo practitioners must attest backup coverage and list at least one firm.
+  if (!v.ethics?.backup_coverage) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        "Solo practitioners must attest to backup-coverage arrangements.",
+      path: ["ethics", "backup_coverage"],
+    });
+  }
+  const firms = (v.backup_firms ?? []).filter((b) => b.firm.trim());
+  if (firms.length === 0) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Add at least one backup firm or attorney you have arrangements with.",
+      path: ["backup_firms"],
+    });
+  }
 });
 
 type FormErrors = Partial<Record<string, string>>;
@@ -129,6 +164,11 @@ function JoinPage() {
   const [genderComp, setGenderComp] = useState<GenderComposition | undefined>(
     undefined,
   );
+  const [hasParalegal, setHasParalegal] = useState<boolean>(true);
+  const [ethics, setEthics] = useState<Partial<Record<EthicsKey, boolean>>>({});
+  const [backupFirms, setBackupFirms] = useState<BackupContact[]>([
+    { firm: "", attorney: "", contact: "" },
+  ]);
   const [errors, setErrors] = useState<FormErrors>({});
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -136,6 +176,8 @@ function JoinPage() {
     () => SPECIALTIES_BY_CATEGORY[category] ?? [],
     [category],
   );
+
+  const isSolo = firmSize === "solo" || hasParalegal === false;
 
   function toggle<T>(list: T[], setList: (v: T[]) => void, v: T) {
     setList(list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
@@ -165,6 +207,15 @@ function JoinPage() {
       hourly_rate: hourlyRate,
       firm_size: firmSize,
       gender_composition: genderComp,
+      has_paralegal: hasParalegal,
+      ethics,
+      backup_firms: backupFirms
+        .map((b) => ({
+          firm: b.firm.trim(),
+          attorney: b.attorney?.trim() || undefined,
+          contact: b.contact?.trim() || undefined,
+        }))
+        .filter((b) => b.firm),
     };
     const parsed = supplierSchema.safeParse(payload);
     if (!parsed.success) {
@@ -211,6 +262,9 @@ function JoinPage() {
       hourly_rate: v.hourly_rate,
       firm_size: v.firm_size,
       gender_composition: v.gender_composition,
+      has_paralegal: v.has_paralegal,
+      ethics: v.ethics,
+      backup_firms: v.backup_firms,
     });
 
     setSuccess(
