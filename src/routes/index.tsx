@@ -17,7 +17,8 @@ import { useProviders } from "@/lib/provider-store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
 import { summarizeProvider, useReviews } from "@/lib/reviews-store";
-import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight, Users, Landmark, Megaphone } from "lucide-react";
+import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight, Users, Landmark, Megaphone, UserCircle2, LogIn } from "lucide-react";
+import { useAuth, ROLE_LABELS } from "@/lib/auth";
 
 type Matter = {
   id: string;
@@ -922,23 +923,6 @@ function Stepper({
 
 // ---------- Syncora Connect hero ----------
 
-type UserType = {
-  name: string;
-  slug: string;
-  who: string;
-  desc: string;
-  icon: React.ComponentType<{ className?: string }>;
-  tint: string;
-  to: string;
-};
-
-const USER_TYPES: UserType[] = [
-  { name: "Client", slug: "client", who: "I need legal help", desc: "Describe your matter, get matched with vetted professionals, and track your case.", icon: Users, tint: "bg-primary text-primary-foreground", to: "#intake" },
-  { name: "Professional", slug: "professional", who: "Attorney, mediator, GAL, counselor", desc: "Join the directory, validate your credentials, and respond to matched clients.", icon: Briefcase, tint: "bg-accent text-accent-foreground", to: "/professionals" },
-  { name: "Government Agency", slug: "agency", who: "Solicitor, judge, court staff, agency counsel", desc: "Manage public-sector matters, track court calendars, and review risk.", icon: Landmark, tint: "bg-emerald-600 text-primary-foreground", to: "/portals/agency" },
-  { name: "Partner / Advertiser", slug: "advertiser", who: "Sponsor, partner, vendor", desc: "Place sponsored placements and review audience delivery analytics.", icon: Megaphone, tint: "bg-amber-500 text-primary-foreground", to: "/advertise" },
-];
-
 const VALUE_PROPS = [
   { icon: Lightbulb, title: "Intelligent Matching", desc: "Smartly aligns your needs with the best possible providers." },
   { icon: Clock, title: "Timing & Fit", desc: "Simple cases matched quickly, complex cases matched carefully." },
@@ -1011,22 +995,8 @@ function SyncoraHero() {
         </section>
 
         {/* User types */}
-        <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {USER_TYPES.map((u) => (
-            <Link
-              key={u.name}
-              to={u.to}
-              className="group rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
-            >
-              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${u.tint}`}>
-                <u.icon className="h-5 w-5" />
-              </span>
-              <div className="mt-4 text-base font-semibold text-card-foreground">{u.name}</div>
-              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{u.who}</p>
-              <p className="mt-2 text-sm text-muted-foreground">{u.desc}</p>
-            </Link>
-          ))}
-        </section>
+        {/* User profile */}
+        <UserProfileCard />
 
         {/* Value props */}
         <section className="mt-10 grid gap-6 border-t border-border/60 pt-8 sm:grid-cols-3">
@@ -1046,6 +1016,106 @@ function SyncoraHero() {
 }
 
 function NetworkDiagram() {
+  return <_NetworkDiagram_orig />;
+}
+
+function UserProfileCard() {
+  const { user, profile, roles, loading, signOut } = useAuth();
+
+  if (loading) {
+    return (
+      <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+        <div className="h-5 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-3 h-4 w-48 animate-pulse rounded bg-muted" />
+      </section>
+    );
+  }
+
+  if (!user) {
+    return (
+      <section className="mt-8 rounded-2xl border border-border bg-card p-6 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div className="flex items-start gap-4">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <UserCircle2 className="h-6 w-6" />
+          </span>
+          <div>
+            <div className="text-base font-semibold text-card-foreground">Your profile</div>
+            <p className="mt-1 text-sm text-muted-foreground">Sign in to see your profile, role, and shortcuts to your work.</p>
+          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2 sm:mt-0">
+          <Link
+            to="/auth"
+            search={{ mode: "signin", redirect: "/" }}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110"
+          >
+            <LogIn className="h-4 w-4" /> Sign in
+          </Link>
+          <Link
+            to="/auth"
+            search={{ mode: "signup", redirect: "/" }}
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted"
+          >
+            Create account
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  const name = profile?.display_name?.trim() || user.email?.split("@")[0] || "there";
+  const initials = name.slice(0, 2).toUpperCase();
+  const primaryRole = roles[0];
+
+  return (
+    <section className="mt-8 rounded-2xl border border-border bg-card p-6">
+      <div className="flex items-start gap-4">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+          {initials}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="text-base font-semibold text-card-foreground">Welcome back, {name}</div>
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">{user.email}</p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {primaryRole ? (
+              roles.map((r) => (
+                <span key={r} className="inline-flex items-center rounded-full bg-accent/15 px-2.5 py-0.5 text-xs font-medium text-accent">
+                  {ROLE_LABELS[r]}
+                </span>
+              ))
+            ) : (
+              <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                No role assigned yet
+              </span>
+            )}
+            {profile?.title ? (
+              <span className="inline-flex items-center rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground">
+                {profile.title}
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+      <div className="mt-5 flex flex-wrap gap-2">
+        <Link to="/employee/dashboard" className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm transition hover:brightness-110">
+          Open dashboard <ArrowRight className="h-4 w-4" />
+        </Link>
+        <Link to="/employee/tasks" className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted">
+          My tasks
+        </Link>
+        <button
+          type="button"
+          onClick={() => signOut()}
+          className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition hover:text-foreground"
+        >
+          Sign out
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function _NetworkDiagram_orig() {
   const nodes = [
     { x: 50, y: 20, icon: Briefcase, ring: "bg-accent" },
     { x: 15, y: 60, icon: Scale, ring: "bg-primary" },
