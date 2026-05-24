@@ -12,11 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as SolicitorRouteImport } from './routes/solicitor'
 import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ProfessionalsRouteImport } from './routes/professionals'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PortalsRouteImport } from './routes/portals'
 import { Route as LegislativeRouteImport } from './routes/legislative'
 import { Route as JudgesRouteImport } from './routes/judges'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as EmployeeRouteImport } from './routes/employee'
 import { Route as DonateRouteImport } from './routes/donate'
@@ -59,6 +61,11 @@ const ReviewsRoute = ReviewsRouteImport.update({
   path: '/reviews',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfessionalsRoute = ProfessionalsRouteImport.update({
   id: '/professionals',
   path: '/professionals',
@@ -82,6 +89,11 @@ const LegislativeRoute = LegislativeRouteImport.update({
 const JudgesRoute = JudgesRouteImport.update({
   id: '/judges',
   path: '/judges',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeedbackRoute = FeedbackRouteImport.update({
@@ -228,11 +240,13 @@ export interface FileRoutesByFullPath {
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
   '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
   '/trust': typeof TrustRoute
@@ -264,11 +278,13 @@ export interface FileRoutesByTo {
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
   '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
   '/trust': typeof TrustRoute
@@ -301,11 +317,13 @@ export interface FileRoutesById {
   '/donate': typeof DonateRoute
   '/employee': typeof EmployeeRouteWithChildren
   '/feedback': typeof FeedbackRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/judges': typeof JudgesRoute
   '/legislative': typeof LegislativeRoute
   '/portals': typeof PortalsRouteWithChildren
   '/pricing': typeof PricingRoute
   '/professionals': typeof ProfessionalsRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/reviews': typeof ReviewsRoute
   '/solicitor': typeof SolicitorRoute
   '/trust': typeof TrustRoute
@@ -339,11 +357,13 @@ export interface FileRouteTypes {
     | '/donate'
     | '/employee'
     | '/feedback'
+    | '/forgot-password'
     | '/judges'
     | '/legislative'
     | '/portals'
     | '/pricing'
     | '/professionals'
+    | '/reset-password'
     | '/reviews'
     | '/solicitor'
     | '/trust'
@@ -375,11 +395,13 @@ export interface FileRouteTypes {
     | '/donate'
     | '/employee'
     | '/feedback'
+    | '/forgot-password'
     | '/judges'
     | '/legislative'
     | '/portals'
     | '/pricing'
     | '/professionals'
+    | '/reset-password'
     | '/reviews'
     | '/solicitor'
     | '/trust'
@@ -411,11 +433,13 @@ export interface FileRouteTypes {
     | '/donate'
     | '/employee'
     | '/feedback'
+    | '/forgot-password'
     | '/judges'
     | '/legislative'
     | '/portals'
     | '/pricing'
     | '/professionals'
+    | '/reset-password'
     | '/reviews'
     | '/solicitor'
     | '/trust'
@@ -448,11 +472,13 @@ export interface RootRouteChildren {
   DonateRoute: typeof DonateRoute
   EmployeeRoute: typeof EmployeeRouteWithChildren
   FeedbackRoute: typeof FeedbackRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   JudgesRoute: typeof JudgesRoute
   LegislativeRoute: typeof LegislativeRoute
   PortalsRoute: typeof PortalsRouteWithChildren
   PricingRoute: typeof PricingRoute
   ProfessionalsRoute: typeof ProfessionalsRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ReviewsRoute: typeof ReviewsRoute
   SolicitorRoute: typeof SolicitorRoute
   TrustRoute: typeof TrustRoute
@@ -489,6 +515,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReviewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/professionals': {
       id: '/professionals'
       path: '/professionals'
@@ -522,6 +555,13 @@ declare module '@tanstack/react-router' {
       path: '/judges'
       fullPath: '/judges'
       preLoaderRoute: typeof JudgesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/feedback': {
@@ -753,11 +793,13 @@ const rootRouteChildren: RootRouteChildren = {
   DonateRoute: DonateRoute,
   EmployeeRoute: EmployeeRouteWithChildren,
   FeedbackRoute: FeedbackRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   JudgesRoute: JudgesRoute,
   LegislativeRoute: LegislativeRoute,
   PortalsRoute: PortalsRouteWithChildren,
   PricingRoute: PricingRoute,
   ProfessionalsRoute: ProfessionalsRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ReviewsRoute: ReviewsRoute,
   SolicitorRoute: SolicitorRoute,
   TrustRoute: TrustRoute,
