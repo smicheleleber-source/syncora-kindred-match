@@ -17,7 +17,7 @@ import { useProviders } from "@/lib/provider-store";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { addConnection } from "@/lib/connections";
 import { summarizeProvider, useReviews } from "@/lib/reviews-store";
-import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight } from "lucide-react";
+import { Scale, Stethoscope, Home as HomeIcon, Briefcase, Lightbulb, Clock, ShieldCheck, ArrowRight, Users, Landmark, Megaphone } from "lucide-react";
 
 type Matter = {
   id: string;
@@ -922,19 +922,21 @@ function Stepper({
 
 // ---------- Syncora Connect hero ----------
 
-type ServiceTile = {
+type UserType = {
   name: string;
-  slug: "legal" | "health" | "home" | "finance";
+  slug: string;
+  who: string;
   desc: string;
   icon: React.ComponentType<{ className?: string }>;
   tint: string;
+  to: string;
 };
 
-const SERVICE_TILES: ServiceTile[] = [
-  { name: "Syncora Legal", slug: "legal", desc: "Find the right lawyer, right now.", icon: Scale, tint: "bg-primary text-primary-foreground" },
-  { name: "Syncora Health", slug: "health", desc: "Connect with a qualified doctor or specialist.", icon: Stethoscope, tint: "bg-accent text-accent-foreground" },
-  { name: "Syncora Home", slug: "home", desc: "Match with trusted pros for repairs & improvement.", icon: HomeIcon, tint: "bg-chart-1/90 text-primary-foreground" },
-  { name: "Syncora Finance", slug: "finance", desc: "Connect with financial advisors, CPAs, or planners.", icon: Briefcase, tint: "bg-chart-3 text-primary-foreground" },
+const USER_TYPES: UserType[] = [
+  { name: "Client", slug: "client", who: "I need legal help", desc: "Describe your matter, get matched with vetted professionals, and track your case.", icon: Users, tint: "bg-primary text-primary-foreground", to: "#intake" },
+  { name: "Professional", slug: "professional", who: "Attorney, mediator, GAL, counselor", desc: "Join the directory, validate your credentials, and respond to matched clients.", icon: Briefcase, tint: "bg-accent text-accent-foreground", to: "/professionals" },
+  { name: "Government Agency", slug: "agency", who: "Solicitor, judge, court staff, agency counsel", desc: "Manage public-sector matters, track court calendars, and review risk.", icon: Landmark, tint: "bg-emerald-600 text-primary-foreground", to: "/portals/agency" },
+  { name: "Partner / Advertiser", slug: "advertiser", who: "Sponsor, partner, vendor", desc: "Place sponsored placements and review audience delivery analytics.", icon: Megaphone, tint: "bg-amber-500 text-primary-foreground", to: "/advertise" },
 ];
 
 const VALUE_PROPS = [
@@ -966,7 +968,7 @@ function SyncoraHero() {
             </span>
           </div>
           <p className="mt-3 text-base text-accent md:text-lg">
-            Intelligent Matching for the Services You Need.
+            Built for clients, professionals, agencies, and partners.
           </p>
         </div>
 
@@ -979,12 +981,11 @@ function SyncoraHero() {
           <div className="relative grid gap-8 p-8 md:grid-cols-[1.1fr_1fr] md:gap-6 md:p-12">
             <div className="flex flex-col justify-center">
               <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-                Find the right professional—
-                <span className="block italic font-normal opacity-90">exactly when you need them.</span>
+                One platform for legal coordination.
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
-                Seamlessly connecting clients with the right professionals — based
-                on real-time availability, location, and expertise.
+                Syncora connects clients, professionals, agencies, and partners —
+                so everyone moves forward with clarity and confidence.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
@@ -994,10 +995,10 @@ function SyncoraHero() {
                   Get Matched Now <ArrowRight className="h-4 w-4" />
                 </a>
                 <Link
-                  to="/portals"
+                  to="/professionals"
                   className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/10 px-5 py-2.5 text-sm font-medium text-primary-foreground backdrop-blur transition hover:bg-primary-foreground/20"
                 >
-                  Get started with Syncora
+                  Join as a Professional
                 </Link>
               </div>
             </div>
@@ -1009,20 +1010,20 @@ function SyncoraHero() {
           </div>
         </section>
 
-        {/* Service tiles */}
+        {/* User types */}
         <section className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {SERVICE_TILES.map((t) => (
+          {USER_TYPES.map((u) => (
             <Link
-              key={t.name}
-              to="/services/$service"
-              params={{ service: t.slug }}
+              key={u.name}
+              to={u.to}
               className="group rounded-2xl border border-border bg-card p-5 text-left transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
             >
-              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${t.tint}`}>
-                <t.icon className="h-5 w-5" />
+              <span className={`inline-flex h-11 w-11 items-center justify-center rounded-full shadow ${u.tint}`}>
+                <u.icon className="h-5 w-5" />
               </span>
-              <div className="mt-4 text-base font-semibold text-card-foreground">{t.name}</div>
-              <p className="mt-1 text-sm text-muted-foreground">{t.desc}</p>
+              <div className="mt-4 text-base font-semibold text-card-foreground">{u.name}</div>
+              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{u.who}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{u.desc}</p>
             </Link>
           ))}
         </section>
