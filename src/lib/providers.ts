@@ -20,6 +20,13 @@ export interface Provider {
   // self-reported experience that still needs validation.
   validated_specialties?: string[];
   complexity_supported: Complexity[];
+  // Subset of `complexity_supported` that the Syncora system has independently
+  // validated against completed case work (closed matters, peer review,
+  // outcome verification). Anything in `complexity_supported` but NOT in
+  // `validated_complexity` is treated as a self-claim that still needs proof.
+  // Required for "complex" — unvalidated complex claims do not count for
+  // matching or display as a confirmed capability.
+  validated_complexity?: Complexity[];
   availability: Urgency; // soonest urgency they can handle
   location: string;
   budget_min: number;
