@@ -997,7 +997,7 @@ function SyncoraHero() {
                   to="/portals"
                   className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 bg-primary-foreground/10 px-5 py-2.5 text-sm font-medium text-primary-foreground backdrop-blur transition hover:bg-primary-foreground/20"
                 >
-                  Choose your portal
+                  Get started with Syncora
                 </Link>
               </div>
             </div>
