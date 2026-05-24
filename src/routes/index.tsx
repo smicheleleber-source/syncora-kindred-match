@@ -921,6 +921,99 @@ function Stepper({
   );
 }
 
+// ---------- Engagement paths ----------
+
+const ENGAGEMENT_PATHS = [
+  {
+    to: "/portals/advertiser",
+    label: "Advertise",
+    who: "Sponsors & partners",
+    desc: "Place sponsored content in front of vetted legal-services audiences and review delivery analytics.",
+    icon: Megaphone,
+    accent: "from-amber-500/15 to-amber-500/0",
+  },
+  {
+    to: "/portals/professional",
+    label: "Professional services",
+    who: "Attorneys, mediators, GALs, counselors",
+    desc: "Join the directory, validate specialties, run your private-practice workspace, and respond to matched clients.",
+    icon: Briefcase,
+    accent: "from-accent/15 to-accent/0",
+  },
+  {
+    to: "/portals/agency",
+    label: "Government & public sector",
+    who: "Solicitors, judges, court staff, agency counsel",
+    desc: "Public-sector matter management, motion-fee receipts, court calendar, judge records, and risk review.",
+    icon: Landmark,
+    accent: "from-emerald-500/15 to-emerald-500/0",
+  },
+  {
+    to: "/portals/client",
+    label: "Client services",
+    who: "Individuals with a legal need",
+    desc: "Describe your matter, match with vetted professionals, track multiple matters, upload court docs, and leave reviews.",
+    icon: Users,
+    accent: "from-primary/15 to-primary/0",
+  },
+  {
+    to: "/donate",
+    label: "Support our mission",
+    who: "Donors & supporters",
+    desc: "Help expand access to justice by supporting free legal matching for underserved communities.",
+    icon: HeartHandshake,
+    accent: "from-rose-500/15 to-rose-500/0",
+  },
+  {
+    to: "/feedback",
+    label: "Feedback & research",
+    who: "Researchers & contributors",
+    desc: "Share insights, request features, or participate in platform research to shape the future of legal tech.",
+    icon: MessageSquare,
+    accent: "from-violet-500/15 to-violet-500/0",
+  },
+];
+
+function EngagementPaths() {
+  return (
+    <section className="mt-12">
+      <div className="text-center">
+        <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">More ways to engage</p>
+        <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
+          How else can you use Syncora?
+        </h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+          Beyond legal matching — advertising, public-sector tools, professional directories, donations, and research.
+        </p>
+      </div>
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {ENGAGEMENT_PATHS.map((p) => (
+          <Link
+            key={p.to}
+            to={p.to}
+            className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 transition hover:border-primary/40 hover:shadow-md"
+          >
+            <div className={`absolute inset-0 bg-gradient-to-br ${p.accent} opacity-60`} />
+            <div className="relative">
+              <span className="inline-flex rounded-xl bg-background/80 p-2.5 text-primary ring-1 ring-border">
+                <p.icon className="h-5 w-5" />
+              </span>
+              <h3 className="mt-3 text-base font-semibold text-card-foreground group-hover:text-primary">
+                {p.label}
+              </h3>
+              <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{p.who}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
+              <span className="mt-3 inline-block text-sm font-medium text-primary">
+                Learn more →
+              </span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ---------- Syncora Connect hero ----------
 
 const VALUE_PROPS = [
@@ -994,7 +1087,6 @@ function SyncoraHero() {
           </div>
         </section>
 
-        {/* User types */}
         {/* User profile */}
         <UserProfileCard />
 
@@ -1010,6 +1102,9 @@ function SyncoraHero() {
             </div>
           ))}
         </section>
+
+        {/* Other engagement paths */}
+        <EngagementPaths />
       </div>
     </header>
   );
