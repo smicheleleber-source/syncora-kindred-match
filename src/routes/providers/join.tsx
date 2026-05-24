@@ -73,7 +73,16 @@ const supplierSchema = z.object({
     .max(200, "Unrealistic capacity"),
   budget_min: z.number().int().min(0).max(1_000_000),
   budget_max: z.number().int().min(0).max(1_000_000),
-  years_experience: z.number().int().min(0).max(80),
+  practice_start_date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid date")
+    .refine((d) => {
+      const t = new Date(d).getTime();
+      if (Number.isNaN(t)) return false;
+      const now = Date.now();
+      const earliest = now - 80 * 365.25 * 24 * 60 * 60 * 1000;
+      return t <= now && t >= earliest;
+    }, "Date must be in the past and within the last 80 years"),
   license_number: z
     .string()
     .trim()
