@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Users, Briefcase, Landmark, Megaphone, ShieldCheck } from "lucide-react";
+import { Users, Scale, Landmark, Lightbulb, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/portals")({
   head: () => ({
@@ -41,26 +41,26 @@ const PORTALS: Portal[] = [
   },
   {
     to: "/portals/professional",
-    label: "Professional portal",
+    label: "Attorney portal",
     who: "Attorney, mediator, GAL, counselor",
-    desc: "Join the directory, validate specialties, run your private-practice workspace, and respond to matched clients.",
-    icon: Briefcase,
+    desc: "Join the directory, validate your bar admission and specialties, run your private-practice workspace, and respond to matched clients.",
+    icon: Scale,
     accent: "from-accent/15 to-accent/0",
   },
   {
     to: "/portals/agency",
-    label: "Government agency portal",
+    label: "Government official portal",
     who: "Solicitor, judge, court staff, agency counsel",
     desc: "Public-sector matter management, motion-fee receipts, court calendar, judge experience records, and risk review.",
     icon: Landmark,
     accent: "from-emerald-500/15 to-emerald-500/0",
   },
   {
-    to: "/portals/advertiser",
-    label: "Advertiser portal",
-    who: "Sponsor, partner, vendor",
-    desc: "Place sponsored placements in front of the right audience segments and review delivery analytics.",
-    icon: Megaphone,
+    to: "/portals/advisor",
+    label: "Advisor portal",
+    who: "Financial advisor, CPA, consultant, business coach",
+    desc: "Refer clients to vetted attorneys, collaborate on shared matters, and track referrals across your book of business.",
+    icon: Lightbulb,
     accent: "from-amber-500/15 to-amber-500/0",
   },
   {
