@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, FolderOpen, FileText, Star, MessageSquare, ShieldAlert, Calendar, Heart } from "lucide-react";
 import { PortalHeader, ToolSection, type Tool } from "@/components/PortalCard";
+import { SoloLawyerBenefits } from "@/components/SoloLawyerBenefits";
 
 export const Route = createFileRoute("/portals/client")({
   head: () => ({
@@ -40,6 +41,7 @@ function ClientPortal() {
       />
       <main className="mx-auto max-w-6xl px-6 py-10">
         <ToolSection title="Get started" tools={INTAKE} />
+        <SoloLawyerBenefits variant="portal" className="my-8" />
         <ToolSection title="Manage your matters" tools={MATTERS} />
         <ToolSection title="Feedback & community" tools={FEEDBACK} />
       </main>

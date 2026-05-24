@@ -42,7 +42,13 @@ export interface Provider {
   hourly_rate?: number; // USD / hour; 0 or omitted = flat-fee / contingency
   firm_size?: FirmSize;
   gender_composition?: GenderComposition;
+  // Solo / no-paralegal practitioners: when false, the client gets direct
+  // availability (no gatekeeper) and an automatic reduced rate.
+  has_paralegal?: boolean;
 }
+
+// Flat discount applied (display only) when a lawyer has no paralegal.
+export const SOLO_LAWYER_DISCOUNT_PCT = 15;
 
 export const FIRM_SIZE_LABELS: Record<FirmSize, string> = {
   solo: "Solo practitioner",
@@ -360,6 +366,7 @@ export const PROVIDERS: Provider[] = [
     hourly_rate: 425,
     firm_size: "mid",
     gender_composition: "mixed",
+    has_paralegal: true,
   },
   {
     id: "2",
@@ -404,6 +411,9 @@ export const PROVIDERS: Provider[] = [
     budget_min: 500,
     budget_max: 2500,
     bio: "Flat-fee uncontested divorce and document prep.",
+    firm_size: "solo",
+    hourly_rate: 175,
+    has_paralegal: false,
   },
   {
     id: "5",
@@ -456,6 +466,7 @@ export const PROVIDERS: Provider[] = [
     hourly_rate: 150,
     firm_size: "solo",
     gender_composition: "predominantly_female",
+    has_paralegal: false,
   },
   {
     id: "9",
