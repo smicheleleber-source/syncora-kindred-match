@@ -127,6 +127,17 @@ function AuthPage() {
             />
           </Field>
 
+          {mode === "signin" && (
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          )}
+
           {error && (
             <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
               {error}
