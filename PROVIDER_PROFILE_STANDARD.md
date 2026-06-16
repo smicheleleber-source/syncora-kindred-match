@@ -79,3 +79,21 @@ The Statement of Work is the most important profile field and should be displaye
 * Provider badges
 * Community endorsements
 * Portfolio and case studies
+
+## Team Structure
+
+- Total Team Members
+- Professional Staff Count
+- Support Staff Count
+- Volunteer Count (if applicable)
+
+## Team Roles
+
+Examples:
+- Attorneys
+- Paralegals
+- Administrative Staff
+- Financial Advisors
+- Insurance Agents
+- Event Coordinators
+- Volunteers
