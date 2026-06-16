@@ -345,11 +345,75 @@ function Index() {
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <div className="mt-6 grid gap-5 md:grid-cols-2">
 
-  {/* Discovery Questions HERE */}
+{category === "family law" && (
+  <div className="md:col-span-2 rounded-xl border border-border bg-muted/20 p-4">
+    <h3 className="text-sm font-semibold text-foreground">
+      Discovery Questions
+    </h3>
+    <p className="mb-4 text-xs text-muted-foreground">
+      Help us better understand your situation before matching.
+    </p>
 
-  {category === "family law" && (
-    ...
-  )}
+    <div className="grid gap-4 md:grid-cols-2">
+      <Field label="Do you currently have a court order?">
+        <select
+          value={hasCourtOrder}
+          onChange={(e) => setHasCourtOrder(e.target.value)}
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <option value="">Select</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </Field>
+
+      <Field label="Do you currently have a court date?">
+        <select
+          value={hasCourtDate}
+          onChange={(e) => setHasCourtDate(e.target.value)}
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <option value="">Select</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </Field>
+
+      {hasCourtDate === "yes" && (
+        <Field label="Court Date">
+          <input
+            type="date"
+            value={courtDate}
+            onChange={(e) => setCourtDate(e.target.value)}
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          />
+        </Field>
+      )}
+
+      <Field label="County">
+        <input
+          type="text"
+          value={county}
+          onChange={(e) => setCounty(e.target.value)}
+          placeholder="Charleston County"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        />
+      </Field>
+
+      <Field label="Do you currently have an attorney?">
+        <select
+          value={hasAttorney}
+          onChange={(e) => setHasAttorney(e.target.value)}
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+        >
+          <option value="">Select</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+      </Field>
+    </div>
+  </div>
+)}
             <Field label="Location (city, state)">
               <input
                 type="text"
