@@ -50,6 +50,11 @@ function Index() {
   const [specialties, setSpecialties] = useState<string[]>([]);
   const [urgency, setUrgency] = useState<Urgency>("medium");
   const [location, setLocation] = useState("Austin, TX");
+  const [hasCourtOrder, setHasCourtOrder] = useState("");
+  const [hasCourtDate, setHasCourtDate] = useState("");
+  const [courtDate, setCourtDate] = useState("");
+  const [county, setCounty] = useState("");
+  const [hasAttorney, setHasAttorney] = useState("");
   const [budgetMin, setBudgetMin] = useState(1000);
   const [budgetMax, setBudgetMax] = useState(5000);
   const [matters, setMatters] = useState<Matter[]>([]);
