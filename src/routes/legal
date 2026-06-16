@@ -28,7 +28,7 @@ type Matter = {
   created_at: number;
 };
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/legal")({
   head: () => ({
     meta: [
       { title: "Syncora Connect — Legal Matchmaking" },
