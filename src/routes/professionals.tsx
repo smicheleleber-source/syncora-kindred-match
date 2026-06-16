@@ -64,8 +64,8 @@ function ProfessionalsPage() {
             </h2>
             <p className="mt-3 text-muted-foreground">
               Syncora Connect is a two-sided marketplace and workflow toolkit built
-              for legal, medical, professional-services, self-governance etc
-              providers. Clients answer a short intake questionnaire; our scoring
+              for legal, medical, professional-services, non-profit organizations, etc.
+              Clients answer a short intake questionnaire; our scoring
               engine surfaces the top three matches based on specialty, budget,
               urgency, and location. Professionals and Service Providers get pre-qualified leads, not cold
               calls.
