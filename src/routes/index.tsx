@@ -1071,7 +1071,7 @@ function SyncoraHero() {
           <div className="relative grid gap-8 p-8 md:grid-cols-[1.1fr_1fr] md:gap-6 md:p-12">
             <div className="flex flex-col justify-center">
               <h1 className="text-3xl font-semibold leading-tight tracking-tight md:text-4xl">
-                One platform for legal coordination.
+                One Platform. Infinite Connections.
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
                 Syncora connects clients, professionals, agencies, and partners —
@@ -1082,7 +1082,7 @@ function SyncoraHero() {
                   href="#intake"
                   className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-semibold text-accent-foreground shadow-md transition hover:brightness-110"
                 >
-                  Get Matched Now <ArrowRight className="h-4 w-4" />
+                  Find My Match <ArrowRight className="h-4 w-4" />
                 </a>
                 <Link
                   to="/professionals"
