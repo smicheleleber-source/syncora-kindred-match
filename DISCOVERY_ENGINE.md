@@ -89,9 +89,77 @@ Expected Match Brief:
 - Attorney Status
 - Budget
 - Summary
-Legal
-Events
-Self Governance
-Nonprofits
-Financial Services
-Insurance
+### Self Governance Navigation Center
+
+Initial User Request:
+"I want to get involved in education policy."
+
+Discovery Questions:
+
+1. What issue areas are most important to you?
+
+* Education
+* Family Rights
+* Economic Development
+* Public Safety
+* Healthcare
+* Environment
+* Government Accountability
+
+2. What type of involvement interests you?
+
+* Volunteer
+* Leadership
+* Board Service
+* Advocacy
+* Research
+* Events
+* Fundraising
+
+3. How many hours per month can you commit?
+
+* 1-5
+* 5-10
+* 10-20
+* 20+
+
+4. Do you prefer:
+
+* Local
+* County
+* State
+* National
+
+5. What skills would you like to contribute?
+
+* Public Speaking
+* Research
+* Event Planning
+* Fundraising
+* Writing
+* Social Media
+* Leadership
+
+6. Are you interested in:
+
+* Existing Nonprofits
+* Community Organizations
+* Advocacy Groups
+* Political Organizations
+* Volunteer Opportunities
+
+7. Do you prefer:
+
+* Existing Organizations
+* New Initiatives
+* Either
+
+Expected Match Brief:
+
+* Interest Areas
+* Engagement Type
+* Commitment Level
+* Geographic Preference
+* Skills Offered
+* Organization Preference
+* Recommended Opportunities
