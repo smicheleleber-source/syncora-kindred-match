@@ -343,6 +343,13 @@ function Index() {
           </div>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+
+  {/* Discovery Questions HERE */}
+
+  {category === "family law" && (
+    ...
+  )}
             <Field label="Location (city, state)">
               <input
                 type="text"
