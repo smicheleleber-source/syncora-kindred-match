@@ -75,9 +75,9 @@ function gapBadge(supply: number, demand: number) {
 function SupplyDemandPage() {
   const providers = useProviders();
   const connections = useConnections();
-  const [domain, setDomain] = useState<Domain>("Legal");
+  const [domain, setDomain] = useState<Domain>("Legal Services");
   const [category, setCategory] = useState<string>(
-    CATEGORIES_BY_DOMAIN.Legal[0],
+    CATEGORIES_BY_DOMAIN["Legal Services"][0],
   );
   const [view, setView] = useState<"state" | "city">("state");
 

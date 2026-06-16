@@ -23,7 +23,7 @@ import { useAuth, ROLE_LABELS } from "@/lib/auth";
 
 type Matter = {
   id: string;
-  domain: Domain | "Legal";
+  domain: Domain;
   input: MatchInput;
   created_at: number;
 };
@@ -89,7 +89,7 @@ function Index() {
     };
     const matter: Matter = {
       id: crypto.randomUUID(),
-      domain: domain ?? "Legal",
+      domain: domain ?? "Legal Services",
       input,
       created_at: Date.now(),
     };
