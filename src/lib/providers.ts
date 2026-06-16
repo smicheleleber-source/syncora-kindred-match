@@ -12,8 +12,23 @@ export type GenderComposition =
 export interface Provider {
   id: string;
   name: string;
+  // Top-level SyncoraConnect vertical this provider serves. Optional for
+  // back-compat with legacy seed data; defaults to "Legal Services" when
+  // absent (see `getProviderVertical`).
+  vertical?: Vertical;
   category: string;
   specialties: string[];
+  // Cross-vertical alternative to `specialties` for non-legal verticals
+  // (events, finance, insurance, advocacy, nonprofits, self-governance).
+  // Used by the unified matcher as a fallback when `specialties` is empty.
+  focus_areas?: string[];
+  // Engagement opportunities offered to users whose request is engagement-
+  // based rather than budget-based (e.g. "volunteer shift", "board seat",
+  // "policy working group", "advisory call").
+  engagement_opportunities?: string[];
+  // Short, plain-language statement of work — what this provider actually
+  // delivers. Free-form copy shown on profiles and used as match context.
+  statement_of_work?: string;
   // Subset of `specialties` that the system has independently validated
   // (e.g. license check, sample-work review, peer attestation). Anything in
   // `specialties` but NOT in `validated_specialties` is treated as
@@ -368,31 +383,43 @@ export const CATEGORIES = [
   "indigenous self-governance",
 ] as const;
 
-// Top-level reason a user comes to Syncora Connect. Each domain expands into a
-// list of subcategories (categories), and each subcategory into specialties.
-export const DOMAINS = [
-  "Legal",
-  "Medical",
-  "Professional Services",
-  "Mediation & Neutrals",
-  "Spiritual & Counseling",
-  "Self-Governance Alliances",
+// Top-level SyncoraConnect verticals. Each vertical expands into categories,
+// and each category into specialties / focus areas. Legal Services is the
+// MVP default — other verticals share the same matching model but start with
+// a smaller catalogue of categories until populated.
+export const VERTICALS = [
+  "Legal Services",
+  "Events & Event Professionals",
+  "Financial Services",
+  "Insurance Networks",
+  "Political & Advocacy Alignment",
+  "Self Governance Navigation Center",
+  "Nonprofits & Volunteer Matching",
 ] as const;
-export type Domain = (typeof DOMAINS)[number];
+export type Vertical = (typeof VERTICALS)[number];
 
-export const DOMAIN_DESCRIPTIONS: Record<Domain, string> = {
-  Legal: "Attorneys for civil, criminal, family, business, and immigration matters.",
-  Medical: "Malpractice and negligence claims involving healthcare providers.",
-  "Professional Services": "Negligence by accountants, engineers, and architects.",
-  "Mediation & Neutrals":
-    "Fringe professionals adjacent to legal work: GALs, mediators, counselors, arbitrators, parenting coordinators, social workers.",
-  "Spiritual & Counseling": "Abuse and breach-of-trust by clergy or counselors.",
-  "Self-Governance Alliances":
-    "Community-led groups: mutual aid, co-ops, tenant unions, restorative circles.",
+// Default vertical surfaced first in the UI (MVP scope).
+export const DEFAULT_VERTICAL: Vertical = "Legal Services";
+
+export const VERTICAL_DESCRIPTIONS: Record<Vertical, string> = {
+  "Legal Services":
+    "Attorneys, mediators, and neutrals for civil, criminal, family, business, immigration, and malpractice matters.",
+  "Events & Event Professionals":
+    "Planners, venues, vendors, and on-site staff for weddings, conferences, fundraisers, and community events.",
+  "Financial Services":
+    "Advisors, CPAs, planners, bookkeepers, and tax pros for individuals and businesses.",
+  "Insurance Networks":
+    "Brokers, agents, and carriers across health, life, property, liability, and specialty lines.",
+  "Political & Advocacy Alignment":
+    "Campaigns, advocacy groups, lobbyists, and organizers aligned by issue, region, and engagement level.",
+  "Self Governance Navigation Center":
+    "Community-led groups: mutual aid, co-ops, tenant unions, restorative circles, neighborhood councils.",
+  "Nonprofits & Volunteer Matching":
+    "Nonprofits, service organizations, and volunteer opportunities matched by cause and time commitment.",
 };
 
-export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
-  Legal: [
+export const CATEGORIES_BY_VERTICAL: Record<Vertical, string[]> = {
+  "Legal Services": [
     "family law",
     "criminal defense",
     "personal injury",
@@ -403,8 +430,6 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "employment law",
     "tax law",
     "legal malpractice",
-  ],
-  Medical: [
     "medical malpractice",
     "dental malpractice",
     "nursing malpractice",
@@ -415,13 +440,10 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "mental health malpractice",
     "chiropractic malpractice",
     "veterinary malpractice",
-  ],
-  "Professional Services": [
     "accounting malpractice",
     "engineering malpractice",
     "architectural malpractice",
-  ],
-  "Mediation & Neutrals": [
+    "clergy malpractice",
     "guardian ad litem",
     "mediator",
     "arbitrator",
@@ -431,8 +453,11 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "court-appointed evaluator",
     "victim advocate",
   ],
-  "Spiritual & Counseling": ["clergy malpractice"],
-  "Self-Governance Alliances": [
+  "Events & Event Professionals": [],
+  "Financial Services": [],
+  "Insurance Networks": [],
+  "Political & Advocacy Alignment": [],
+  "Self Governance Navigation Center": [
     "mutual aid network",
     "worker cooperative",
     "housing cooperative",
@@ -444,7 +469,21 @@ export const CATEGORIES_BY_DOMAIN: Record<Domain, string[]> = {
     "credit union / lending circle",
     "indigenous self-governance",
   ],
+  "Nonprofits & Volunteer Matching": [],
 };
+
+// ---- Back-compat aliases (legacy `Domain` terminology) -----------------
+// Older code refers to verticals as "domains". Keep the names exported so
+// existing imports keep compiling; new code should prefer `Vertical`.
+export const DOMAINS = VERTICALS;
+export type Domain = Vertical;
+export const DOMAIN_DESCRIPTIONS = VERTICAL_DESCRIPTIONS;
+export const CATEGORIES_BY_DOMAIN = CATEGORIES_BY_VERTICAL;
+
+/** Resolve a provider's vertical, defaulting to Legal Services. */
+export function getProviderVertical(p: Provider): Vertical {
+  return p.vertical ?? DEFAULT_VERTICAL;
+}
 
 // Specialty options shown to users after they pick a category. These define
 // finer-grained expertise (e.g. custody, military, DUI) within a practice area.
