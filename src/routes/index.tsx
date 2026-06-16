@@ -343,30 +343,6 @@ function Index() {
           </div>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-{category === "family law" && (
-  <div className="md:col-span-2 rounded-xl border border-border bg-muted/20 p-4">
-    <h3 className="text-sm font-semibold text-foreground">
-      Discovery Questions
-    </h3>
-    <p className="text-xs text-muted-foreground">
-      Help us better understand your situation before matching.
-    </p>
-  </div>
-)}
-
-<Field label="Location (city, state)">
-  <input
-    type="text"
-    value={location}
-    onChange={(e) => setLocation(e.target.value)}
-    placeholder="Austin, TX"
-    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
-  />
-</Field>
-    </div>
-  </div>
-)}
             <Field label="Location (city, state)">
               <input
                 type="text"
