@@ -163,3 +163,65 @@ Expected Match Brief:
 * Skills Offered
 * Organization Preference
 * Recommended Opportunities
+## Organization Statement of Work (SOW)
+
+Purpose:
+
+The Statement of Work allows organizations to describe their mission, projects, volunteer opportunities, and desired outcomes so they can be matched to individuals, volunteers, professionals, and supporters.
+
+Organization Information:
+
+* Organization Name
+* Organization Type
+* Website
+* Location
+
+Mission:
+
+* Why does the organization exist?
+
+Current Projects:
+
+* Project Name
+* Project Description
+* Desired Outcomes
+
+Volunteer Opportunities:
+
+* Role Title
+* Description
+* Hours Required
+* Skills Needed
+
+Leadership Opportunities:
+
+* Board Service
+* Advisory Roles
+* Committee Membership
+
+Skills Requested:
+
+* Research
+* Writing
+* Fundraising
+* Event Planning
+* Public Speaking
+* Marketing
+* Technology
+
+Engagement Types:
+
+* Volunteer
+* Member
+* Donor
+* Leader
+* Advisor
+
+Expected Organization Match Profile:
+
+* Mission Areas
+* Active Projects
+* Volunteer Needs
+* Skills Requested
+* Commitment Levels
+* Geographic Scope
