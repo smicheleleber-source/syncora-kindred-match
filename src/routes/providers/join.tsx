@@ -209,9 +209,9 @@ type FormErrors = Partial<Record<string, string>>;
 function JoinPage() {
   const navigate = useNavigate();
   const library = useLibrary();
-  const [domain, setDomain] = useState<Domain>("Legal");
+  const [domain, setDomain] = useState<Domain>("Legal Services");
   const [category, setCategory] = useState<string>(
-    CATEGORIES_BY_DOMAIN.Legal[0],
+    CATEGORIES_BY_DOMAIN["Legal Services"][0],
   );
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
