@@ -364,18 +364,6 @@ function Index() {
     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
   />
 </Field>
-
-      <Field label="Do you currently have an attorney?">
-        <select
-          value={hasAttorney}
-          onChange={(e) => setHasAttorney(e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="">Select</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </Field>
     </div>
   </div>
 )}
