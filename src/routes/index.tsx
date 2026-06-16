@@ -1074,8 +1074,8 @@ function SyncoraHero() {
                 One Platform. Infinite Connections.
               </h1>
               <p className="mt-4 max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
-                Syncora connects clients, professionals, agencies, and partners —
-                so everyone moves forward with clarity and confidence.
+               SyncoraConnect helps people, professionals, organizations, volunteers, and partners - 
+               find the right connections at the right time.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
