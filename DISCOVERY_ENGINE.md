@@ -19,12 +19,17 @@ Supported Verticals
 	• Self Governance Navigation Center
 	• Nonprofits & Volunteer Matching
 Match Brief
-The Match Brief contains:
-	• Summary
-	• Key Facts
-	• Complexity
-	• Urgency
-	• Recommended Match Type
+Expected Match Brief:
+
+- Category
+- Subcategory
+- Urgency
+- Complexity
+- County
+- Court Date
+- Attorney Status
+- Budget
+- Summary
 Discovery Question Examples
 ### Legal Services
 
