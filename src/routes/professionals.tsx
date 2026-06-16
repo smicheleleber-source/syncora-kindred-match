@@ -3,13 +3,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/professionals")({
   head: () => ({
     meta: [
-      { title: "For Professionals — Syncora Connect" },
+      { title: "For Professionals and Service Providers — Syncora Connect" },
       {
         name: "description",
         content:
           "How legal and professional service providers use Syncora Connect to get matched with clients, manage cases, and build trust.",
       },
-      { property: "og:title", content: "For Professionals — Syncora Connect" },
+      { property: "og:title", content: "For Professionals and Service Providers — Syncora Connect" },
       {
         property: "og:description",
         content:
@@ -28,7 +28,7 @@ function ProfessionalsPage() {
         <div className="mx-auto max-w-5xl px-6 py-12 md:py-16">
           <div className="flex items-center gap-2 text-sm font-medium uppercase tracking-[0.2em] text-primary">
             <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-            Syncora Connect · For Professionals
+            Syncora Connect · For Professionals and Service Providers
           </div>
           <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-foreground md:text-5xl">
             Grow your practice with better client relationships.
@@ -64,17 +64,17 @@ function ProfessionalsPage() {
             </h2>
             <p className="mt-3 text-muted-foreground">
               Syncora Connect is a two-sided marketplace and workflow toolkit built
-              for legal, medical, professional-services, and self-governance
+              for legal, medical, professional-services, self-governance etc
               providers. Clients answer a short intake questionnaire; our scoring
               engine surfaces the top three matches based on specialty, budget,
-              urgency, and location. Professionals get pre-qualified leads, not cold
+              urgency, and location. Professionals and Service Providers get pre-qualified leads, not cold
               calls.
             </p>
             <p className="mt-3 text-muted-foreground">
-              Beyond matchmaking, Syncora provides shared tools — litigation
+              Beyond matchmaking, Syncora provides shared tools such as — litigation
               playbooks, a systems-engineering matrix for building claims, case-law
               integration, and a donation engine for community alliances — so that
-              professionals and clients stay aligned on strategy and evidence.
+              professionals and/or service providers and clients stay aligned on strategy and evidence.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
@@ -127,7 +127,7 @@ function ProfessionalsPage() {
         {/* How to use it */}
         <section className="mt-16">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            How professionals use Syncora Connect
+            How professionals and service professional use Syncora Connect
           </h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             <StepCard
