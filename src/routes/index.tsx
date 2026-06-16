@@ -344,7 +344,6 @@ function Index() {
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <div className="mt-6 grid gap-5 md:grid-cols-2">
-
 {category === "family law" && (
   <div className="md:col-span-2 rounded-xl border border-border bg-muted/20 p-4">
     <h3 className="text-sm font-semibold text-foreground">
@@ -355,23 +354,9 @@ function Index() {
     </p>
   </div>
 )}
-        <Field label="Court Date">
-          <input
-            type="date"
-            value={courtDate}
-            onChange={(e) => setCourtDate(e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-          />
-        </Field>
-      )}
 
-      <Field label="County">
-        <input
-          type="text"
-          value={county}
-          onChange={(e) => setCounty(e.target.value)}
-          placeholder="Charleston County"
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+<Field label="Location (city, state)">
+
         />
       </Field>
 
