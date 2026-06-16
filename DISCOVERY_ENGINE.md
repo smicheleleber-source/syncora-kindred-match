@@ -26,6 +26,64 @@ The Match Brief contains:
 	• Urgency
 	• Recommended Match Type
 Discovery Question Examples
+### Legal Services
+
+#### Family Law
+
+Initial User Request:
+"I need help with custody."
+
+Discovery Questions:
+
+1. How many children are involved?
+
+2. Do you currently have a custody order?
+- Yes
+- No
+
+3. Do you have a court date scheduled?
+- Yes
+- No
+
+4. If yes, what is the date?
+
+5. What county is the case located in?
+
+6. Do you currently have an attorney?
+- Yes
+- No
+
+7. Which best describes your situation?
+- Custody
+- Visitation
+- Child Support
+- Contempt
+- Modification
+- Divorce
+
+8. How urgent is the matter?
+- Immediate
+- This Week
+- This Month
+- Planning Ahead
+
+9. Estimated legal budget?
+- Under $1,000
+- $1,000-$5,000
+- $5,000-$15,000
+- $15,000+
+
+Expected Match Brief:
+
+- Category
+- Subcategory
+- Urgency
+- Complexity
+- County
+- Court Date
+- Attorney Status
+- Budget
+- Summary
 Legal
 Events
 Self Governance
