@@ -350,36 +350,11 @@ function Index() {
     <h3 className="text-sm font-semibold text-foreground">
       Discovery Questions
     </h3>
-    <p className="mb-4 text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground">
       Help us better understand your situation before matching.
     </p>
-
-    <div className="grid gap-4 md:grid-cols-2">
-      <Field label="Do you currently have a court order?">
-        <select
-          value={hasCourtOrder}
-          onChange={(e) => setHasCourtOrder(e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="">Select</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </Field>
-
-      <Field label="Do you currently have a court date?">
-        <select
-          value={hasCourtDate}
-          onChange={(e) => setHasCourtDate(e.target.value)}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-        >
-          <option value="">Select</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </Field>
-
-      {hasCourtDate === "yes" && (
+  </div>
+)}
         <Field label="Court Date">
           <input
             type="date"
